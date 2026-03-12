@@ -63,6 +63,7 @@ from .const import (
     CONF_REVIZIE_ULEI_KM_URMATOR,
     CONF_SERIE_CIV,
     CONF_TIP_PROPRIETATE,
+    CONF_EXTINCTOR_DATA_EXPIRARE,
     CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE,
     CONF_VIN,
     DOMAIN,
@@ -441,6 +442,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                 "baterie",
                 "frane",
                 "trusa_prim_ajutor",
+                "extinctor",
             ],
         )
 
@@ -677,6 +679,38 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="trusa_prim_ajutor",
+            data_schema=self.add_suggested_values_to_schema(schema, valori),
+            errors=errors,
+        )
+
+    # ── 5g. Extinctor ──
+    async def async_step_extinctor(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Formular pentru extinctor (obligatoriu în România)."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            errors = valideaza_campuri_data(user_input)
+            if not errors:
+                return self._salveaza_si_inchide(
+                    converteste_date_la_iso(user_input)
+                )
+
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_EXTINCTOR_DATA_EXPIRARE): _selector_data(),
+            }
+        )
+
+        valori = pregateste_valori_sugerate(
+            {**self.config_entry.options, **(user_input or {})}
+            if user_input
+            else self.config_entry.options
+        )
+
+        return self.async_show_form(
+            step_id="extinctor",
             data_schema=self.add_suggested_values_to_schema(schema, valori),
             errors=errors,
         )
