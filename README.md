@@ -5,7 +5,6 @@
 ![Total descărcări pentru toate versiunile](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/descarcari.json)
 ![Descărcări pentru ultima versiune](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/ultima_release.json)
 
-
 Integrare custom pentru [Home Assistant](https://www.home-assistant.io/) care permite **gestionarea vehiculelor și documentelor** acestora — asigurări, taxe, revizii, anvelope, frâne, baterie — direct din interfața HA.
 
 Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul rulează local.
@@ -17,7 +16,7 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 - **Vehicule multiple**: adaugă un număr nelimitat de vehicule, fiecare identificat prin placa de înmatriculare
 - **Documente cu termen**: RCA, ITP, impozit, leasing — cu calculul automat al zilelor rămase
 - **Mentenanță**: revizie ulei, distribuție, anvelope, baterie, plăcuțe și discuri de frână — cu calculul km rămași
-- **Echipament obligatoriu**: trusă de prim ajutor — cu avertizare la expirare
+- **Echipament obligatoriu**: trusă de prim ajutor, extinctor — cu avertizare la expirare
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
 - **Curățare automată**: la schimbarea condițiilor (ex: treci de la leasing la proprietate), entitățile orfane sunt eliminate automat
 - **Date în format românesc**: ZZ.LL.AAAA în interfață, ISO intern
@@ -72,7 +71,8 @@ Gestionare vehicul
 │   ├── Anvelope
 │   ├── Baterie
 │   ├── Frâne (plăcuțe și discuri)
-│   └── Trusă de prim ajutor
+│   ├── Trusă de prim ajutor
+│   └── Extinctor
 └── Actualizare kilometraj
 ```
 
@@ -82,11 +82,11 @@ Datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: `18.04.2026`). 
 
 ## Entități create
 
-Pentru fiecare vehicul, integrarea creează până la **13 senzori**. Aceștia apar condiționat — doar dacă au date completate.
+Pentru fiecare vehicul, integrarea creează până la **14 senzori**. Aceștia apar condiționat — doar dacă au date completate.
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
-Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, spații → underscore). De exemplu, pentru placa `AB 10 ABC`, entity ID-urile ar fi `sensor.vehicule_ab10abc_informatii`, `sensor.vehicule_ab10abc_rca`, etc.
+Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, fără spații). De exemplu, pentru placa `B 123 ABC`, entity ID-urile ar fi `sensor.vehicule_b123abc_informatii`, `sensor.vehicule_b123abc_rca`, etc.
 
 ### Tabel senzori
 
@@ -105,6 +105,7 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, 
 | Plăcuțe frână | `placute_frana` | km | `placute_frana_km_urmator` completat | Km rămași |
 | Discuri frână | `discuri_frana` | km | `discuri_frana_km_urmator` completat | Km rămași |
 | Trusă prim ajutor | `trusa_prim_ajutor` | zile | `trusa_prim_ajutor_data_expirare` completat | Zile rămase până la expirare |
+| Extinctor | `extinctor` | zile | `extinctor_data_expirare` completat | Zile rămase până la expirare |
 
 ### Atribute senzori
 
@@ -121,6 +122,8 @@ Fiecare senzor expune atribute suplimentare. Câteva exemple:
 **Anvelope** — atribute: Data montare vară, Data montare iarnă, Sezon recomandat
 
 **Trusă prim ajutor** — atribute: Data expirare, Stare (Valid/Expirat)
+
+**Extinctor** — atribute: Data expirare, Stare (Valid/Expirat)
 
 Datele din atribute sunt afișate în format românesc (ZZ.LL.AAAA), iar valorile numerice sunt afișate ca numere întregi (fără zecimale).
 
