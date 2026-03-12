@@ -92,6 +92,7 @@ Urmărirea lucrărilor de mentenanță și reparații:
   - Baterie
   - Frâne (plăcuțe și discuri)
   - Trusă de prim ajutor
+  - Extinctor
 - Pentru fiecare tip:
   - **Data ultimei mentenanțe:** Când a fost efectuată ultima dată
   - **Prețul:** Costul lucrării
@@ -118,7 +119,7 @@ Toate datele de tip dată se introduc în format **ZZ.LL.AAAA**, unde:
 
 ## Senzori creați
 
-Pentru fiecare vehicul adăugat, integrarea creează până la 13 senzori potențiali:
+Pentru fiecare vehicul adăugat, integrarea creează până la 14 senzori potențiali:
 
 ### Senzori de dată
 
@@ -194,10 +195,10 @@ automation:
 type: entities
 title: Vehicul - Status
 entities:
-  - sensor.ab_123_cd_km
-  - sensor.ab_123_cd_rca_expirare
-  - sensor.ab_123_cd_itp_expirare
-  - sensor.ab_123_cd_taxa_locala
+  - sensor.vehicule_ab123cd_km
+  - sensor.vehicule_ab123cd_rca_expirare
+  - sensor.vehicule_ab123cd_itp_expirare
+  - sensor.vehicule_ab123cd_taxa_locala
 ```
 
 ### Card cu informații detaliate
@@ -206,7 +207,7 @@ entities:
 type: custom:auto-entities
 filter:
   include:
-    - entity_id: "sensor.ab_123_cd*"
+    - entity_id: "sensor.vehicule_ab123cd*"
 title: Vehicul - Toate informațiile
 ```
 
@@ -215,14 +216,14 @@ title: Vehicul - Toate informațiile
 ```yaml
 type: conditional
 conditions:
-  - entity: sensor.ab_123_cd_rca_expirare
+  - entity: sensor.vehicule_ab123cd_rca_expirare
     state_not: "unavailable"
 card:
   type: entities
   title: "⚠️ Documente care expiră în curând"
   entities:
-    - sensor.ab_123_cd_rca_expirare
-    - sensor.ab_123_cd_itp_expirare
+    - sensor.vehicule_ab123cd_rca_expirare
+    - sensor.vehicule_ab123cd_itp_expirare
 ```
 
 ## Verificare după instalare
