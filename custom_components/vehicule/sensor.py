@@ -523,14 +523,14 @@ class VehiculeSensor(SensorEntity):
         """Informații despre dispozitiv (vehiculul)."""
         marca = self._date_vehicul.get(CONF_MARCA, "")
         model = self._date_vehicul.get(CONF_MODEL, "")
-        an = intreg(self._date_vehicul.get(CONF_AN_FABRICATIE))
+        #an = intreg(self._date_vehicul.get(CONF_AN_FABRICATIE))
 
         return DeviceInfo(
             identifiers={(DOMAIN, self._numar_normalizat)},
             name=f"Vehicule {self._nr_inmatriculare}",
             manufacturer=marca or None,
             model=model or None,
-            sw_version=str(an) if an else None,
+            configuration_url="https://github.com/cnecrea/vehicule",
             entry_type=None,
         )
 
