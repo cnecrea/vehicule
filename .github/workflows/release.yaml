@@ -15,7 +15,7 @@ on:
 
 jobs:
   release:
-    name: Creează Lansare de tip draft
+    name: Creează lansare de tip draft
     runs-on: ubuntu-22.04  # Ubuntu 22.04 este stabil și suportă Python 3.10
 
     steps:
