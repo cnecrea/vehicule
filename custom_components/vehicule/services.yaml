@@ -5,9 +5,9 @@ actualizeaza_date:
   fields:
     nr_inmatriculare:
       name: "Număr de înmatriculare"
-      description: "Numărul de înmatriculare al vehiculului (ex: B 123 ABC)."
+      description: "Numărul de înmatriculare al vehiculului (ex: B123ABC)."
       required: true
-      example: "B 123 ABC"
+      example: "B123ABC"
       selector:
         text:
     km_curent:
