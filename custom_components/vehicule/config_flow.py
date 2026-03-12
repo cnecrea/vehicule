@@ -14,6 +14,7 @@ Câmpurile de an folosesc TextSelector cu validare server-side
 from __future__ import annotations
 
 import logging
+import re
 from datetime import date
 from typing import Any
 
@@ -114,6 +115,8 @@ class VehiculeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             if not numar:
                 errors["base"] = "numar_gol"
+            elif not re.fullmatch(r"[A-Z0-9]+", numar):
+                errors["base"] = "format_numar_invalid"
             else:
                 numar_normalizat = normalizeaza_numar(numar)
                 await self.async_set_unique_id(numar_normalizat)
