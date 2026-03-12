@@ -19,6 +19,7 @@ Senzori posibili per vehicul:
 - Plăcuțe frână (km rămași) – vizibil când placute_frana_km_urmator este setat
 - Discuri frână (km rămași) – vizibil când discuri_frana_km_urmator este setat
 - Trusă prim ajutor (zile rămase) – vizibil când trusa_prim_ajutor_data_expirare este setat
+- Extinctor (zile rămase) – vizibil când extinctor_data_expirare este setat
 """
 
 from __future__ import annotations
@@ -80,6 +81,7 @@ from .const import (
     CONF_REVIZIE_ULEI_KM_URMATOR,
     CONF_SERIE_CIV,
     CONF_TIP_PROPRIETATE,
+    CONF_EXTINCTOR_DATA_EXPIRARE,
     CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE,
     CONF_VIN,
     DOMAIN,
@@ -393,6 +395,21 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
             }
         ),
     ),
+    # ── Extinctor (obligatoriu în România) ──
+    VehiculeSensorDescription(
+        key="extinctor",
+        translation_key="extinctor",
+        icon="mdi:fire-extinguisher",
+        native_unit_of_measurement="zile",
+        vizibil_fn=lambda d: _are_valoare(d, CONF_EXTINCTOR_DATA_EXPIRARE),
+        value_fn=lambda d: zile_ramase(d.get(CONF_EXTINCTOR_DATA_EXPIRARE)),
+        attributes_fn=lambda d: _filtrare_atribute(
+            {
+                "Data expirare": format_data_ro(d.get(CONF_EXTINCTOR_DATA_EXPIRARE)),
+                "Stare": stare_document(d.get(CONF_EXTINCTOR_DATA_EXPIRARE)),
+            }
+        ),
+    ),
 ]
 
 
@@ -530,7 +547,6 @@ class VehiculeSensor(SensorEntity):
             name=f"Vehicule {self._nr_inmatriculare}",
             manufacturer=marca or None,
             model=model or None,
-            configuration_url="https://github.com/cnecrea/vehicule",
             entry_type=None,
         )
 
