@@ -83,7 +83,7 @@ Pentru fiecare vehicul, integrarea creează până la **13 senzori**. Aceștia a
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
-Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, spații → underscore). De exemplu, pentru placa `AB 10 VKU`, entity ID-urile ar fi `sensor.vehicule_ab_10_vku_informatii`, `sensor.vehicule_ab_10_vku_rca`, etc.
+Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, spații → underscore). De exemplu, pentru placa `AB 10 ABC`, entity ID-urile ar fi `sensor.vehicule_ab10abc_informatii`, `sensor.vehicule_ab10abc_rca`, etc.
 
 ### Tabel senzori
 
@@ -153,12 +153,12 @@ automation:
   - alias: "RCA - Expirare apropiată"
     trigger:
       platform: numeric_state
-      entity_id: sensor.vehicule_b_123_abc_rca
+      entity_id: sensor.vehicule_b123abc_rca
       below: 30
     action:
       service: notify.mobile_app
       data:
-        message: "RCA-ul va expira în {{ states('sensor.vehicule_b_123_abc_rca') }} zile!"
+        message: "RCA-ul va expira în {{ states('sensor.vehicule_b123abc_rca') }} zile!"
         title: "Atenție: Asigurare RCA"
 ```
 
@@ -169,12 +169,12 @@ automation:
   - alias: "Revizie ulei - Km apropiați"
     trigger:
       platform: numeric_state
-      entity_id: sensor.vehicule_b_123_abc_revizie_ulei
+      entity_id: sensor.vehicule_b123abc_revizie_ulei
       below: 1000
     action:
       service: notify.mobile_app
       data:
-        message: "Revizia uleiului e datorată în {{ states('sensor.vehicule_b_123_abc_revizie_ulei') }} km"
+        message: "Revizia uleiului e datorată în {{ states('sensor.vehicule_b123abc_revizie_ulei') }} km"
         title: "Atenție: Revizie ulei"
 ```
 
@@ -184,12 +184,12 @@ automation:
 type: entities
 title: Vehicul B 123 ABC
 entities:
-  - entity: sensor.vehicule_b_123_abc_informatii
-  - entity: sensor.vehicule_b_123_abc_kilometraj
-  - entity: sensor.vehicule_b_123_abc_rca
-  - entity: sensor.vehicule_b_123_abc_itp
-  - entity: sensor.vehicule_b_123_abc_impozit
-  - entity: sensor.vehicule_b_123_abc_revizie_ulei
+  - entity: sensor.vehicule_b123abc_informatii
+  - entity: sensor.vehicule_b123abc_kilometraj
+  - entity: sensor.vehicule_b123abc_rca
+  - entity: sensor.vehicule_b123abc_itp
+  - entity: sensor.vehicule_b123abc_impozit
+  - entity: sensor.vehicule_b123abc_revizie_ulei
 ```
 
 ---
