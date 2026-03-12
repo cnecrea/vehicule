@@ -172,25 +172,61 @@ Extinctorul este **obligatoriu în România**. Funcționează identic cu trusa d
 
 ## 6. Automatizări
 
-### Cum creez o notificare pentru expirarea RCA?
-Exemplu de automatizare (YAML):
+### Cum creez notificări pentru documente și mentenanță?
+
+Recomandăm o singură automatizare care verifică **zilnic** toți senzorii, în loc de trigger-uri `numeric_state` separate (care se activează doar la **tranziția** valorii sub prag și pot rata notificări după restart HA).
 
 ```yaml
 automation:
-  - alias: "Notificare RCA expiră"
-    trigger:
-      platform: numeric_state
-      entity_id: sensor.vehicule_b123abc_rca
-      below: 30
-    action:
-      service: notify.mobile_app
-      data:
-        message: "RCA-ul va expira în {{ states('sensor.vehicule_b123abc_rca') }} zile!"
-        title: "Atenție: Asigurare RCA"
+  - alias: "Vehicul B123ABC — Notificări zilnice"
+    triggers:
+      - trigger: time
+        at: "11:00:00"
+    actions:
+      - repeat:
+          for_each:
+            - entity: sensor.vehicule_b123abc_rca
+              name: "RCA"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_itp
+              name: "ITP"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_impozit
+              name: "Impozit"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_revizie_ulei
+              name: "Revizie ulei"
+              prag: 1000
+              unitate: "km"
+            - entity: sensor.vehicule_b123abc_trusa_prim_ajutor
+              name: "Trusă prim ajutor"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_extinctor
+              name: "Extinctor"
+              prag: 30
+              unitate: "zile"
+          sequence:
+            - variables:
+                val: "{{ states(repeat.item.entity) }}"
+            - if:
+                - condition: template
+                  value_template: >
+                    {{ val not in ['unknown', 'unavailable'] and val | int(999) < repeat.item.prag }}
+              then:
+                - action: notify.mobile_app
+                  data:
+                    title: "⚠️ {{ repeat.item.name }} — B123ABC"
+                    message: "Mai ai {{ val }} {{ repeat.item.unitate }} rămase."
 ```
 
-### Cum creez o notificare pentru expirarea ITP?
-Similar cu RCA, dar utilizați `sensor.vehicule_b123abc_itp`.
+Adăugați sau eliminați senzori din lista `for_each` după necesități. Pragurile se pot ajusta liber.
+
+### Cum creez o notificare doar pentru RCA sau ITP?
+Folosiți automatizarea de mai sus, dar păstrați doar senzorul dorit în lista `for_each`.
 
 ### Cum actualizez kilometrajul automat?
 Puteți utiliza serviciul **`vehicule.actualizeaza_date`** pentru a actualiza km-ul curent din automatizări.
@@ -200,14 +236,14 @@ Exemplu (automatizare care actualizează km):
 ```yaml
 automation:
   - alias: "Actualizare km din GPS"
-    trigger:
-      platform: time_pattern
-      minutes: 0  # Orice oră
-    action:
-      service: vehicule.actualizeaza_date
-      data:
-        nr_inmatriculare: "B123ABC"
-        km_curent: 95000
+    triggers:
+      - trigger: time_pattern
+        hours: "/1"
+    actions:
+      - action: vehicule.actualizeaza_date
+        data:
+          nr_inmatriculare: "B123ABC"
+          km_curent: "{{ states('sensor.obd_odometer') | int(0) }}"
 ```
 
 ### Care sunt cazurile de utilizare frecvente?
