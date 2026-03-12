@@ -42,14 +42,14 @@ tail -f <config_dir>/home-assistant.log | grep vehicule
 Când integrarea vehicule se încarcă pentru prima dată sau după o repornire, vei vedea:
 
 ```
-[custom_components.vehicule] Configurez vehiculul: B 123 ABC
-[custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B 123 ABC
-[custom_components.vehicule.sensor] Vehicul B 123 ABC: 5 senzori creați (din 8 posibili)
+[custom_components.vehicule] Configurez vehiculul: B123ABC
+[custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B123ABC
+[custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 8 posibili)
 [custom_components.vehicule] Serviciul vehicule.actualizeaza_date a fost înregistrat
 ```
 
 **Explicație:**
-- `Configurez vehiculul: B 123 ABC` – Integrarea a inițializat vehiculul cu numărul de înmatriculare
+- `Configurez vehiculul: B123ABC` – Integrarea a inițializat vehiculul cu numărul de înmatriculare
 - `Creez senzorii...` – Se procesează entitățile care vor fi create
 - `5 senzori creați (din 8 posibili)` – Doar 5 senzori sunt relevanți pentru datele tale (de ex., dacă nu ai date despre consum, senzorul de consum nu va fi creat)
 - `Serviciul vehicule.actualizeaza_date a fost înregistrat` – Serviciul pentru actualizare manuală a datelor este disponibil
@@ -62,8 +62,8 @@ Când integrarea vehicule se încarcă pentru prima dată sau după o repornire,
 Când actualizezi datele printr-un apel de serviciu:
 
 ```
-[custom_components.vehicule] Actualizez datele pentru B 123 ABC – km: 45320
-[custom_components.vehicule.sensor] Vehicul B 123 ABC: 6 senzori creați (din 8 posibili)
+[custom_components.vehicule] Actualizez datele pentru B123ABC – km: 45320
+[custom_components.vehicule.sensor] Vehicul B123ABC: 6 senzori creați (din 8 posibili)
 ```
 
 Senzori noi pot apărea când completezi date (de ex., dacă adaugi prima dată consumul, senzorul de consum va fi creat).
@@ -72,7 +72,7 @@ Senzori noi pot apărea când completezi date (de ex., dacă adaugi prima dată 
 Când elimini o intrare din integrare:
 
 ```
-[custom_components.vehicule] Descarc vehiculul: B 123 ABC
+[custom_components.vehicule] Descarc vehiculul: B123ABC
 [custom_components.vehicule.sensor] Elimin entitatea orfană: sensor.vehicul_b_123_abc_km (unique_id: vehicule_b123abc_km)
 ```
 
@@ -84,8 +84,8 @@ Când elimini o intrare din integrare:
 Dacă modifici setările integrării (Options flow):
 
 ```
-[custom_components.vehicule] Opțiuni actualizate pentru B 123 ABC – reîncarc
-[custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B 123 ABC
+[custom_components.vehicule] Opțiuni actualizate pentru B123ABC – reîncarc
+[custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B123ABC
 ```
 
 ---
@@ -117,7 +117,7 @@ Dacă modifici setările integrării (Options flow):
 
 **Scenariu:** Încearcă să actualizezi un vehicul care nu mai există în configurație
 ```
-[custom_components.vehicule] Nu am găsit vehiculul cu nr. B 123 ABC
+[custom_components.vehicule] Nu am găsit vehiculul cu nr. B123ABC
 ```
 
 **Ce trebuie verificat:**
@@ -142,13 +142,13 @@ Atunci când Home Assistant pornește, secvența este:
 
 1. **Încărcarea integrării**
    ```
-   [custom_components.vehicule] Configurez vehiculul: B 123 ABC
+   [custom_components.vehicule] Configurez vehiculul: B123ABC
    ```
 
 2. **Crearea senzorilor**
    ```
-   [custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B 123 ABC
-   [custom_components.vehicule.sensor] Vehicul B 123 ABC: 5 senzori creați (din 8 posibili)
+   [custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B123ABC
+   [custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 8 posibili)
    ```
 
 3. **Înregistrarea serviciilor**
