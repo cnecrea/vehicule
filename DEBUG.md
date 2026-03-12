@@ -73,7 +73,7 @@ Când elimini o intrare din integrare:
 
 ```
 [custom_components.vehicule] Descarc vehiculul: B 123 ABC
-[custom_components.vehicule.sensor] Elimin entitatea orfană: sensor.vehicul_b_123_abc_km (unique_id: vehicule_b_123_abc_km)
+[custom_components.vehicule.sensor] Elimin entitatea orfană: sensor.vehicul_b_123_abc_km (unique_id: vehicule_b123abc_km)
 ```
 
 **Explicație:**
