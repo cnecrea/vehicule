@@ -1,0 +1,111 @@
+name: Redimensionare imagini în issues
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+  issue_comment:
+    types:
+      - created
+      - edited
+
+permissions:
+  issues: write
+
+jobs:
+  redimensionare_imagini:
+    name: Redimensionare imagini la thumbnail
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Redimensionează imaginile
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NR: ${{ github.event.issue.number }}
+          EVENT_NAME: ${{ github.event_name }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          # Nu procesa propriile editări (evită loop infinit)
+          if [ "$ACTOR" = "github-actions[bot]" ]; then
+            echo "Editare proprie, skip."
+            exit 0
+          fi
+
+          # Determină sursa: issue body sau comentariu
+          if [ "$EVENT_NAME" = "issue_comment" ]; then
+            ORIGINAL_BODY="$COMMENT_BODY"
+            TARGET="comment"
+          else
+            ORIGINAL_BODY="$ISSUE_BODY"
+            TARGET="issue"
+          fi
+
+          # Verifică dacă există imagini de procesat
+          # 1) <img> tags care NU sunt deja width="300" height="500" și NU sunt deja în <a>
+          # 2) Markdown: ![alt](url)
+          HAS_HTML_IMG=false
+          HAS_MD_IMG=false
+
+          if echo "$ORIGINAL_BODY" | grep -qP '<img\s' && ! echo "$ORIGINAL_BODY" | grep -qP '<img\s[^>]*width="300" height="500"'; then
+            HAS_HTML_IMG=true
+          fi
+
+          if echo "$ORIGINAL_BODY" | grep -qP '!\[[^\]]*\]\(https://'; then
+            HAS_MD_IMG=true
+          fi
+
+          if [ "$HAS_HTML_IMG" = "false" ] && [ "$HAS_MD_IMG" = "false" ]; then
+            echo "Nicio imagine de procesat."
+            exit 0
+          fi
+
+          # Înlocuiește imaginile cu thumbnail 500px + link la full-size
+          UPDATED_BODY=$(echo "$ORIGINAL_BODY" | perl -pe '
+            # Nu modifica liniile care conțin deja <a href
+            unless (/<a\s+href/) {
+              # Format GitHub nou: <img ... src="URL" ... />
+              # Extrage src și alt, rescrie cu width="300" height="500" și wrap în <a>
+              if (/<img\s[^>]*src="([^"]*)"[^>]*>/ && !/width="300" height="500"/) {
+                my $full = $&;
+                my $src = $1;
+                my $alt = ($full =~ /alt="([^"]*)"/) ? $1 : "image";
+                s/\Q$full\E/<a href="$src"><img src="$src" width="300" height="500" alt="$alt" \/><\/a>/;
+              }
+              # Format markdown vechi: ![alt](url)
+              s/!\[([^\]]*)\]\((https:\/\/[^\)]+\.(?:png|jpg|jpeg|gif|webp|PNG|JPG|JPEG|GIF|WEBP)[^\)]*)\)/<a href="$2"><img src="$2" width="300" height="500" alt="$1" \/><\/a>/g;
+              s/!\[([^\]]*)\]\((https:\/\/github\.com\/user-attachments\/assets\/[^\)]+)\)/<a href="$2"><img src="$2" width="300" height="500" alt="$1" \/><\/a>/g;
+            }
+          ')
+
+          # Verifică dacă s-a schimbat ceva
+          if [ "$ORIGINAL_BODY" = "$UPDATED_BODY" ]; then
+            echo "Nicio modificare necesară."
+            exit 0
+          fi
+
+          # Construiește JSON-ul cu jq
+          PAYLOAD=$(jq -n --arg body "$UPDATED_BODY" '{"body":$body}')
+
+          if [ "$TARGET" = "comment" ]; then
+            echo "Actualizez comentariul #${COMMENT_ID}..."
+            curl -s -X PATCH \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/$REPO/issues/comments/$COMMENT_ID" \
+              -d "$PAYLOAD"
+          else
+            echo "Actualizez issue-ul #${ISSUE_NR}..."
+            curl -s -X PATCH \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/$REPO/issues/$ISSUE_NR" \
+              -d "$PAYLOAD"
+          fi
+
+          echo "Imaginile au fost redimensionate la thumbnail."
