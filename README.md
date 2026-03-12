@@ -14,6 +14,7 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 - **Vehicule multiple**: adaugă un număr nelimitat de vehicule, fiecare identificat prin placa de înmatriculare
 - **Documente cu termen**: RCA, ITP, impozit, leasing — cu calculul automat al zilelor rămase
 - **Mentenanță**: revizie ulei, distribuție, anvelope, baterie, plăcuțe și discuri de frână — cu calculul km rămași
+- **Echipament obligatoriu**: trusă de prim ajutor — cu avertizare la expirare
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
 - **Curățare automată**: la schimbarea condițiilor (ex: treci de la leasing la proprietate), entitățile orfane sunt eliminate automat
 - **Date în format românesc**: ZZ.LL.AAAA în interfață, ISO intern
@@ -67,7 +68,8 @@ Gestionare vehicul
 │   ├── Distribuție
 │   ├── Anvelope
 │   ├── Baterie
-│   └── Frâne (plăcuțe și discuri)
+│   ├── Frâne (plăcuțe și discuri)
+│   └── Trusă de prim ajutor
 └── Actualizare kilometraj
 ```
 
@@ -77,7 +79,7 @@ Datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: `18.04.2026`). 
 
 ## Entități create
 
-Pentru fiecare vehicul, integrarea creează până la **12 senzori**. Aceștia apar condiționat — doar dacă au date completate.
+Pentru fiecare vehicul, integrarea creează până la **13 senzori**. Aceștia apar condiționat — doar dacă au date completate.
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
@@ -99,6 +101,7 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, 
 | Baterie | `baterie` | luni | `baterie_data_schimb` completat | Luni de la ultimul schimb |
 | Plăcuțe frână | `placute_frana` | km | `placute_frana_km_urmator` completat | Km rămași |
 | Discuri frână | `discuri_frana` | km | `discuri_frana_km_urmator` completat | Km rămași |
+| Trusă prim ajutor | `trusa_prim_ajutor` | zile | `trusa_prim_ajutor_data_expirare` completat | Zile rămase până la expirare |
 
 ### Atribute senzori
 
@@ -113,6 +116,8 @@ Fiecare senzor expune atribute suplimentare. Câteva exemple:
 **Revizie ulei** — atribute: Km ultima revizie, Km următoarea revizie, Data ultima revizie, Km curent
 
 **Anvelope** — atribute: Data montare vară, Data montare iarnă, Sezon recomandat
+
+**Trusă prim ajutor** — atribute: Data expirare, Stare (Valid/Expirat)
 
 Datele din atribute sunt afișate în format românesc (ZZ.LL.AAAA), iar valorile numerice sunt afișate ca numere întregi (fără zecimale).
 
