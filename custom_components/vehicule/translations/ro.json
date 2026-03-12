@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Adaugă vehicul",
-        "description": "Introduceți numărul de înmatriculare al vehiculului. Restul datelor pot fi adăugate ulterior din setările integrării.",
+        "description": "Introduceți numărul de înmatriculare al vehiculului, fără spații sau cratime (ex: B123ABC). Restul datelor pot fi adăugate ulterior din setările integrării.",
         "data": {
           "nr_inmatriculare": "Număr de înmatriculare"
         }
@@ -14,6 +14,7 @@
     },
     "error": {
       "numar_gol": "Numărul de înmatriculare nu poate fi gol.",
+      "format_numar_invalid": "Format invalid. Introduceți numărul fără spații, cratime sau alte caractere speciale (ex: B123ABC).",
       "format_data_invalid": "Format dată invalid. Folosiți formatul ZZ.LL.AAAA (ex: 18.04.2026).",
       "an_invalid": "An invalid. Introduceți un an valid cu 4 cifre (verificați intervalul permis)."
     }
@@ -234,7 +235,7 @@
       "fields": {
         "nr_inmatriculare": {
           "name": "Număr de înmatriculare",
-          "description": "Numărul de înmatriculare al vehiculului (ex: B 123 ABC)."
+          "description": "Numărul de înmatriculare al vehiculului (ex: B123ABC)."
         },
         "km_curent": {
           "name": "Kilometraj curent",
