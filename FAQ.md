@@ -206,7 +206,7 @@ automation:
     action:
       service: vehicule.actualizeaza_date
       data:
-        nr_inmatriculare: "B 123 ABC"
+        nr_inmatriculare: "B123ABC"
         km_curent: 95000
 ```
 
