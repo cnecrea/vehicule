@@ -86,11 +86,12 @@ Alte informații administrative:
 #### 5. Mentenanță
 Urmărirea lucrărilor de mentenanță și reparații:
 - **Submeniu:** Selectați tipul de mentenanță din listă
-  - Schimbare ulei
-  - Schimbare filtru aer
-  - Schimbare anvelope
-  - Curățare radiator
-  - Alte lucrări
+  - Revizie ulei
+  - Distribuție
+  - Anvelope
+  - Baterie
+  - Frâne (plăcuțe și discuri)
+  - Trusă de prim ajutor
 - Pentru fiecare tip:
   - **Data ultimei mentenanțe:** Când a fost efectuată ultima dată
   - **Prețul:** Costul lucrării
@@ -117,7 +118,7 @@ Toate datele de tip dată se introduc în format **ZZ.LL.AAAA**, unde:
 
 ## Senzori creați
 
-Pentru fiecare vehicul adăugat, integrarea creează până la 12 senzori potențiali:
+Pentru fiecare vehicul adăugat, integrarea creează până la 13 senzori potențiali:
 
 ### Senzori de dată
 
