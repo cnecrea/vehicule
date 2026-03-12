@@ -193,6 +193,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         errors: dict[str, str] = {}
         an_curent = date.today().year
 
+        chei = {
+            CONF_MARCA, CONF_MODEL, CONF_VIN, CONF_SERIE_CIV,
+            CONF_AN_FABRICATIE, CONF_AN_PRIMA_INMATRICULARE,
+            CONF_MOTORIZARE, CONF_COMBUSTIBIL,
+            CONF_CAPACITATE_CILINDRICA, CONF_PUTERE_KW, CONF_PUTERE_CP,
+        }
+
         if user_input is not None:
             # Validare ani
             errors = valideaza_campuri_an(
@@ -202,7 +209,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             )
 
             if not errors:
-                return self._salveaza_si_inchide(user_input)
+                return self._salveaza_si_inchide(user_input, chei)
 
         schema = vol.Schema(
             {
@@ -272,12 +279,16 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru datele asigurării RCA."""
         errors: dict[str, str] = {}
+        chei = {
+            CONF_RCA_NUMAR_POLITA, CONF_RCA_COMPANIE,
+            CONF_RCA_DATA_EMITERE, CONF_RCA_DATA_EXPIRARE, CONF_RCA_COST,
+        }
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -316,12 +327,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru datele ITP."""
         errors: dict[str, str] = {}
+        chei = {CONF_ITP_DATA_EXPIRARE, CONF_ITP_STATIE, CONF_ITP_KILOMETRAJ}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -363,27 +375,20 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         la următoarea deschidere (și datele de leasing sunt șterse).
         """
         errors: dict[str, str] = {}
+        chei = {
+            CONF_PROPRIETAR, CONF_TIP_PROPRIETATE,
+            CONF_IMPOZIT_SUMA, CONF_IMPOZIT_SCADENTA, CONF_IMPOZIT_LOCALITATE,
+        }
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 date_convertite = converteste_date_la_iso(user_input)
-                # Dacă tip_proprietate s-a schimbat din leasing în proprietate,
-                # ștergem data de expirare leasing din opțiuni
-                if date_convertite.get(CONF_TIP_PROPRIETATE) != "leasing":
-                    date_convertite.pop(CONF_LEASING_DATA_EXPIRARE, None)
-                    # Ștergem și din opțiunile existente (la salvare)
-                    optiuni_curente = dict(self.config_entry.options)
-                    optiuni_curente.pop(CONF_LEASING_DATA_EXPIRARE, None)
-                    optiuni_curente.update(
-                        {k: v for k, v in date_convertite.items() if v is not None and v != ""}
-                    )
-                    # Ștergem câmpurile golite explicit
-                    for k, v in date_convertite.items():
-                        if v is None or v == "":
-                            optiuni_curente.pop(k, None)
-                    return self.async_create_entry(data=optiuni_curente)
-                return self._salveaza_si_inchide(date_convertite)
+                # Includem CONF_LEASING_DATA_EXPIRARE în chei_formular:
+                # - dacă NU e leasing → cheia nu e în user_input → se șterge
+                # - dacă E leasing → se salvează/șterge normal
+                chei.add(CONF_LEASING_DATA_EXPIRARE)
+                return self._salveaza_si_inchide(date_convertite, chei)
 
         # Determinăm dacă vehiculul e în leasing (din opțiunile salvate)
         este_leasing = (
@@ -455,12 +460,16 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru revizia de ulei."""
         errors: dict[str, str] = {}
+        chei = {
+            CONF_REVIZIE_ULEI_KM_ULTIMUL, CONF_REVIZIE_ULEI_KM_URMATOR,
+            CONF_REVIZIE_ULEI_DATA,
+        }
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -501,12 +510,16 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru distribuție."""
         errors: dict[str, str] = {}
+        chei = {
+            CONF_DISTRIBUTIE_KM_ULTIMUL, CONF_DISTRIBUTIE_KM_URMATOR,
+            CONF_DISTRIBUTIE_DATA,
+        }
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -547,12 +560,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru anvelope."""
         errors: dict[str, str] = {}
+        chei = {CONF_ANVELOPE_VARA_DATA, CONF_ANVELOPE_IARNA_DATA}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -580,12 +594,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru baterie."""
         errors: dict[str, str] = {}
+        chei = {CONF_BATERIE_DATA_SCHIMB}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -611,8 +626,12 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru plăcuțe și discuri de frână."""
+        chei = {
+            CONF_PLACUTE_FRANA_KM_ULTIMUL, CONF_PLACUTE_FRANA_KM_URMATOR,
+            CONF_DISCURI_FRANA_KM_ULTIMUL, CONF_DISCURI_FRANA_KM_URMATOR,
+        }
         if user_input is not None:
-            return self._salveaza_si_inchide(user_input)
+            return self._salveaza_si_inchide(user_input, chei)
 
         schema = vol.Schema(
             {
@@ -660,12 +679,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru trusa de prim ajutor (obligatorie în România)."""
         errors: dict[str, str] = {}
+        chei = {CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -692,12 +712,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru extinctor (obligatoriu în România)."""
         errors: dict[str, str] = {}
+        chei = {CONF_EXTINCTOR_DATA_EXPIRARE}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input)
+                    converteste_date_la_iso(user_input), chei
                 )
 
         schema = vol.Schema(
@@ -725,8 +746,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru actualizarea kilometrajului curent."""
+        chei = {CONF_KM_CURENT}
         if user_input is not None:
-            return self._salveaza_si_inchide(user_input)
+            return self._salveaza_si_inchide(user_input, chei)
 
         schema = vol.Schema(
             {
@@ -751,14 +773,19 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     # Utilitar: salvează și închide
     # ─────────────────────────────────────────
     def _salveaza_si_inchide(
-        self, user_input: dict[str, Any]
+        self,
+        user_input: dict[str, Any],
+        chei_formular: set[str] | None = None,
     ) -> config_entries.ConfigFlowResult:
         """Îmbină datele noi cu opțiunile existente și închide fluxul.
 
         Comportament:
         - Câmpuri cu valoare non-goală: se actualizează / adaugă
         - Câmpuri golite explicit (None sau ""): se șterg din opțiuni
-        - Câmpuri nemodificate (absent din user_input): rămân neschimbate
+        - Câmpuri din formular absente din user_input: se șterg din opțiuni
+          (HA nu trimite câmpuri vol.Optional lăsate goale de utilizator)
+        - Câmpuri nemodificate (absent din user_input ȘI din chei_formular):
+          rămân neschimbate
         """
         optiuni_noi = {**self.config_entry.options}
 
@@ -768,5 +795,12 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             else:
                 # Utilizatorul a golit câmpul → ștergem din opțiuni
                 optiuni_noi.pop(cheie, None)
+
+        # Câmpuri care erau în formular dar NU au fost trimise de HA
+        # (= utilizatorul le-a golit) → le ștergem din opțiuni
+        if chei_formular:
+            for cheie in chei_formular:
+                if cheie not in user_input:
+                    optiuni_noi.pop(cheie, None)
 
         return self.async_create_entry(data=optiuni_noi)
