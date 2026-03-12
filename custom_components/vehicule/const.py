@@ -86,6 +86,11 @@ CONF_BATERIE_DATA_SCHIMB: Final = "baterie_data_schimb"
 CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE: Final = "trusa_prim_ajutor_data_expirare"
 
 # ─────────────────────────────────────────────
+# Echipament obligatoriu – Extinctor
+# ─────────────────────────────────────────────
+CONF_EXTINCTOR_DATA_EXPIRARE: Final = "extinctor_data_expirare"
+
+# ─────────────────────────────────────────────
 # Mentenanță – Frâne
 # ─────────────────────────────────────────────
 CONF_PLACUTE_FRANA_KM_ULTIMUL: Final = "placute_frana_km_ultimul"
