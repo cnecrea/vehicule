@@ -94,7 +94,8 @@
           "anvelope": "Anvelope",
           "baterie": "Baterie",
           "frane": "Frâne (plăcuțe și discuri)",
-          "trusa_prim_ajutor": "Trusă de prim ajutor"
+          "trusa_prim_ajutor": "Trusă de prim ajutor",
+          "extinctor": "Extinctor"
         }
       },
       "revizie_ulei": {
@@ -147,6 +148,13 @@
           "trusa_prim_ajutor_data_expirare": "Data expirare"
         }
       },
+      "extinctor": {
+        "title": "Extinctor",
+        "description": "Introduceți data de expirare a extinctorului (obligatoriu în România).",
+        "data": {
+          "extinctor_data_expirare": "Data expirare"
+        }
+      },
       "kilometraj": {
         "title": "Actualizare kilometraj",
         "description": "Actualizați kilometrajul curent al vehiculului.",
@@ -196,6 +204,9 @@
       },
       "trusa_prim_ajutor": {
         "name": "Trusă prim ajutor"
+      },
+      "extinctor": {
+        "name": "Extinctor"
       }
     }
   },
