@@ -48,7 +48,7 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 
 1. **Settings** → **Devices & Services** → **Add Integration**
 2. Caută „**Vehicule**"
-3. Introdu numărul de înmatriculare (ex: `B 123 ABC`)
+3. Introdu numărul de înmatriculare, fără spații (ex: `B123ABC`)
 4. Click **Submit**
 
 Integrarea creează un device cu un singur senzor (Informații). Restul senzorilor apar pe măsură ce completezi date.
@@ -86,7 +86,7 @@ Pentru fiecare vehicul, integrarea creează până la **14 senzori**. Aceștia a
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
-Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici, fără spații). De exemplu, pentru placa `B 123 ABC`, entity ID-urile ar fi `sensor.vehicule_b123abc_informatii`, `sensor.vehicule_b123abc_rca`, etc.
+Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici). De exemplu, pentru placa `B123ABC`, entity ID-urile ar fi `sensor.vehicule_b123abc_informatii`, `sensor.vehicule_b123abc_rca`, etc.
 
 ### Tabel senzori
 
@@ -137,14 +137,14 @@ Actualizează kilometrajul curent al unui vehicul.
 
 | Parametru | Tip | Obligatoriu | Descriere |
 |-----------|-----|-------------|-----------|
-| `nr_inmatriculare` | string | Da | Numărul de înmatriculare (ex: `B 123 ABC`) |
+| `nr_inmatriculare` | string | Da | Numărul de înmatriculare (ex: `B123ABC`) |
 | `km_curent` | int | Da | Kilometrajul actual (0–9.999.999) |
 
 **Exemplu**:
 ```yaml
 service: vehicule.actualizeaza_date
 data:
-  nr_inmatriculare: "B 123 ABC"
+  nr_inmatriculare: "B123ABC"
   km_curent: 85000
 ```
 
@@ -188,7 +188,7 @@ automation:
 
 ```yaml
 type: entities
-title: Vehicul B 123 ABC
+title: Vehicul B123ABC
 entities:
   - entity: sensor.vehicule_b123abc_informatii
   - entity: sensor.vehicule_b123abc_kilometraj
