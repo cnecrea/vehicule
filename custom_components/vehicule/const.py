@@ -137,12 +137,7 @@ ATTR_MODEL: Final = "model"
 def normalizeaza_numar(numar: str) -> str:
     """Normalizează numărul de înmatriculare pentru utilizare în ID-uri.
 
-    Exemplu: 'B 123 ABC' -> 'b_123_abc'
+    Numărul trebuie introdus fără spații, cratime sau underscore (ex: B123ABC).
+    Exemplu: 'B123ABC' -> 'b123abc'
     """
-    return (
-        numar.strip()
-        .lower()
-        .replace(" ", "_")
-        .replace("-", "_")
-        .replace(".", "")
-    )
+    return numar.strip().lower()
