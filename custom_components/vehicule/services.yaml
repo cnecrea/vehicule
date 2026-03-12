@@ -1,0 +1,24 @@
+# Servicii pentru integrarea Vehicule
+actualizeaza_date:
+  name: "Actualizează date"
+  description: "Actualizează datele unui vehicul (kilometraj curent)."
+  fields:
+    nr_inmatriculare:
+      name: "Număr de înmatriculare"
+      description: "Numărul de înmatriculare al vehiculului (ex: B 123 ABC)."
+      required: true
+      example: "B 123 ABC"
+      selector:
+        text:
+    km_curent:
+      name: "Kilometraj curent"
+      description: "Kilometrajul actual al vehiculului."
+      required: true
+      example: 50000
+      selector:
+        number:
+          min: 0
+          max: 9999999
+          step: 1
+          unit_of_measurement: "km"
+          mode: box
