@@ -44,7 +44,7 @@ După instalare și repornire:
 2. În dreapta sus, apăsați **Crea integrare**
 3. Căutați și selectați **"Vehicule"**
 4. În fereastra de dialog:
-   - Introduceți **placa de înmatriculare** a vehiculului (ex: `AB 123 CD`)
+   - Introduceți **placa de înmatriculare** a vehiculului (ex: `B123ABC`)
    - Apăsați **Creare**
 5. Integrarea este acum adăugată și gata pentru configurare
 
@@ -149,7 +149,7 @@ Puteți actualiza datele vehiculului prin apelarea serviciului `vehicule.actuali
 ```yaml
 service: vehicule.actualizeaza_date
 data:
-  placa_inmatriculare: "AB 123 CD"
+  nr_inmatriculare: "B123ABC"
   kilometraj: 50000
   data_rca: "18.04.2026"
   data_itp: "15.06.2027"
@@ -159,7 +159,7 @@ data:
 
 | Parametru | Tip | Descriere | Exemplu |
 |-----------|-----|-----------|---------|
-| `placa_inmatriculare` | string | **Obligatoriu** - Placa vehiculului | `AB 123 CD` |
+| `nr_inmatriculare` | string | **Obligatoriu** - Placa vehiculului | `B123ABC` |
 | `kilometraj` | integer | Kilometrajul curent | `50000` |
 | `data_rca` | string | Data expirării RCA (ZZ.LL.AAAA) | `18.04.2026` |
 | `data_itp` | string | Data expirării ITP (ZZ.LL.AAAA) | `15.06.2027` |
@@ -183,7 +183,7 @@ automation:
     action:
       - service: vehicule.actualizeaza_date
         data:
-          placa_inmatriculare: "AB 123 CD"
+          nr_inmatriculare: "B123ABC"
           kilometraj: 51000
 ```
 
@@ -253,7 +253,7 @@ După instalare și configurare inițială, efectuați aceste verificări:
 1. Accesați **Setări** → **Sisteme** → **Servicii**
 2. Selectați domeniu: `vehicule`
 3. Selectați serviciu: `actualizeaza_date`
-4. Completați parametrul `placa_inmatriculare` și apăsați **Execută**
+4. Completați parametrul `nr_inmatriculare` și apăsați **Execută**
 5. Verificați în jurnale că serviciul s-a executat cu succes
 
 ## Dezinstalare
