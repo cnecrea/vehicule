@@ -50,7 +50,7 @@ Datele sunt organizate în meniuri categorizate:
 | **RCA** | Număr poliță, data expirării, asigurator |
 | **ITP** | Data expirării, locul testării |
 | **Administrativ** | Număr de serie (VIN), taxa auto, certificat de înregistrare, alte documente |
-| **Mentenanță** | Informații despre schimburi de ulei, distribuitor, anvelope, baterie, frâne |
+| **Mentenanță** | Informații despre revizie ulei, distribuție, anvelope, baterie, frâne, trusă de prim ajutor |
 | **Kilometraj** | Kilometrajul curent (actualizat manual sau prin automatizări) |
 
 ### Cum funcționează formatele de dată?
@@ -131,9 +131,15 @@ Similar ca uleiul:
 3. Senzorul arată dacă bateria trebuie înlocuită
 
 ### Cum urmăresc frânele?
-1. Completați **Mentenanță → Data ultimei revizii a frânelor**
-2. Introduceți **Interval revizii frâne (km)**
-3. Senzorul arată km/zile rămase
+1. Completați **Mentenanță → Frâne** cu kilometrajul la ultima și următoarea schimbare
+2. Senzorul arată km rămași până la schimbare (separat pentru plăcuțe și discuri)
+
+### Cum urmăresc trusa de prim ajutor?
+Trusa de prim ajutor este **obligatorie în România**. Integrarea o gestionează astfel:
+1. Accesați **Mentenanță → Trusă de prim ajutor**
+2. Completați **Data expirare** (ZZ.LL.AAAA)
+3. Senzorul arată zilele rămase până la expirare
+4. Atributul „Stare" arată „Valid" sau „Expirat"
 
 ---
 
