@@ -142,7 +142,7 @@ Actualizează kilometrajul curent al unui vehicul.
 
 **Exemplu**:
 ```yaml
-service: vehicule.actualizeaza_date
+action: vehicule.actualizeaza_date
 data:
   nr_inmatriculare: "B123ABC"
   km_curent: 85000
@@ -152,50 +152,91 @@ data:
 
 ## Exemple de automatizări
 
-### Notificare RCA la expirare
+### Notificare documente și mentenanță
+
+Automatizarea verifică zilnic (la ora 11:00) toți senzorii relevanți și trimite notificări pe telefon pentru documentele sau componentele care necesită atenție.
+
+> **De ce nu `numeric_state`?** Trigger-ul `numeric_state` se activează doar la **tranziția** valorii sub prag — dacă HA a fost repornit sau senzorul era deja sub prag, notificarea nu se mai trimite. Varianta cu `time` + `repeat.for_each` verifică **efectiv** valorile în fiecare zi.
 
 ```yaml
 automation:
-  - alias: "RCA - Expirare apropiată"
-    trigger:
-      platform: numeric_state
-      entity_id: sensor.vehicule_b123abc_rca
-      below: 30
-    action:
-      service: notify.mobile_app
-      data:
-        message: "RCA-ul va expira în {{ states('sensor.vehicule_b123abc_rca') }} zile!"
-        title: "Atenție: Asigurare RCA"
+  - alias: "Vehicul B123ABC — Notificări zilnice"
+    description: "Verifică documente și mentenanță, trimite notificări pe telefon"
+    triggers:
+      - trigger: time
+        at: "11:00:00"
+    actions:
+      - repeat:
+          for_each:
+            - entity: sensor.vehicule_b123abc_rca
+              name: "RCA"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_itp
+              name: "ITP"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_impozit
+              name: "Impozit"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_revizie_ulei
+              name: "Revizie ulei"
+              prag: 1000
+              unitate: "km"
+            - entity: sensor.vehicule_b123abc_distributie
+              name: "Distribuție"
+              prag: 5000
+              unitate: "km"
+            - entity: sensor.vehicule_b123abc_placute_frana
+              name: "Plăcuțe frână"
+              prag: 3000
+              unitate: "km"
+            - entity: sensor.vehicule_b123abc_discuri_frana
+              name: "Discuri frână"
+              prag: 5000
+              unitate: "km"
+            - entity: sensor.vehicule_b123abc_trusa_prim_ajutor
+              name: "Trusă prim ajutor"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_extinctor
+              name: "Extinctor"
+              prag: 30
+              unitate: "zile"
+          sequence:
+            - variables:
+                val: "{{ states(repeat.item.entity) }}"
+            - if:
+                - condition: template
+                  value_template: >
+                    {{ val not in ['unknown', 'unavailable'] and val | int(999) < repeat.item.prag }}
+              then:
+                - action: notify.mobile_app
+                  data:
+                    title: "⚠️ {{ repeat.item.name }} — B123ABC"
+                    message: >
+                      Mai ai {{ val }} {{ repeat.item.unitate }} rămase.
+                      {% if repeat.item.unitate == 'zile' and val | int(0) < 0 %}
+                      ⛔ EXPIRAT de {{ val | int(0) | abs }} zile!
+                      {% endif %}
 ```
 
-### Notificare revizie ulei
+> **Notă**: Înlocuiește `notify.mobile_app` cu serviciul tău de notificare (ex: `notify.mobile_app_telefonul_meu`). Pragurile și lista de senzori se pot ajusta după preferințe.
+
+### Actualizare kilometraj din senzor GPS
 
 ```yaml
 automation:
-  - alias: "Revizie ulei - Km apropiați"
-    trigger:
-      platform: numeric_state
-      entity_id: sensor.vehicule_b123abc_revizie_ulei
-      below: 1000
-    action:
-      service: notify.mobile_app
-      data:
-        message: "Revizia uleiului e datorată în {{ states('sensor.vehicule_b123abc_revizie_ulei') }} km"
-        title: "Atenție: Revizie ulei"
-```
-
-### Card Lovelace
-
-```yaml
-type: entities
-title: Vehicul B123ABC
-entities:
-  - entity: sensor.vehicule_b123abc_informatii
-  - entity: sensor.vehicule_b123abc_kilometraj
-  - entity: sensor.vehicule_b123abc_rca
-  - entity: sensor.vehicule_b123abc_itp
-  - entity: sensor.vehicule_b123abc_impozit
-  - entity: sensor.vehicule_b123abc_revizie_ulei
+  - alias: "Actualizare km din OBD/GPS"
+    triggers:
+      - trigger: time_pattern
+        hours: "/1"
+    actions:
+      - action: vehicule.actualizeaza_date
+        data:
+          nr_inmatriculare: "B123ABC"
+          km_curent: "{{ states('sensor.obd_odometer') | int(0) }}"
 ```
 
 ---
