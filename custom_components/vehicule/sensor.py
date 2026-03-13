@@ -10,6 +10,7 @@ Senzori posibili per vehicul:
 - Kilometraj curent – vizibil când km_curent este setat
 - RCA (zile rămase) – vizibil când rca_data_expirare este setat
 - ITP (zile rămase) – vizibil când itp_data_expirare este setat
+- Rovinieta (zile rămase) – vizibil când rovinieta_data_sfarsit este setat
 - Impozit (zile rămase) – vizibil când impozit_scadenta este setat
 - Leasing (zile rămase) – vizibil DOAR dacă tip_proprietate = leasing
 - Revizie ulei (km rămași) – vizibil când revizie_ulei_km_urmator este setat
@@ -82,6 +83,10 @@ from .const import (
     CONF_SERIE_CIV,
     CONF_TIP_PROPRIETATE,
     CONF_EXTINCTOR_DATA_EXPIRARE,
+    CONF_ROVINIETA_CATEGORIE,
+    CONF_ROVINIETA_DATA_INCEPUT,
+    CONF_ROVINIETA_DATA_SFARSIT,
+    CONF_ROVINIETA_PRET,
     CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE,
     CONF_VIN,
     DOMAIN,
@@ -232,6 +237,24 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 "Stație": d.get(CONF_ITP_STATIE),
                 "Kilometraj la ITP": intreg(d.get(CONF_ITP_KILOMETRAJ)),
                 "Stare": stare_document(d.get(CONF_ITP_DATA_EXPIRARE)),
+            }
+        ),
+    ),
+    # ── Rovinieta ──
+    VehiculeSensorDescription(
+        key="rovinieta",
+        translation_key="rovinieta",
+        icon="mdi:road-variant",
+        native_unit_of_measurement="zile",
+        vizibil_fn=lambda d: _are_valoare(d, CONF_ROVINIETA_DATA_SFARSIT),
+        value_fn=lambda d: zile_ramase(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
+        attributes_fn=lambda d: _filtrare_atribute(
+            {
+                "Data început": format_data_ro(d.get(CONF_ROVINIETA_DATA_INCEPUT)),
+                "Data sfârșit": format_data_ro(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
+                "Categorie": d.get(CONF_ROVINIETA_CATEGORIE),
+                "Preț (RON)": intreg(d.get(CONF_ROVINIETA_PRET)),
+                "Stare": stare_document(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
             }
         ),
     ),
