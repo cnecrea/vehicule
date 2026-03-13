@@ -14,13 +14,17 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 ## Ce face integrarea
 
 - **Vehicule multiple**: adaugă un număr nelimitat de vehicule, fiecare identificat prin placa de înmatriculare
-- **Documente cu termen**: RCA, ITP, impozit, leasing — cu calculul automat al zilelor rămase
+- **Documente cu termen**: RCA, ITP, rovinieta, impozit, leasing — cu calculul automat al zilelor rămase
 - **Mentenanță**: revizie ulei, distribuție, anvelope, baterie, plăcuțe și discuri de frână — cu calculul km rămași
 - **Echipament obligatoriu**: trusă de prim ajutor, extinctor — cu avertizare la expirare
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
 - **Curățare automată**: la schimbarea condițiilor (ex: treci de la leasing la proprietate), entitățile orfane sunt eliminate automat
 - **Date în format românesc**: ZZ.LL.AAAA în interfață, ISO intern
+- **Verificare km obligatoriu**: ITP, revizie ulei, distribuție și frâne necesită setarea prealabilă a kilometrajului curent
+- **Leasing dinamic**: la prima selectare a tipului „Leasing", apare automat un pas suplimentar pentru data de expirare
 - **Serviciu actualizare**: `vehicule.actualizeaza_date` pentru automatizarea km-ului
+- **Backup / Restore**: servicii `vehicule.exporta_date` și `vehicule.importa_date` pentru export/import JSON (ideal pentru flote)
+- **Traduceri complete**: Română (ro.json) + Engleză (en.json + strings.json)
 
 ---
 
@@ -64,6 +68,7 @@ Gestionare vehicul
 ├── Date de identificare
 ├── Asigurare RCA
 ├── Inspecție tehnică (ITP)
+├── Rovinieta
 ├── Date administrative / fiscale
 ├── Mentenanță
 │   ├── Revizie ulei
@@ -82,7 +87,7 @@ Datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: `18.04.2026`). 
 
 ## Entități create
 
-Pentru fiecare vehicul, integrarea creează până la **14 senzori**. Aceștia apar condiționat — doar dacă au date completate.
+Pentru fiecare vehicul, integrarea creează până la **15 senzori**. Aceștia apar condiționat — doar dacă au date completate.
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
@@ -96,6 +101,7 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici).
 | Kilometraj | `kilometraj` | km | `km_curent` completat | Km curent |
 | RCA | `rca` | zile | `rca_data_expirare` completat | Zile rămase până la expirare |
 | ITP | `itp` | zile | `itp_data_expirare` completat | Zile rămase până la expirare |
+| Rovinieta | `rovinieta` | zile | `rovinieta_data_sfarsit` completat | Zile rămase până la expirare |
 | Impozit | `impozit` | zile | `impozit_scadenta` completat | Zile rămase până la scadență |
 | Leasing | `leasing` | zile | `tip_proprietate` = leasing | Zile rămase până la expirare |
 | Revizie ulei | `revizie_ulei` | km | `revizie_ulei_km_urmator` completat | Km rămași până la revizie |
@@ -114,6 +120,8 @@ Fiecare senzor expune atribute suplimentare. Câteva exemple:
 **RCA** — atribute: Număr poliță, Companie, Data emitere, Data expirare, Cost (RON), Stare (Valid/Expirat)
 
 **ITP** — atribute: Data expirare, Stație, Kilometraj la ITP, Stare (Valid/Expirat)
+
+**Rovinieta** — atribute: Data început, Data sfârșit, Categorie, Preț (RON), Stare (Valid/Expirat)
 
 **Impozit** — atribute: Sumă (RON), Scadență, Localitate, Proprietar, Tip proprietate
 
@@ -148,6 +156,40 @@ data:
   km_curent: 85000
 ```
 
+### vehicule.exporta_date
+
+Exportă datele unui vehicul într-un fișier JSON în directorul `/config/`.
+
+| Parametru | Tip | Obligatoriu | Descriere |
+|-----------|-----|-------------|-----------|
+| `nr_inmatriculare` | string | Da | Numărul de înmatriculare (ex: `B123ABC`) |
+
+**Exemplu**:
+```yaml
+action: vehicule.exporta_date
+data:
+  nr_inmatriculare: "B123ABC"
+```
+
+Fișierul generat: `/config/vehicule_backup_b123abc.json`
+
+### vehicule.importa_date
+
+Importă datele unui vehicul dintr-un fișier JSON de backup. Dacă vehiculul nu există, va fi creat automat.
+
+| Parametru | Tip | Obligatoriu | Descriere |
+|-----------|-----|-------------|-----------|
+| `cale_fisier` | string | Da | Calea completă către fișierul JSON (ex: `/config/vehicule_backup_b123abc.json`) |
+
+**Exemplu**:
+```yaml
+action: vehicule.importa_date
+data:
+  cale_fisier: "/config/vehicule_backup_b123abc.json"
+```
+
+> **Notă**: La import, dacă vehiculul există deja, opțiunile sunt actualizate. Dacă nu există, este creat automat o nouă intrare.
+
 ---
 
 ## Exemple de automatizări
@@ -174,6 +216,10 @@ automation:
               unitate: "zile"
             - entity: sensor.vehicule_b123abc_itp
               name: "ITP"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_rovinieta
+              name: "Rovinieta"
               prag: 30
               unitate: "zile"
             - entity: sensor.vehicule_b123abc_impozit
@@ -264,9 +310,10 @@ custom_components/vehicule/
 ├── manifest.json        # Metadata integrare
 ├── sensor.py            # Senzori condiționați per vehicul
 ├── services.yaml        # Definiții servicii
-├── strings.json         # Traduceri (sursă)
+├── strings.json         # Traduceri en (sursă)
 ├── hacs.json            # Configurație HACS
 └── translations/
+    ├── en.json          # Traduceri limba engleză
     └── ro.json          # Traduceri limba română
 ```
 
@@ -283,9 +330,8 @@ custom_components/vehicule/
 ## Limitări cunoscute
 
 1. **Datele sunt locale** — stocate în configurația HA, nu sunt sincronizate cu alte sisteme
-2. **Fără import/export CSV** — momentan nu se pot importa sau exporta date în masă
-3. **Fără istoric costuri** — costurile și datele de mentenanță nu sunt arhivate istoric
-4. **Fără imagini vehicul** — nu există suport pentru fotografii sau avatare per vehicul
+2. **Fără istoric costuri** — costurile și datele de mentenanță nu sunt arhivate istoric
+3. **Fără imagini vehicul** — nu există suport pentru fotografii sau avatare per vehicul
 
 ---
 
