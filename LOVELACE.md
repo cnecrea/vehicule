@@ -39,6 +39,7 @@ Următoarele componente custom trebuie instalate din [HACS](https://hacs.xyz/) �
 | Kilometraj | `sensor.vehicule_b123abc_kilometraj` | km | Km curent |
 | RCA | `sensor.vehicule_b123abc_rca` | zile | Zile rămase |
 | ITP | `sensor.vehicule_b123abc_itp` | zile | Zile rămase |
+| Rovinieta | `sensor.vehicule_b123abc_rovinieta` | zile | Zile rămase |
 | Impozit | `sensor.vehicule_b123abc_impozit` | zile | Zile rămase |
 | Leasing | `sensor.vehicule_b123abc_leasing` | zile | Zile rămase |
 | Revizie ulei | `sensor.vehicule_b123abc_revizie_ulei` | km | Km rămași |
@@ -286,10 +287,10 @@ cards:
 
 ---
 
-## 2. Documente (RCA, ITP, Impozit, Leasing)
+## 2. Documente (RCA, ITP, Rovinieta, Impozit, Leasing)
 
 Header cu status RCA (cel mai important document) — afișează zilele rămase, compania și numărul poliței.
-Grid cu 3 indicatori: ITP, Impozit, Leasing — fiecare cu culoare condiționată.
+Grid cu 4 indicatori: ITP, Rovinieta, Impozit, Leasing — fiecare cu culoare condiționată.
 Footer cu date emitere/expirare RCA și cost.
 
 > **Notă**: Cardul Leasing apare doar dacă **Tip proprietate = leasing** este selectat în integrare. Dacă nu aveți leasing, eliminați cardul din grid sau înlocuiți-l cu alt senzor.
@@ -365,12 +366,64 @@ cards:
               - width: 100%
       - type: grid
         square: false
-        columns: 3
+        columns: 4
         cards:
           - type: custom:button-card
             entity: sensor.vehicule_b123abc_itp
             icon: mdi:car-wrench
             name: ITP
+            show_state: false
+            show_name: true
+            show_label: true
+            color_type: card
+            color: |
+              [[[
+                const z = parseInt(entity.state) || 0;
+                if (z < 0) return 'rgba(239,79,26,0.15)';
+                if (z < 30) return 'rgba(255,152,0,0.15)';
+                return 'rgba(76,175,80,0.15)';
+              ]]]
+            label: |
+              [[[
+                const z = parseInt(entity.state);
+                if (isNaN(z)) return '—';
+                return z < 0 ? 'EXPIRAT' : z + ' zile';
+              ]]]
+            tap_action:
+              action: more-info
+            styles:
+              card:
+                - border-radius: 10px
+                - padding: 20px 8px
+                - box-shadow: none
+                - border: none
+              icon:
+                - width: 34px
+                - color: |
+                    [[[
+                      const z = parseInt(entity.state) || 0;
+                      if (z < 0) return 'rgb(239,79,26)';
+                      if (z < 30) return 'rgb(255,152,0)';
+                      return 'rgb(76,175,80)';
+                    ]]]
+              label:
+                - font-size: 13px
+                - font-weight: 600
+                - color: |
+                    [[[
+                      const z = parseInt(entity.state) || 0;
+                      if (z < 0) return 'rgb(239,79,26)';
+                      if (z < 30) return 'rgb(255,152,0)';
+                      return 'rgb(76,175,80)';
+                    ]]]
+              name:
+                - font-size: 13px
+                - color: var(--secondary-text-color)
+                - margin-top: 4px
+          - type: custom:button-card
+            entity: sensor.vehicule_b123abc_rovinieta
+            icon: mdi:road-variant
+            name: Rovinieta
             show_state: false
             show_name: true
             show_label: true
