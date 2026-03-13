@@ -1,189 +1,301 @@
-# Vehicule - Întrebări Frecvente (FAQ)
+<a name="top"></a>
+# Întrebări frecvente
 
-## 1. Generale
-
-### Ce este integrarea Vehicule?
-Vehicule este o integrare Home Assistant personalizată care vă permite să gestionați vehiculele și documentele acestora (RCA, ITP, asigurări, reparații, etc.) direct în Home Assistant. Puteți urmări expirarea documentelor, kilometrajul și istoricul mentenanței pentru fiecare vehicul.
-
-### Pentru cine este aceasta integrare?
-Aceasta integrare este ideală pentru:
-- Proprietarii de multiple vehicule care doresc centralizarea datelor
-- Persoane care doresc automatizări pentru remindere la expirarea RCA/ITP
-- Utilizatori care doresc urmărirea consumului de carburant și mentenanței
-- Oricine preferă să-și gestioneze datele 100% local, fără servicii cloud externe
-
-### Este gratuită?
-Da, integrarea este complet gratuită și open-source. Codul sursă este disponibil pe GitHub: https://github.com/cnecrea/vehicule
-
-### Are nevoie de internet?
-**NU.** Integrarea funcționează 100% local, pe mașina dvs. Home Assistant. Nu trimite nicio informație către servere externe. Nu are nicio dependență de API-uri externe. Datele rămân sub controlul dvs total.
-
-### Care este clasa IoT?
-Integrarea este clasificată ca `calculated` - datele sunt prelucrate local pe baza valorilor introduse de utilizator.
-
----
-
-## 2. Configurare
-
-### Cum adaug un vehicul?
-1. Accesați **Settings → Devices & Services → Integrations**
-2. Căutați și instalați **Vehicule** (dacă nu este deja instalată)
-3. Apăsați **+ Create Entry**
-4. Introduceți **numărul de înmatriculare** (plăcuța de înmatriculare)
-5. Confirmare - integrarea creează automat senzorii
-
-Fiecare vehicul = 1 config entry, identificat unic prin numărul de înmatriculare.
-
-### Cum editez datele unui vehicul?
-1. Accesați **Settings → Devices & Services → Integrations → Vehicule**
-2. Selectați vehiculul pe care doriti să-l editați
-3. Apăsați pe intrare
-4. Apăsați butonul **⚙️ (Options)** din colțul dreapta sus
-5. Completați categoriile relevante (vezi mai jos)
-
-### Care sunt categoriile de date?
-Datele sunt organizate în meniuri categorizate:
-
-| Categorie | Descriere |
-|-----------|-----------|
-| **Identificare** | Marca, model, tip combustibil, cilindree, an de fabricație, an de înmatriculare, tip proprietate (proprietate/leasing) |
-| **RCA** | Număr poliță, data expirării, asigurator |
-| **ITP** | Data expirării, locul testării |
-| **Rovinieta** | Data început, data sfârșit, categorie, preț |
-| **Administrativ** | Proprietar, tip proprietate, impozit, leasing |
-| **Mentenanță** | Revizie ulei, distribuție, anvelope, baterie, frâne, trusă de prim ajutor, extinctor |
-| **Kilometraj** | Kilometrajul curent (actualizat manual sau prin automatizări) |
-
-### Cum funcționează formatele de dată?
-- **Afișare:** în interfață, datele se afișează în format **ZZ.LL.AAAA** (ex: 15.03.2026)
-- **Stocare internă:** datele sunt stocate în format ISO (YYYY-MM-DD)
-- **Input:** introduceți datele în format ZZ.LL.AAAA
-
-Exemplu: pentru 15 martie 2026, scrieți `15.03.2026`
-
-### Ce se întâmplă dacă sterg o valoare dintr-un câmp?
-- Câmpurile sunt opționale
-- Dacă goliți un câmp, sensorul asociat **dispare** din Home Assistant
-- Datele anterioare sunt șterse
-- Puteți completa din nou oricând
-
-### Cum funcționează câmpurile de an (fabricație și înmatriculare)?
-- Au validare pe server
-- Acceptă ani între **1900** și anul curent + 1 pentru **fabricație**
-- Acceptă ani între **1900** și anul curent pentru **înmatriculare**
-- Validarea previne erori de introduceți în date
+- [Ce este integrarea Vehicule?](#ce-este-integrarea-vehicule)
+- [Are nevoie de internet?](#are-nevoie-de-internet)
+- [Este gratuită?](#este-gratuită)
+- [Cum adaug un vehicul?](#cum-adaug-un-vehicul)
+- [Cum editez datele unui vehicul?](#cum-editez-datele-unui-vehicul)
+- [Care sunt categoriile disponibile în meniu?](#care-sunt-categoriile-disponibile-în-meniu)
+- [Cum funcționează formatele de dată?](#cum-funcționează-formatele-de-dată)
+- [Ce se întâmplă dacă șterg o valoare dintr-un câmp?](#ce-se-întâmplă-dacă-șterg-o-valoare-dintr-un-câmp)
+- [Câți senzori are fiecare vehicul?](#câți-senzori-are-fiecare-vehicul)
+- [Când apare sau dispare un senzor?](#când-apare-sau-dispare-un-senzor)
+- [Ce arată valoarea unui senzor de tip „zile"?](#ce-arată-valoarea-unui-senzor-de-tip-zile)
+- [Trebuie setat kilometrajul înainte de ITP și mentenanță?](#trebuie-setat-kilometrajul-înainte-de-itp-și-mentenanță)
+- [Cum urmăresc rovinieta?](#cum-urmăresc-rovinieta)
+- [Cum urmăresc schimbul de ulei?](#cum-urmăresc-schimbul-de-ulei)
+- [Cum urmăresc distribuția?](#cum-urmăresc-distribuția)
+- [Cum funcționează detecția anvelopelor de sezon?](#cum-funcționează-detecția-anvelopelor-de-sezon)
+- [Cum urmăresc bateria?](#cum-urmăresc-bateria)
+- [Cum urmăresc frânele?](#cum-urmăresc-frânele)
+- [Cum urmăresc trusa de prim ajutor și extinctorul?](#cum-urmăresc-trusa-de-prim-ajutor-și-extinctorul)
+- [Când apare senzorul de leasing?](#când-apare-senzorul-de-leasing)
+- [Ce se întâmplă dacă schimb din „Leasing" la „Proprietate"?](#ce-se-întâmplă-dacă-schimb-din-leasing-la-proprietate)
+- [Cum creez notificări zilnice pentru documente și mentenanță?](#cum-creez-notificări-zilnice-pentru-documente-și-mentenanță)
+- [Cum actualizez kilometrajul automat?](#cum-actualizez-kilometrajul-automat)
+- [Cum fac backup la datele unui vehicul?](#cum-fac-backup-la-datele-unui-vehicul)
+- [Cum restaurez datele unui vehicul din backup?](#cum-restaurez-datele-unui-vehicul-din-backup)
+- [Pot folosi backup/restore pentru a migra între instanțe HA?](#pot-folosi-backuprestore-pentru-a-migra-între-instanțe-ha)
+- [Un senzor arată „Unknown". De ce?](#un-senzor-arată-unknown-de-ce)
+- [Primesc „Entity not provided by integration". Ce fac?](#primesc-entity-not-provided-by-integration-ce-fac)
+- [Integrarea nu apare în lista de integrații. De ce?](#integrarea-nu-apare-în-lista-de-integrații-de-ce)
+- [Cum activez debug logging?](#cum-activez-debug-logging)
+- [Trebuie să șterg și să readaug vehiculul după actualizare?](#trebuie-să-șterg-și-să-readaug-vehiculul-după-actualizare)
+- [Îmi place proiectul. Cum pot să-l susțin?](#îmi-place-proiectul-cum-pot-să-l-susțin)
 
 ---
 
-## 3. Senzori
+## Ce este integrarea Vehicule?
 
-### Ce senzori are fiecare vehicul?
-Integrarea creează senzori pentru:
-- Data expirării RCA (cu atribut `days_remaining`)
-- Data expirării ITP (cu atribut `days_remaining`)
-- Kilometrajul curent
-- Status mentenanță (schimb ulei, distribuitor, anvelope, etc.)
-- Data ultimei menteneri
-- Alte senzori specifici, în funcție de datele introduse
+[↑ Înapoi la cuprins](#top)
 
-### Când apare/dispare un senzor?
-- Un senzor **apare** doar când datele relevante sunt completate
-- Un senzor **dispare** automat când goliți (ștergeți) datele corespunzătoare
-- Integrarea auto-curață entitățile orfane
+Vehicule este o integrare Home Assistant personalizată care permite gestionarea vehiculelor și documentelor acestora — RCA, ITP, rovinieta, impozit, leasing, mentenanță — direct din interfața HA. Poți urmări expirarea documentelor, kilometrajul și starea mentenanței pentru fiecare vehicul.
 
-### Ce arată atributul `days_remaining`?
-- **Valori pozitive (ex: 45):** zilele rămase până la expirare
-- **Valori negative (ex: -10):** documentul a expirat cu 10 zile în urmă
-- **0:** expira astazi
-
-Exemplu: dacă RCA expira în 15 zile, `days_remaining = 15`. Dacă a expirat acum 3 zile, `days_remaining = -3`.
-
-### De ce datele se afișează în format românesc?
-Formatele de dată sunt adaptate la localizarea românească:
-- Afișare: `15.03.2026`
-- Zile prescurtate: Lun, Mar, Mie, etc.
-- Luni prescurtate: Ian, Feb, Mar, etc.
-
-### Trebuie setat kilometrajul înainte de ITP și mentenanță?
-Da. Începând cu versiunea 1.1.0, pașii **ITP**, **Revizie ulei**, **Distribuție** și **Frâne** necesită ca kilometrajul curent să fie configurat. Dacă nu este setat, formularul afișează o eroare și trebuie mai întâi să accesați **Actualizare kilometraj** din meniul principal.
+E ideală pentru proprietarii de vehicule multiple, flote sau oricine vrea centralizarea datelor 100% local.
 
 ---
 
-## 4. Mentenanță
+## Are nevoie de internet?
 
-### Cum urmăresc schimbul de ulei?
-1. Completați în categoria **Mentenanță → Ulei curent** data ultimului schimb (ZZ.LL.AAAA)
-2. Introduceți **Interval schimb ulei (km)** (ex: 10000)
-3. Integrarea creează un senzor care arată km rămași până la schimb
-4. Când `km_remaining_ulei < 0`, trebuie să efectuați schimbul
+[↑ Înapoi la cuprins](#top)
 
-### Cum urmăresc distribuitorului?
-Similar ca uleiul:
-1. Completați **Mentenanță → Distribuitor data schimbului**
-2. Introduceți **Interval schimb distribuitor (km)**
-3. Senzorul arată km rămași
+**Nu.** Integrarea funcționează 100% local, pe instanța ta Home Assistant. Nu trimite nicio informație către servere externe, nu are dependențe de API-uri și nu necesită conexiune la internet. Datele rămân sub controlul tău total.
 
-### Cum funcționează detecția anvelopelor de sezon?
-- Puteți introduce date pentru **Anvelope iarnă** și **Anvelope vară**
-- Integrarea creează senzori de status pentru fiecare set
-- Indicați manual când ați montat setul respectiv
-- Asta vă ajută să păstrați evidența tipului de anvelope și a datei schimbării
+Clasa IoT: `calculated` — datele sunt prelucrate local pe baza valorilor introduse de utilizator.
 
-### Cum urmăresc bateria?
-1. Completați **Mentenanță → Data ultimei înlocuiri a bateriei**
-2. Introduceți **Interval baterie (ani)** (tipic 3-5 ani)
-3. Senzorul arată dacă bateria trebuie înlocuită
+---
 
-### Cum urmăresc frânele?
-1. Completați **Mentenanță → Frâne** cu kilometrajul la ultima și următoarea schimbare
-2. Senzorul arată km rămași până la schimbare (separat pentru plăcuțe și discuri)
+## Este gratuită?
 
-### Cum urmăresc trusa de prim ajutor?
-Trusa de prim ajutor este **obligatorie în România**. Integrarea o gestionează astfel:
-1. Accesați **Mentenanță → Trusă de prim ajutor**
-2. Completați **Data expirare** (ZZ.LL.AAAA)
+[↑ Înapoi la cuprins](#top)
+
+Da, complet gratuită și open-source. Codul sursă este disponibil pe GitHub: https://github.com/cnecrea/vehicule
+
+---
+
+## Cum adaug un vehicul?
+
+[↑ Înapoi la cuprins](#top)
+
+1. Mergi la **Settings** → **Devices & Services** → **Add Integration**
+2. Caută „**Vehicule**"
+3. Introdu numărul de înmatriculare, fără spații (ex: `B123ABC`)
+4. Click **Submit**
+
+Integrarea creează un device cu un singur senzor (Informații). Restul senzorilor apar pe măsură ce completezi date.
+
+Fiecare vehicul = 1 config entry, identificat unic prin numărul de înmatriculare. Detalii complete în [SETUP.md](./SETUP.md).
+
+---
+
+## Cum editez datele unui vehicul?
+
+[↑ Înapoi la cuprins](#top)
+
+1. Mergi la **Settings** → **Devices & Services** → **Vehicule**
+2. Click pe intrarea vehiculului dorit
+3. Click pe butonul **Configure** (⚙️)
+4. Alege categoria din meniu și completează câmpurile
+
+Datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: `18.04.2026`). Câmpurile de an acceptă valori cu 4 cifre, validate server-side.
+
+---
+
+## Care sunt categoriile disponibile în meniu?
+
+[↑ Înapoi la cuprins](#top)
+
+```
+Gestionare vehicul
+├── Date de identificare
+├── Asigurare RCA
+├── Inspecție tehnică (ITP)
+├── Rovinieta
+├── Date administrative / fiscale
+├── Mentenanță
+│   ├── Revizie ulei
+│   ├── Distribuție
+│   ├── Anvelope
+│   ├── Baterie
+│   ├── Frâne (plăcuțe și discuri)
+│   ├── Trusă de prim ajutor
+│   └── Extinctor
+└── Actualizare kilometraj
+```
+
+**Identificare** — marcă, model, combustibil, cilindree, an fabricație, an înmatriculare, tip proprietate.
+**RCA** — număr poliță, companie, date emitere/expirare, cost.
+**ITP** — data expirare, stație, km la ITP.
+**Rovinieta** — data început, data sfârșit, categorie, preț.
+**Administrativ** — proprietar, tip proprietate, impozit, leasing.
+**Mentenanță** — revizie ulei, distribuție, anvelope, baterie, frâne, trusă prim ajutor, extinctor.
+**Kilometraj** — kilometrajul curent (manual sau prin automatizări).
+
+---
+
+## Cum funcționează formatele de dată?
+
+[↑ Înapoi la cuprins](#top)
+
+Datele se introduc în format **ZZ.LL.AAAA** (ex: `15.03.2026` pentru 15 martie 2026). În interfață se afișează tot în format românesc. Intern, sunt stocate în format ISO (YYYY-MM-DD).
+
+Câmpurile de an (fabricație, înmatriculare) acceptă valori între **1900** și anul curent (+1 pentru fabricație). Validarea se face server-side.
+
+---
+
+## Ce se întâmplă dacă șterg o valoare dintr-un câmp?
+
+[↑ Înapoi la cuprins](#top)
+
+Câmpurile sunt opționale. Dacă golești un câmp și salvezi, senzorul asociat **dispare** din Home Assistant și datele anterioare sunt șterse. Poți completa din nou oricând, iar senzorul va reapărea.
+
+---
+
+## Câți senzori are fiecare vehicul?
+
+[↑ Înapoi la cuprins](#top)
+
+Până la **15 senzori**, toți condiționați — apar doar dacă au date completate:
+
+| Senzor | Cheie | Unitate | Ce afișează |
+|--------|-------|---------|-------------|
+| Informații | `informatii` | — | Marcă + Model |
+| Kilometraj | `kilometraj` | km | Km curent |
+| RCA | `rca` | zile | Zile rămase |
+| ITP | `itp` | zile | Zile rămase |
+| Rovinieta | `rovinieta` | zile | Zile rămase |
+| Impozit | `impozit` | zile | Zile rămase până la scadență |
+| Leasing | `leasing` | zile | Zile rămase |
+| Revizie ulei | `revizie_ulei` | km | Km rămași |
+| Distribuție | `distributie` | km | Km rămași |
+| Anvelope | `anvelope` | — | Sezon curent (Vară / Iarnă) |
+| Baterie | `baterie` | luni | Luni de la schimb |
+| Plăcuțe frână | `placute_frana` | km | Km rămași |
+| Discuri frână | `discuri_frana` | km | Km rămași |
+| Trusă prim ajutor | `trusa_prim_ajutor` | zile | Zile rămase |
+| Extinctor | `extinctor` | zile | Zile rămase |
+
+Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{cheie}` (ex: `sensor.vehicule_b123abc_rca`).
+
+---
+
+## Când apare sau dispare un senzor?
+
+[↑ Înapoi la cuprins](#top)
+
+Un senzor **apare** când completezi datele relevante. **Dispare** automat când golești câmpurile corespunzătoare. Integrarea curăță automat entitățile orfane — nu trebuie să faci nimic manual.
+
+---
+
+## Ce arată valoarea unui senzor de tip „zile"?
+
+[↑ Înapoi la cuprins](#top)
+
+- **Valori pozitive** (ex: 45) — zilele rămase până la expirare
+- **0** — expiră astăzi
+- **Valori negative** (ex: -10) — documentul a expirat cu 10 zile în urmă
+
+Exemplu: RCA expiră în 15 zile → `state = 15`. A expirat acum 3 zile → `state = -3`.
+
+---
+
+## Trebuie setat kilometrajul înainte de ITP și mentenanță?
+
+[↑ Înapoi la cuprins](#top)
+
+Da. Începând cu v1.1.0, pașii **ITP**, **Revizie ulei**, **Distribuție** și **Frâne** necesită ca kilometrajul curent să fie configurat. Dacă nu e setat, formularul afișează eroarea `km_necesar` și blochează salvarea.
+
+Soluția: accesează mai întâi **Actualizare kilometraj** din meniul principal și setează km-ul curent.
+
+---
+
+## Cum urmăresc rovinieta?
+
+[↑ Înapoi la cuprins](#top)
+
+1. Din meniul de configurare, alege **Rovinieta**
+2. Completează **Data început** și **Data sfârșit** (ZZ.LL.AAAA)
+3. Opțional: categorie și preț (RON)
+4. Senzorul arată zilele rămase până la expirare (identic cu RCA/ITP)
+
+Atribute expuse: Data început, Data sfârșit, Categorie, Preț (RON), Stare (Valid/Expirat).
+
+---
+
+## Cum urmăresc schimbul de ulei?
+
+[↑ Înapoi la cuprins](#top)
+
+1. Accesează **Mentenanță → Revizie ulei**
+2. Completează km-ul la ultima revizie, km-ul pentru următoarea revizie și data ultimei revizii
+3. Senzorul arată **km rămași** până la următoarea revizie
+4. Când valoarea scade sub 0, revzia e depășită
+
+---
+
+## Cum urmăresc distribuția?
+
+[↑ Înapoi la cuprins](#top)
+
+Funcționează identic cu revizia de ulei: completezi km-ul la ultima și următoarea schimbare a distribuției, iar senzorul afișează km rămași.
+
+---
+
+## Cum funcționează detecția anvelopelor de sezon?
+
+[↑ Înapoi la cuprins](#top)
+
+Poți introduce datele de montare pentru **anvelope vară** și **anvelope iarnă**. Senzorul afișează sezonul curent (Vară / Iarnă) și compară cu sezonul recomandat. Te ajută să ții evidența schimbărilor de anvelope.
+
+---
+
+## Cum urmăresc bateria?
+
+[↑ Înapoi la cuprins](#top)
+
+1. Accesează **Mentenanță → Baterie**
+2. Completează **Data schimb** (ZZ.LL.AAAA)
+3. Senzorul arată **lunile de la ultimul schimb** — util pentru a ști când trebuie înlocuită (tipic 3-5 ani)
+
+---
+
+## Cum urmăresc frânele?
+
+[↑ Înapoi la cuprins](#top)
+
+1. Accesează **Mentenanță → Frâne**
+2. Completează km-ul la ultima și următoarea schimbare (separat pentru plăcuțe și discuri)
+3. Senzori separați pentru plăcuțe și discuri, fiecare cu km rămași
+
+> **Notă:** Necesită setarea prealabilă a kilometrajului curent.
+
+---
+
+## Cum urmăresc trusa de prim ajutor și extinctorul?
+
+[↑ Înapoi la cuprins](#top)
+
+Ambele sunt **obligatorii în România** și funcționează identic:
+
+1. Accesează **Mentenanță → Trusă de prim ajutor** sau **Extinctor**
+2. Completează **Data expirare** (ZZ.LL.AAAA)
 3. Senzorul arată zilele rămase până la expirare
-4. Atributul „Stare" arată „Valid" sau „Expirat"
-
-### Cum urmăresc extinctorul?
-Extinctorul este **obligatoriu în România**. Funcționează identic cu trusa de prim ajutor:
-1. Accesați **Mentenanță → Extinctor**
-2. Completați **Data expirare** (ZZ.LL.AAAA)
-3. Senzorul arată zilele rămase până la expirare
-4. Atributul „Stare" arată „Valid" sau „Expirat"
-
-### Cum urmăresc rovinieta?
-1. Accesați meniul de configurare → **Rovinieta**
-2. Completați **Data început** și **Data sfârșit** (ZZ.LL.AAAA)
-3. Opțional: categorie și preț
-4. Senzorul arată zilele rămase până la expirare (similar cu RCA/ITP)
-5. Atributul „Stare" arată „Valid" sau „Expirat"
+4. Atributul „Stare" indică „Valid" sau „Expirat"
 
 ---
 
-## 5. Leasing
+## Când apare senzorul de leasing?
 
-### Când apare sensorul de leasing?
-- Sensorul de leasing apare doar dacă setați **Identificare → Tip proprietate = Leasing**
-- Câmpul **Data expirării leasing** devine activ doar în acest caz
+[↑ Înapoi la cuprins](#top)
 
-### Ce se întâmplă dacă schimb din "Leasing" la "Proprietate"?
-- Câmpurile de leasing dispar din interfață
-- Sensorul de leasing dispare din Home Assistant
-- Datele sunt șterse (nu mai sunt necesare)
-- Puteți reveni oricând la "Leasing"
+Senzorul de leasing apare doar dacă setezi **Tip proprietate = Leasing** în secțiunea Date administrative. La prima selectare a opțiunii „Leasing", integrarea deschide automat un pas suplimentar pentru a introduce data de expirare a contractului de leasing.
 
-### Cum urmăresc expirarea contractului de leasing?
-1. Setați **Tip proprietate = Leasing**
-2. Completați **Data expirării leasing** (ZZ.LL.AAAA)
-3. Senzorul arată zilele rămase (similar cu RCA/ITP)
-4. Folosiți în automatizări pentru reminder
+Senzorul arată zilele rămase (similar cu RCA/ITP).
 
 ---
 
-## 6. Automatizări
+## Ce se întâmplă dacă schimb din „Leasing" la „Proprietate"?
 
-### Cum creez notificări pentru documente și mentenanță?
+[↑ Înapoi la cuprins](#top)
+
+Câmpurile de leasing dispar din interfață, senzorul de leasing dispare din Home Assistant, iar datele de leasing sunt șterse. Poți reveni oricând la „Leasing" și completa din nou.
+
+---
+
+## Cum creez notificări zilnice pentru documente și mentenanță?
+
+[↑ Înapoi la cuprins](#top)
 
 Recomandăm o singură automatizare care verifică **zilnic** toți senzorii, în loc de trigger-uri `numeric_state` separate (care se activează doar la **tranziția** valorii sub prag și pot rata notificări după restart HA).
 
@@ -202,6 +314,10 @@ automation:
               unitate: "zile"
             - entity: sensor.vehicule_b123abc_itp
               name: "ITP"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_rovinieta
+              name: "Rovinieta"
               prag: 30
               unitate: "zile"
             - entity: sensor.vehicule_b123abc_impozit
@@ -234,15 +350,17 @@ automation:
                     message: "Mai ai {{ val }} {{ repeat.item.unitate }} rămase."
 ```
 
-Adăugați sau eliminați senzori din lista `for_each` după necesități. Pragurile se pot ajusta liber.
+Adaugă sau elimină senzori din lista `for_each` după preferințe. Pragurile se pot ajusta liber.
 
-### Cum creez o notificare doar pentru RCA sau ITP?
-Folosiți automatizarea de mai sus, dar păstrați doar senzorul dorit în lista `for_each`.
+> **⚠️ Important:** Înlocuiește `b123abc` cu numărul normalizat al vehiculului tău și `notify.mobile_app` cu entity_id-ul serviciului tău de notificare (ex: `notify.mobile_app_telefonul_meu`).
 
-### Cum actualizez kilometrajul automat?
-Puteți utiliza serviciul **`vehicule.actualizeaza_date`** pentru a actualiza km-ul curent din automatizări.
+---
 
-Exemplu (automatizare care actualizează km):
+## Cum actualizez kilometrajul automat?
+
+[↑ Înapoi la cuprins](#top)
+
+Folosește serviciul `vehicule.actualizeaza_date` dintr-o automatizare. Exemplu cu senzor OBD/GPS:
 
 ```yaml
 automation:
@@ -257,121 +375,112 @@ automation:
           km_curent: "{{ states('sensor.obd_odometer') | int(0) }}"
 ```
 
-### Care sunt cazurile de utilizare frecvente?
-- Notificări push pe telefon când expira RCA/ITP
-- Trimitere de email/SMS cu reminder-uri
-- Logging datelor în baze de date externe (ex: InfluxDB)
-- Integrare cu dashboard-uri custom în Lovelace
-- Afișare în tablete/displaye montate în vehicul
+---
+
+## Cum fac backup la datele unui vehicul?
+
+[↑ Înapoi la cuprins](#top)
+
+Folosește serviciul `vehicule.exporta_date`:
+
+1. Mergi la **Developer Tools → Services**
+2. Selectează `vehicule.exporta_date`
+3. Introdu numărul de înmatriculare (ex: `B123ABC`)
+4. Apasă **Call Service**
+
+Fișierul JSON este salvat automat în `/config/vehicule_backup_b123abc.json`. Conține: versiunea de backup, domeniul integrării, numărul de înmatriculare, data exportului și toate opțiunile configurate.
 
 ---
 
-## 7. Backup și Restore
+## Cum restaurez datele unui vehicul din backup?
 
-### Cum fac backup la datele unui vehicul?
-Folosiți serviciul `vehicule.exporta_date`:
-1. Accesați **Developer Tools → Services**
-2. Selectați `vehicule.exporta_date`
-3. Introduceți numărul de înmatriculare (ex: `B123ABC`)
-4. Apăsați **Call Service**
+[↑ Înapoi la cuprins](#top)
 
-Fișierul JSON este salvat automat în `/config/vehicule_backup_b123abc.json`.
+Folosește serviciul `vehicule.importa_date`:
 
-### Cum restaurez datele unui vehicul?
-Folosiți serviciul `vehicule.importa_date`:
-1. Copiați fișierul JSON de backup în directorul `/config/`
-2. Accesați **Developer Tools → Services**
-3. Selectați `vehicule.importa_date`
-4. Introduceți calea completă (ex: `/config/vehicule_backup_b123abc.json`)
-5. Apăsați **Call Service**
+1. Copiază fișierul JSON de backup în directorul `/config/`
+2. Mergi la **Developer Tools → Services**
+3. Selectează `vehicule.importa_date`
+4. Introdu calea completă (ex: `/config/vehicule_backup_b123abc.json`)
+5. Apasă **Call Service**
 
 Dacă vehiculul nu există, va fi creat automat. Dacă există, opțiunile sunt actualizate.
 
-### Ce conține fișierul de backup?
-Fișierul JSON include: versiunea de backup, domeniul integrării, numărul de înmatriculare, data exportului și toate opțiunile configurate (identificare, documente, mentenanță, kilometraj).
+---
 
-### Pot folosi backup/restore pentru a migra între instanțe HA?
-Da. Exportați pe instanța sursă, copiați fișierul JSON pe instanța destinație și importați. Vehiculul va fi creat automat dacă nu există.
+## Pot folosi backup/restore pentru a migra între instanțe HA?
+
+[↑ Înapoi la cuprins](#top)
+
+Da. Exportezi pe instanța sursă, copiezi fișierul JSON pe instanța destinație (în `/config/`) și importezi. Vehiculul va fi creat automat dacă nu există. Ideal și pentru gestionarea flotelor — poți exporta/importa în masă.
 
 ---
 
-## 8. Troubleshooting
+## Un senzor arată „Unknown". De ce?
 
-### Un senzor arată "Unknown"
-**Cauze:**
+[↑ Înapoi la cuprins](#top)
+
+Cauze posibile:
 - Datele pentru acel senzor nu sunt completate
-- Format de dată incorect (asigurați-vă că utilizați ZZ.LL.AAAA)
-- An de fabricație/înmatriculare în afara intervalului acceptat (1900 - curent+1)
+- Format de dată incorect (trebuie ZZ.LL.AAAA)
+- An de fabricație/înmatriculare în afara intervalului acceptat (1900 – curent+1)
 
-**Soluție:**
-1. Verificați categoria relevantă în Options
-2. Completați datele în format corect
-3. Salvați
-
-### Înțeleg: "Entity not provided by integration"
-Aceasta se întâmplă dacă:
-- Ați șters vehiculul din integrare, dar automația/dashboard-ul încă refera senzori orfani
-- Numele senzorului s-a schimbat între versiuni
-
-**Soluție:**
-1. Actualizați referințele în automatizări/dashboard-uri
-2. Ștergeți și re-adăugați vehiculul dacă sunt probleme persistente
-
-### Cum activez debug logging?
-Consultați [DEBUG.md](DEBUG.md) pentru instrucțiuni detaliate asupra activării logging-ului debug.
-
-### Integrarea nu apare în lista de integrații
-- Asigurați-vă că ați instalat-o din HACS sau manual
-- Verificați că fișierele sunt în locația corectă: `custom_components/vehicule/`
-- Restartați Home Assistant
-- Verificați din **Settings → System → Logs** pentru erori
-
-### Datele nu se salvează corect
-- Verificați formatele de dată (ZZ.LL.AAAA)
-- Asigurați-vă că anii sunt în interval valid
-- Restartați integrarea din **Settings → Devices & Services → Vehicule → [meniu...]**
+Soluție: verifică categoria relevantă în Options, completează datele în format corect și salvează.
 
 ---
 
-## 9. Actualizări
+## Primesc „Entity not provided by integration". Ce fac?
 
-### Cum actualizez integrarea?
-**Dacă folosiți HACS:**
-1. Accesați **HACS → Integrations → Vehicule**
-2. Apăsați **Update**
-3. Restartați Home Assistant
+[↑ Înapoi la cuprins](#top)
 
-**Dacă ati instalat manual:**
-1. Descărcați versiunea nouă de la GitHub
-2. Copiați fișierele în `custom_components/vehicule/`
-3. Restartați Home Assistant
-
-### Setările mele sunt păstrate după actualizare?
-Da. Configurațiile și datele vehiculelor sunt stocate în baza de date Home Assistant și nu sunt afectate de actualizări.
-
-### Trebuie să șterg și să re-adaug vehiculul după actualizare?
-Nu, în 99% dintre cazuri. Configurația și datele sunt păstrate. Poate fi necesar doar dacă:
-- Au fost schimbări majore în structura entităților (rar)
-- Documentația de upgrade o recomandă explicit
-
-În caz de îndoială, consultați [CHANGELOG.md](CHANGELOG.md).
-
-### Ce se întâmplă cu entitățile după actualizare?
-- Entitățile noi sunt adăugate automat
-- Entitățile existente sunt actualizate
-- Entitățile care nu mai sunt necesare sunt auto-șterse
-- Nicio pierdere de date
+Se întâmplă dacă ai șters vehiculul din integrare, dar automatizarea/dashboard-ul încă referă senzorii vechi. Actualizează referințele din automatizări și dashboard-uri. Dacă problema persistă, șterge și re-adaugă vehiculul.
 
 ---
 
-## Alte Resurse
+## Integrarea nu apare în lista de integrații. De ce?
 
-- **Cod sursă:** https://github.com/cnecrea/vehicule
-- **Issues/Bug reports:** https://github.com/cnecrea/vehicule/issues
-- **Debug logging:** Consultați [DEBUG.md](DEBUG.md)
-- **Changelog:** Consultați [CHANGELOG.md](CHANGELOG.md)
-- **Contribuții:** Pull requests sunt binevenite!
+[↑ Înapoi la cuprins](#top)
+
+Verifică:
+1. Ai instalat-o din HACS sau manual (fișierele trebuie să fie în `custom_components/vehicule/`)
+2. Ai restartat Home Assistant după instalare
+3. Nu sunt erori în **Settings → System → Logs** legate de `vehicule`
 
 ---
 
-*Ultima actualizare: 2026-03-13*
+## Cum activez debug logging?
+
+[↑ Înapoi la cuprins](#top)
+
+Consultă [DEBUG.md](DEBUG.md) pentru instrucțiuni detaliate. Pe scurt, adaugă în `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    custom_components.vehicule: debug
+```
+
+Apoi restartează Home Assistant și verifică logurile din **Settings → System → Logs**.
+
+---
+
+## Trebuie să șterg și să readaug vehiculul după actualizare?
+
+[↑ Înapoi la cuprins](#top)
+
+De regulă nu. Configurațiile și datele vehiculelor sunt stocate în baza de date HA și nu sunt afectate de actualizări. Entitățile noi sunt adăugate automat, cele existente sunt actualizate, iar cele care nu mai sunt necesare sunt auto-șterse.
+
+Poate fi necesar doar dacă au fost schimbări majore în structura entităților (rar) sau documentația de upgrade o recomandă explicit.
+
+---
+
+## Îmi place proiectul. Cum pot să-l susțin?
+
+[↑ Înapoi la cuprins](#top)
+
+- ⭐ Oferă un **star** pe [GitHub](https://github.com/cnecrea/vehicule/)
+- 🐛 **Raportează probleme** — deschide un [issue](https://github.com/cnecrea/vehicule/issues)
+- 🔀 **Contribuie cu cod** — trimite un pull request
+- ☕ **Donează** prin [Buy Me a Coffee](https://buymeacoffee.com/cnecrea)
+- 📢 **Distribuie** proiectul prietenilor sau comunității tale
