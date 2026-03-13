@@ -91,6 +91,14 @@ CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE: Final = "trusa_prim_ajutor_data_expirare"
 CONF_EXTINCTOR_DATA_EXPIRARE: Final = "extinctor_data_expirare"
 
 # ─────────────────────────────────────────────
+# Rovinieta
+# ─────────────────────────────────────────────
+CONF_ROVINIETA_DATA_INCEPUT: Final = "rovinieta_data_inceput"
+CONF_ROVINIETA_DATA_SFARSIT: Final = "rovinieta_data_sfarsit"
+CONF_ROVINIETA_CATEGORIE: Final = "rovinieta_categorie"
+CONF_ROVINIETA_PRET: Final = "rovinieta_pret"
+
+# ─────────────────────────────────────────────
 # Mentenanță – Frâne
 # ─────────────────────────────────────────────
 CONF_PLACUTE_FRANA_KM_ULTIMUL: Final = "placute_frana_km_ultimul"
@@ -125,6 +133,13 @@ STARE_VALID: Final = "valid"
 # Servicii
 # ─────────────────────────────────────────────
 SERVICE_ACTUALIZEAZA_DATE: Final = "actualizeaza_date"
+SERVICE_EXPORTA_DATE: Final = "exporta_date"
+SERVICE_IMPORTA_DATE: Final = "importa_date"
+
+# ─────────────────────────────────────────────
+# Backup
+# ─────────────────────────────────────────────
+BACKUP_VERSION: Final = 1
 
 # ─────────────────────────────────────────────
 # Atribute dispozitiv
