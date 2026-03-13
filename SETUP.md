@@ -10,7 +10,8 @@ Integrare Home Assistant pentru gestionarea și urmărirea vehiculelor personale
 
 Pentru o demonstrație completă a procesului de instalare și configurare, urmăriți tutorialul video:
 
-[![Tutorial instalare Vehicule](https://img.youtube.com/vi/UbDGPWnDncU/maxresdefault.jpg)](https://www.youtube.com/watch?v=UbDGPWnDncU)
+[![Tutorial instalare Vehicule](https://img.youtube.com/vi/vCtOu52y5bM/maxresdefault.jpg)](https://www.youtube.com/watch?v=vCtOu52y5bM)
+
 
 Acest video prezintă procesul complet de instalare și configurare a integrării:
 - instalare prin HACS
