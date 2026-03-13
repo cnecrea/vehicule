@@ -1,0 +1,255 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add vehicle",
+        "description": "Enter the vehicle's license plate number, without spaces or hyphens (e.g.: B123ABC). Other details can be added later from the integration settings.",
+        "data": {
+          "nr_inmatriculare": "License plate number"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This vehicle is already configured."
+    },
+    "error": {
+      "numar_gol": "The license plate number cannot be empty.",
+      "format_numar_invalid": "Invalid format. Enter the number without spaces, hyphens or other special characters (e.g.: B123ABC).",
+      "format_data_invalid": "Invalid date format. Use the format DD.MM.YYYY (e.g.: 18.04.2026).",
+      "an_invalid": "Invalid year. Enter a valid 4-digit year (check the allowed range)."
+    }
+  },
+  "options": {
+    "error": {
+      "format_data_invalid": "Invalid date format. Use the format DD.MM.YYYY (e.g.: 18.04.2026).",
+      "an_invalid": "Invalid year. Enter a valid 4-digit year (check the allowed range).",
+      "km_necesar": "You must first configure the vehicle's current mileage (main menu → Update mileage)."
+    },
+    "step": {
+      "init": {
+        "title": "Vehicle management",
+        "description": "Choose the data category you want to edit.",
+        "menu_options": {
+          "identificare": "Identification data",
+          "rca": "RCA insurance",
+          "itp": "Technical inspection (ITP)",
+          "administrativ": "Administrative / tax data",
+          "mentenanta": "Maintenance",
+          "kilometraj": "Update mileage"
+        }
+      },
+      "identificare": {
+        "title": "Vehicle identification data",
+        "description": "Fill in the identification data. All fields are optional.",
+        "data": {
+          "marca": "Make",
+          "model": "Model",
+          "vin": "VIN (chassis number)",
+          "serie_civ": "Vehicle identity card serial (CIV)",
+          "an_fabricatie": "Year of manufacture",
+          "an_prima_inmatriculare": "Year of first registration",
+          "motorizare": "Engine type",
+          "combustibil": "Fuel type",
+          "capacitate_cilindrica": "Engine displacement",
+          "putere_kw": "Power (kW)",
+          "putere_cp": "Power (HP)"
+        }
+      },
+      "rca": {
+        "title": "RCA insurance",
+        "description": "Enter the RCA policy details.",
+        "data": {
+          "rca_numar_polita": "Policy number",
+          "rca_companie": "Insurance company",
+          "rca_data_emitere": "Issue date",
+          "rca_data_expirare": "Expiry date",
+          "rca_cost": "Cost (RON)"
+        }
+      },
+      "itp": {
+        "title": "Periodic technical inspection (ITP)",
+        "description": "Enter the ITP details.",
+        "data": {
+          "itp_data_expirare": "ITP expiry date",
+          "itp_statie": "Inspection station",
+          "itp_kilometraj": "Mileage at ITP"
+        }
+      },
+      "administrativ": {
+        "title": "Administrative / tax data",
+        "description": "Enter the administrative and tax data.",
+        "data": {
+          "proprietar": "Owner",
+          "tip_proprietate": "Ownership type",
+          "impozit_suma": "Annual vehicle tax (RON)",
+          "impozit_scadenta": "Tax due date",
+          "impozit_localitate": "City hall / locality",
+          "leasing_data_expirare": "Leasing expiry date"
+        }
+      },
+      "leasing_data": {
+        "title": "Leasing expiry date",
+        "description": "You selected the ownership type 'Leasing'. Enter the leasing contract expiry date.",
+        "data": {
+          "leasing_data_expirare": "Leasing expiry date"
+        }
+      },
+      "mentenanta": {
+        "title": "Maintenance",
+        "description": "Choose the maintenance category.",
+        "menu_options": {
+          "revizie_ulei": "Oil service",
+          "distributie": "Timing belt/chain",
+          "anvelope": "Tires",
+          "baterie": "Battery",
+          "frane": "Brakes (pads and discs)",
+          "trusa_prim_ajutor": "First aid kit",
+          "extinctor": "Fire extinguisher"
+        }
+      },
+      "revizie_ulei": {
+        "title": "Oil service",
+        "description": "Enter the details about the last oil service and the interval until the next one.",
+        "data": {
+          "revizie_ulei_km_ultimul": "Km at last service",
+          "revizie_ulei_km_urmator": "Km at next service",
+          "revizie_ulei_data": "Last service date"
+        }
+      },
+      "distributie": {
+        "title": "Timing belt/chain",
+        "description": "Enter the details about the timing belt/chain.",
+        "data": {
+          "distributie_km_ultimul": "Km at last replacement",
+          "distributie_km_urmator": "Km at next replacement",
+          "distributie_data": "Last replacement date"
+        }
+      },
+      "anvelope": {
+        "title": "Tires",
+        "description": "Enter the tire fitting dates.",
+        "data": {
+          "anvelope_vara_data": "Summer tires fitting date",
+          "anvelope_iarna_data": "Winter tires fitting date"
+        }
+      },
+      "baterie": {
+        "title": "Battery",
+        "description": "Enter the date of the last battery replacement.",
+        "data": {
+          "baterie_data_schimb": "Battery replacement date"
+        }
+      },
+      "frane": {
+        "title": "Brakes",
+        "description": "Enter the details about brake pads and discs.",
+        "data": {
+          "placute_frana_km_ultimul": "Brake pads – Km at last replacement",
+          "placute_frana_km_urmator": "Brake pads – Km at next replacement",
+          "discuri_frana_km_ultimul": "Brake discs – Km at last replacement",
+          "discuri_frana_km_urmator": "Brake discs – Km at next replacement"
+        }
+      },
+      "trusa_prim_ajutor": {
+        "title": "First aid kit",
+        "description": "Enter the first aid kit expiry date (mandatory in Romania).",
+        "data": {
+          "trusa_prim_ajutor_data_expirare": "Expiry date"
+        }
+      },
+      "extinctor": {
+        "title": "Fire extinguisher",
+        "description": "Enter the fire extinguisher expiry date (mandatory in Romania).",
+        "data": {
+          "extinctor_data_expirare": "Expiry date"
+        }
+      },
+      "kilometraj": {
+        "title": "Update mileage",
+        "description": "Update the vehicle's current mileage.",
+        "data": {
+          "km_curent": "Current mileage"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "informatii": {
+        "name": "Information"
+      },
+      "kilometraj": {
+        "name": "Mileage"
+      },
+      "rca": {
+        "name": "RCA"
+      },
+      "itp": {
+        "name": "ITP"
+      },
+      "impozit": {
+        "name": "Tax"
+      },
+      "leasing": {
+        "name": "Leasing"
+      },
+      "revizie_ulei": {
+        "name": "Oil service"
+      },
+      "distributie": {
+        "name": "Timing belt"
+      },
+      "anvelope": {
+        "name": "Tires"
+      },
+      "baterie": {
+        "name": "Battery"
+      },
+      "placute_frana": {
+        "name": "Brake pads"
+      },
+      "discuri_frana": {
+        "name": "Brake discs"
+      },
+      "trusa_prim_ajutor": {
+        "name": "First aid kit"
+      },
+      "extinctor": {
+        "name": "Fire extinguisher"
+      }
+    }
+  },
+  "selector": {
+    "combustibil": {
+      "options": {
+        "benzina": "Gasoline",
+        "diesel": "Diesel",
+        "hybrid": "Hybrid",
+        "electric": "Electric",
+        "gpl": "LPG"
+      }
+    },
+    "tip_proprietate": {
+      "options": {
+        "proprietate": "Owned",
+        "leasing": "Leasing"
+      }
+    }
+  },
+  "services": {
+    "actualizeaza_date": {
+      "name": "Update data",
+      "description": "Update vehicle data (current mileage).",
+      "fields": {
+        "nr_inmatriculare": {
+          "name": "License plate number",
+          "description": "The vehicle's license plate number (e.g.: B123ABC)."
+        },
+        "km_curent": {
+          "name": "Current mileage",
+          "description": "The vehicle's current mileage."
+        }
+      }
+    }
+  }
+}
