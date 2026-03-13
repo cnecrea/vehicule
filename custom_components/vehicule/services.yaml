@@ -1,18 +1,12 @@
 # Servicii pentru integrarea Vehicule
 actualizeaza_date:
-  name: "Actualizează date"
-  description: "Actualizează datele unui vehicul (kilometraj curent)."
   fields:
     nr_inmatriculare:
-      name: "Număr de înmatriculare"
-      description: "Numărul de înmatriculare al vehiculului (ex: B123ABC)."
       required: true
       example: "B123ABC"
       selector:
         text:
     km_curent:
-      name: "Kilometraj curent"
-      description: "Kilometrajul actual al vehiculului."
       required: true
       example: 50000
       selector:
@@ -22,3 +16,19 @@ actualizeaza_date:
           step: 1
           unit_of_measurement: "km"
           mode: box
+
+exporta_date:
+  fields:
+    nr_inmatriculare:
+      required: true
+      example: "B123ABC"
+      selector:
+        text:
+
+importa_date:
+  fields:
+    cale_fisier:
+      required: true
+      example: "/config/vehicule_backup_b123abc.json"
+      selector:
+        text:
