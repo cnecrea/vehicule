@@ -46,13 +46,17 @@ Când integrarea vehicule se încarcă pentru prima dată sau după o repornire,
 [custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B123ABC
 [custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 8 posibili)
 [custom_components.vehicule] Serviciul vehicule.actualizeaza_date a fost înregistrat
+[custom_components.vehicule] Serviciul vehicule.exporta_date a fost înregistrat
+[custom_components.vehicule] Serviciul vehicule.importa_date a fost înregistrat
 ```
 
 **Explicație:**
 - `Configurez vehiculul: B123ABC` – Integrarea a inițializat vehiculul cu numărul de înmatriculare
 - `Creez senzorii...` – Se procesează entitățile care vor fi create
-- `5 senzori creați (din 8 posibili)` – Doar 5 senzori sunt relevanți pentru datele tale (de ex., dacă nu ai date despre consum, senzorul de consum nu va fi creat)
+- `5 senzori creați (din 15 posibili)` – Doar 5 senzori sunt relevanți pentru datele tale (de ex., dacă nu ai date despre rovinieta, senzorul de rovinieta nu va fi creat)
 - `Serviciul vehicule.actualizeaza_date a fost înregistrat` – Serviciul pentru actualizare manuală a datelor este disponibil
+- `Serviciul vehicule.exporta_date a fost înregistrat` – Serviciul pentru export backup JSON
+- `Serviciul vehicule.importa_date a fost înregistrat` – Serviciul pentru import backup JSON
 
 ---
 
@@ -154,6 +158,8 @@ Atunci când Home Assistant pornește, secvența este:
 3. **Înregistrarea serviciilor**
    ```
    [custom_components.vehicule] Serviciul vehicule.actualizeaza_date a fost înregistrat
+   [custom_components.vehicule] Serviciul vehicule.exporta_date a fost înregistrat
+   [custom_components.vehicule] Serviciul vehicule.importa_date a fost înregistrat
    ```
 
 După aceasta, integrarea este gata de utilizare.
