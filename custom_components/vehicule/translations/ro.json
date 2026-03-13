@@ -22,7 +22,8 @@
   "options": {
     "error": {
       "format_data_invalid": "Format dată invalid. Folosiți formatul ZZ.LL.AAAA (ex: 18.04.2026).",
-      "an_invalid": "An invalid. Introduceți un an valid cu 4 cifre (verificați intervalul permis)."
+      "an_invalid": "An invalid. Introduceți un an valid cu 4 cifre (verificați intervalul permis).",
+      "km_necesar": "Trebuie să configurați mai întâi kilometrajul curent al vehiculului (meniul principal → Actualizare kilometraj)."
     },
     "step": {
       "init": {
@@ -83,6 +84,13 @@
           "impozit_suma": "Impozit auto anual (RON)",
           "impozit_scadenta": "Data scadență impozit",
           "impozit_localitate": "Primărie / localitate",
+          "leasing_data_expirare": "Data expirare leasing"
+        }
+      },
+      "leasing_data": {
+        "title": "Data expirare leasing",
+        "description": "Ați selectat tipul de proprietate 'Leasing'. Introduceți data de expirare a contractului de leasing.",
+        "data": {
           "leasing_data_expirare": "Data expirare leasing"
         }
       },
