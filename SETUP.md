@@ -4,6 +4,21 @@ Integrare Home Assistant pentru gestionarea și urmărirea vehiculelor personale
 
 **Depozitul oficial:** https://github.com/cnecrea/vehicule
 
+# Instalare și configurare
+
+## Ghid video de instalare
+
+Pentru o demonstrație completă a procesului de instalare și configurare, urmăriți tutorialul video:
+
+[![Tutorial instalare Vehicule](https://img.youtube.com/vi/UbDGPWnDncU/maxresdefault.jpg)](https://www.youtube.com/watch?v=UbDGPWnDncU)
+
+Acest video prezintă procesul complet de instalare și configurare a integrării:
+- instalare prin HACS
+- configurarea inițială
+- verificarea senzorilor creați
+
+---
+
 ## Cerințe preliminare
 
 - Home Assistant versiune **2025.11.0 sau mai nouă**
