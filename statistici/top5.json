@@ -1,19 +1,4 @@
 {
-  "generat_la": "2026-03-13T03:10:19.104Z",
-  "top": [
-    {
-      "tag": "1.0.0",
-      "nume": "1.0.0",
-      "prerelease": false,
-      "publicat_la": "2026-03-12T23:35:36Z",
-      "descarcari": 0,
-      "assets": [
-        {
-          "nume": "vehicule.zip",
-          "descarcari": 0,
-          "url": "https://github.com/cnecrea/vehicule/releases/download/1.0.0/vehicule.zip"
-        }
-      ]
-    }
-  ]
+  "generat_la": "2026-03-13T12:00:19.813Z",
+  "top": []
 }
