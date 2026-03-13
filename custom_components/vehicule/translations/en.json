@@ -33,6 +33,7 @@
           "identificare": "Identification data",
           "rca": "RCA insurance",
           "itp": "Technical inspection (ITP)",
+          "rovinieta": "Vignette (Rovinieta)",
           "administrativ": "Administrative / tax data",
           "mentenanta": "Maintenance",
           "kilometraj": "Update mileage"
@@ -73,6 +74,16 @@
           "itp_data_expirare": "ITP expiry date",
           "itp_statie": "Inspection station",
           "itp_kilometraj": "Mileage at ITP"
+        }
+      },
+      "rovinieta": {
+        "title": "Vignette (Rovinieta)",
+        "description": "Enter the road vignette (Rovinieta) details.",
+        "data": {
+          "rovinieta_data_inceput": "Start date",
+          "rovinieta_data_sfarsit": "End date",
+          "rovinieta_categorie": "Category",
+          "rovinieta_pret": "Price (RON)"
         }
       },
       "administrativ": {
@@ -187,6 +198,9 @@
       "itp": {
         "name": "ITP"
       },
+      "rovinieta": {
+        "name": "Vignette"
+      },
       "impozit": {
         "name": "Tax"
       },
@@ -248,6 +262,26 @@
         "km_curent": {
           "name": "Current mileage",
           "description": "The vehicle's current mileage."
+        }
+      }
+    },
+    "exporta_date": {
+      "name": "Export vehicle data",
+      "description": "Exports a vehicle's data to a JSON file in the Home Assistant config directory.",
+      "fields": {
+        "nr_inmatriculare": {
+          "name": "License plate number",
+          "description": "The license plate number of the vehicle to export (e.g.: B123ABC)."
+        }
+      }
+    },
+    "importa_date": {
+      "name": "Import vehicle data",
+      "description": "Imports a vehicle's data from a JSON backup file. If the vehicle does not exist, it will be created automatically.",
+      "fields": {
+        "cale_fisier": {
+          "name": "File path",
+          "description": "Full path to the JSON backup file (e.g.: /config/vehicule_backup_b123abc.json)."
         }
       }
     }
