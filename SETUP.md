@@ -91,7 +91,17 @@ Informații despre asigurarea de răspundere civilă:
 #### 3. ITP
 Informații despre inspecția tehnică periodică:
 - **Data expirării:** Data până la care ITP este valabil
-- **Stație ITP:** Locul unde a fost efectuată inspectia
+- **Stație ITP:** Locul unde a fost efectuată inspecția
+- **Kilometraj la ITP:** Km la momentul inspecției
+
+> **Notă:** Necesită setarea prealabilă a kilometrajului curent.
+
+#### 3b. Rovinieta
+Informații despre vinieta de drum:
+- **Data început:** Data de la care este valabilă
+- **Data sfârșit:** Data până la care este valabilă
+- **Categorie:** Categoria rovinietei
+- **Preț (RON):** Costul rovinietei
 
 #### 4. Administrativ
 Alte informații administrative:
@@ -135,7 +145,7 @@ Toate datele de tip dată se introduc în format **ZZ.LL.AAAA**, unde:
 
 ## Senzori creați
 
-Pentru fiecare vehicul adăugat, integrarea creează până la 14 senzori potențiali:
+Pentru fiecare vehicul adăugat, integrarea creează până la 15 senzori potențiali:
 
 ### Senzori de dată
 
@@ -201,6 +211,28 @@ automation:
         data:
           nr_inmatriculare: "B123ABC"
           kilometraj: 51000
+```
+
+## Serviciul vehicule.exporta_date
+
+Exportă datele unui vehicul într-un fișier JSON în directorul `/config/`:
+
+```yaml
+service: vehicule.exporta_date
+data:
+  nr_inmatriculare: "B123ABC"
+```
+
+Fișierul generat: `/config/vehicule_backup_b123abc.json`
+
+## Serviciul vehicule.importa_date
+
+Importă datele unui vehicul dintr-un fișier JSON. Dacă vehiculul nu există, va fi creat automat:
+
+```yaml
+service: vehicule.importa_date
+data:
+  cale_fisier: "/config/vehicule_backup_b123abc.json"
 ```
 
 ## Carduri Lovelace
@@ -296,6 +328,6 @@ Pentru probleme, sugestii sau raportare de bug-uri, vizitați:
 
 ---
 
-**Versiune:** 1.0.0
+**Versiune:** 1.1.0
 **Compatibilitate:** Home Assistant 2025.11.0+
 **Licență:** RO (România)
