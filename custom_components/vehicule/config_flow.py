@@ -62,6 +62,10 @@ from .const import (
     CONF_REVIZIE_ULEI_DATA,
     CONF_REVIZIE_ULEI_KM_ULTIMUL,
     CONF_REVIZIE_ULEI_KM_URMATOR,
+    CONF_ROVINIETA_CATEGORIE,
+    CONF_ROVINIETA_DATA_INCEPUT,
+    CONF_ROVINIETA_DATA_SFARSIT,
+    CONF_ROVINIETA_PRET,
     CONF_SERIE_CIV,
     CONF_TIP_PROPRIETATE,
     CONF_EXTINCTOR_DATA_EXPIRARE,
@@ -139,6 +143,26 @@ class VehiculeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+    async def async_step_import(
+        self, import_data: dict[str, Any]
+    ) -> config_entries.ConfigFlowResult:
+        """Creează o intrare din import (utilizat de serviciul importa_date).
+
+        Acest pas este apelat programatic, nu de utilizator.
+        Se ocupă doar de crearea intrării cu numărul de înmatriculare.
+        Opțiunile sunt setate ulterior de serviciul de import.
+        """
+        numar = import_data[CONF_NR_INMATRICULARE].strip().upper()
+        numar_normalizat = normalizeaza_numar(numar)
+
+        await self.async_set_unique_id(numar_normalizat)
+        self._abort_if_unique_id_configured()
+
+        return self.async_create_entry(
+            title=numar,
+            data={CONF_NR_INMATRICULARE: numar},
+        )
+
     @staticmethod
     @callback
     def async_get_options_flow(
@@ -172,6 +196,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                 "identificare",
                 "rca",
                 "itp",
+                "rovinieta",
                 "administrativ",
                 "mentenanta",
                 "kilometraj",
@@ -364,6 +389,55 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="itp",
+            data_schema=self.add_suggested_values_to_schema(schema, valori),
+            errors=errors,
+        )
+
+    # ─────────────────────────────────────────
+    # 3b. Rovinieta
+    # ─────────────────────────────────────────
+    async def async_step_rovinieta(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Formular pentru datele rovinietei."""
+        errors: dict[str, str] = {}
+        chei = {
+            CONF_ROVINIETA_DATA_INCEPUT,
+            CONF_ROVINIETA_DATA_SFARSIT,
+            CONF_ROVINIETA_CATEGORIE,
+            CONF_ROVINIETA_PRET,
+        }
+
+        if user_input is not None:
+            errors = valideaza_campuri_data(user_input)
+            if not errors:
+                return self._salveaza_si_inchide(
+                    converteste_date_la_iso(user_input), chei
+                )
+
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_ROVINIETA_DATA_INCEPUT): _selector_data(),
+                vol.Optional(CONF_ROVINIETA_DATA_SFARSIT): _selector_data(),
+                vol.Optional(CONF_ROVINIETA_CATEGORIE): selector.TextSelector(),
+                vol.Optional(CONF_ROVINIETA_PRET): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
+            }
+        )
+
+        valori = pregateste_valori_sugerate(
+            {**self.config_entry.options, **(user_input or {})}
+            if user_input
+            else self.config_entry.options
+        )
+
+        return self.async_show_form(
+            step_id="rovinieta",
             data_schema=self.add_suggested_values_to_schema(schema, valori),
             errors=errors,
         )
