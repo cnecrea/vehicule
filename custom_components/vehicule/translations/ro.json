@@ -33,6 +33,7 @@
           "identificare": "Date de identificare",
           "rca": "Asigurare RCA",
           "itp": "Inspecție tehnică (ITP)",
+          "rovinieta": "Rovinieta",
           "administrativ": "Date administrative / fiscale",
           "mentenanta": "Mentenanță",
           "kilometraj": "Actualizare kilometraj"
@@ -73,6 +74,16 @@
           "itp_data_expirare": "Data expirare ITP",
           "itp_statie": "Stația unde a fost efectuat",
           "itp_kilometraj": "Kilometraj la ITP"
+        }
+      },
+      "rovinieta": {
+        "title": "Rovinieta",
+        "description": "Introduceți datele rovinietei.",
+        "data": {
+          "rovinieta_data_inceput": "Data început",
+          "rovinieta_data_sfarsit": "Data sfârșit",
+          "rovinieta_categorie": "Categorie",
+          "rovinieta_pret": "Preț (RON)"
         }
       },
       "administrativ": {
@@ -187,6 +198,9 @@
       "itp": {
         "name": "ITP"
       },
+      "rovinieta": {
+        "name": "Rovinieta"
+      },
       "impozit": {
         "name": "Impozit"
       },
@@ -248,6 +262,26 @@
         "km_curent": {
           "name": "Kilometraj curent",
           "description": "Kilometrajul actual al vehiculului."
+        }
+      }
+    },
+    "exporta_date": {
+      "name": "Exportă date vehicul",
+      "description": "Exportă datele unui vehicul într-un fișier JSON în directorul config al Home Assistant.",
+      "fields": {
+        "nr_inmatriculare": {
+          "name": "Număr de înmatriculare",
+          "description": "Numărul de înmatriculare al vehiculului de exportat (ex: B123ABC)."
+        }
+      }
+    },
+    "importa_date": {
+      "name": "Importă date vehicul",
+      "description": "Importă datele unui vehicul dintr-un fișier JSON de backup. Dacă vehiculul nu există, va fi creat automat.",
+      "fields": {
+        "cale_fisier": {
+          "name": "Cale fișier",
+          "description": "Calea completă către fișierul JSON de backup (ex: /config/vehicule_backup_b123abc.json)."
         }
       }
     }
