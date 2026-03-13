@@ -49,8 +49,9 @@ Datele sunt organizate în meniuri categorizate:
 | **Identificare** | Marca, model, tip combustibil, cilindree, an de fabricație, an de înmatriculare, tip proprietate (proprietate/leasing) |
 | **RCA** | Număr poliță, data expirării, asigurator |
 | **ITP** | Data expirării, locul testării |
-| **Administrativ** | Număr de serie (VIN), taxa auto, certificat de înregistrare, alte documente |
-| **Mentenanță** | Informații despre revizie ulei, distribuție, anvelope, baterie, frâne, trusă de prim ajutor, extinctor |
+| **Rovinieta** | Data început, data sfârșit, categorie, preț |
+| **Administrativ** | Proprietar, tip proprietate, impozit, leasing |
+| **Mentenanță** | Revizie ulei, distribuție, anvelope, baterie, frâne, trusă de prim ajutor, extinctor |
 | **Kilometraj** | Kilometrajul curent (actualizat manual sau prin automatizări) |
 
 ### Cum funcționează formatele de dată?
@@ -103,6 +104,9 @@ Formatele de dată sunt adaptate la localizarea românească:
 - Zile prescurtate: Lun, Mar, Mie, etc.
 - Luni prescurtate: Ian, Feb, Mar, etc.
 
+### Trebuie setat kilometrajul înainte de ITP și mentenanță?
+Da. Începând cu versiunea 1.1.0, pașii **ITP**, **Revizie ulei**, **Distribuție** și **Frâne** necesită ca kilometrajul curent să fie configurat. Dacă nu este setat, formularul afișează o eroare și trebuie mai întâi să accesați **Actualizare kilometraj** din meniul principal.
+
 ---
 
 ## 4. Mentenanță
@@ -147,6 +151,13 @@ Extinctorul este **obligatoriu în România**. Funcționează identic cu trusa d
 2. Completați **Data expirare** (ZZ.LL.AAAA)
 3. Senzorul arată zilele rămase până la expirare
 4. Atributul „Stare" arată „Valid" sau „Expirat"
+
+### Cum urmăresc rovinieta?
+1. Accesați meniul de configurare → **Rovinieta**
+2. Completați **Data început** și **Data sfârșit** (ZZ.LL.AAAA)
+3. Opțional: categorie și preț
+4. Senzorul arată zilele rămase până la expirare (similar cu RCA/ITP)
+5. Atributul „Stare" arată „Valid" sau „Expirat"
 
 ---
 
@@ -255,7 +266,36 @@ automation:
 
 ---
 
-## 7. Troubleshooting
+## 7. Backup și Restore
+
+### Cum fac backup la datele unui vehicul?
+Folosiți serviciul `vehicule.exporta_date`:
+1. Accesați **Developer Tools → Services**
+2. Selectați `vehicule.exporta_date`
+3. Introduceți numărul de înmatriculare (ex: `B123ABC`)
+4. Apăsați **Call Service**
+
+Fișierul JSON este salvat automat în `/config/vehicule_backup_b123abc.json`.
+
+### Cum restaurez datele unui vehicul?
+Folosiți serviciul `vehicule.importa_date`:
+1. Copiați fișierul JSON de backup în directorul `/config/`
+2. Accesați **Developer Tools → Services**
+3. Selectați `vehicule.importa_date`
+4. Introduceți calea completă (ex: `/config/vehicule_backup_b123abc.json`)
+5. Apăsați **Call Service**
+
+Dacă vehiculul nu există, va fi creat automat. Dacă există, opțiunile sunt actualizate.
+
+### Ce conține fișierul de backup?
+Fișierul JSON include: versiunea de backup, domeniul integrării, numărul de înmatriculare, data exportului și toate opțiunile configurate (identificare, documente, mentenanță, kilometraj).
+
+### Pot folosi backup/restore pentru a migra între instanțe HA?
+Da. Exportați pe instanța sursă, copiați fișierul JSON pe instanța destinație și importați. Vehiculul va fi creat automat dacă nu există.
+
+---
+
+## 8. Troubleshooting
 
 ### Un senzor arată "Unknown"
 **Cauze:**
@@ -293,7 +333,7 @@ Consultați [DEBUG.md](DEBUG.md) pentru instrucțiuni detaliate asupra activări
 
 ---
 
-## 8. Actualizări
+## 9. Actualizări
 
 ### Cum actualizez integrarea?
 **Dacă folosiți HACS:**
@@ -334,4 +374,4 @@ Nu, în 99% dintre cazuri. Configurația și datele sunt păstrate. Poate fi nec
 
 ---
 
-*Ultima actualizare: 2026-03-12*
+*Ultima actualizare: 2026-03-13*
