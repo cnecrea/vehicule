@@ -325,11 +325,17 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     async def async_step_itp(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
-        """Formular pentru datele ITP."""
+        """Formular pentru datele ITP.
+
+        Necesită kilometrajul curent configurat (câmpul „Kilometraj la ITP"
+        depinde de referința km a vehiculului).
+        """
         errors: dict[str, str] = {}
         chei = {CONF_ITP_DATA_EXPIRARE, CONF_ITP_STATIE, CONF_ITP_KILOMETRAJ}
 
-        if user_input is not None:
+        if not self._verifica_km_curent():
+            errors["base"] = "km_necesar"
+        elif user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
@@ -371,8 +377,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         """Formular pentru datele administrative și fiscale.
 
         Câmpul „Data expirare leasing" apare DOAR dacă tip_proprietate = leasing.
-        Dacă utilizatorul schimbă din leasing în proprietate, câmpul dispare
-        la următoarea deschidere (și datele de leasing sunt șterse).
+
+        Comportament dinamic:
+        - Dacă vehiculul e DEJA în leasing (salvat), câmpul apare inline.
+        - Dacă utilizatorul SCHIMBĂ acum în leasing (prima dată), se salvează
+          datele admin și se redirectează la pasul „leasing_data" pentru dată.
+        - Dacă utilizatorul schimbă din leasing în altceva, câmpul dispare
+          și datele de leasing sunt șterse automat.
         """
         errors: dict[str, str] = {}
         chei = {
@@ -380,20 +391,27 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             CONF_IMPOZIT_SUMA, CONF_IMPOZIT_SCADENTA, CONF_IMPOZIT_LOCALITATE,
         }
 
+        # Determinăm dacă vehiculul e DEJA în leasing (din opțiunile salvate)
+        este_leasing = (
+            self.config_entry.options.get(CONF_TIP_PROPRIETATE) == "leasing"
+        )
+
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 date_convertite = converteste_date_la_iso(user_input)
-                # Includem CONF_LEASING_DATA_EXPIRARE în chei_formular:
-                # - dacă NU e leasing → cheia nu e în user_input → se șterge
-                # - dacă E leasing → se salvează/șterge normal
                 chei.add(CONF_LEASING_DATA_EXPIRARE)
-                return self._salveaza_si_inchide(date_convertite, chei)
 
-        # Determinăm dacă vehiculul e în leasing (din opțiunile salvate)
-        este_leasing = (
-            self.config_entry.options.get(CONF_TIP_PROPRIETATE) == "leasing"
-        )
+                # Dacă utilizatorul tocmai a selectat „leasing" și NU era
+                # deja leasing → câmpul de dată NU era vizibil în formular.
+                # Salvăm temporar datele admin și redirectăm la pasul dedicat.
+                tip_selectat = user_input.get(CONF_TIP_PROPRIETATE)
+                if tip_selectat == "leasing" and not este_leasing:
+                    self._date_admin_temp = date_convertite
+                    self._chei_admin_temp = chei
+                    return await self.async_step_leasing_data()
+
+                return self._salveaza_si_inchide(date_convertite, chei)
 
         # Construim schema dinamic
         campuri: dict[vol.Optional, Any] = {
@@ -416,7 +434,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             vol.Optional(CONF_IMPOZIT_LOCALITATE): selector.TextSelector(),
         }
 
-        # Câmpul leasing apare DOAR dacă vehiculul e în leasing
+        # Câmpul leasing apare inline DOAR dacă vehiculul e DEJA în leasing
         if este_leasing:
             campuri[vol.Optional(CONF_LEASING_DATA_EXPIRARE)] = _selector_data()
 
@@ -430,6 +448,42 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="administrativ",
+            data_schema=self.add_suggested_values_to_schema(schema, valori),
+            errors=errors,
+        )
+
+    async def async_step_leasing_data(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Pas suplimentar: data expirare leasing.
+
+        Apare automat după ce utilizatorul selectează „Leasing" ca tip
+        de proprietate (prima dată). La vizitele ulterioare, câmpul
+        apare inline în formularul administrativ.
+        """
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            errors = valideaza_campuri_data(user_input)
+            if not errors:
+                date_convertite = converteste_date_la_iso(user_input)
+                # Combinăm datele administrative cu data de leasing
+                date_complete = {**self._date_admin_temp, **date_convertite}
+                chei_complete = self._chei_admin_temp | {
+                    CONF_LEASING_DATA_EXPIRARE
+                }
+                return self._salveaza_si_inchide(date_complete, chei_complete)
+
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_LEASING_DATA_EXPIRARE): _selector_data(),
+            }
+        )
+
+        valori = pregateste_valori_sugerate(self.config_entry.options)
+
+        return self.async_show_form(
+            step_id="leasing_data",
             data_schema=self.add_suggested_values_to_schema(schema, valori),
             errors=errors,
         )
@@ -458,14 +512,20 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     async def async_step_revizie_ulei(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
-        """Formular pentru revizia de ulei."""
+        """Formular pentru revizia de ulei.
+
+        Necesită kilometrajul curent configurat (senzorul calculează
+        km rămași până la următoarea revizie).
+        """
         errors: dict[str, str] = {}
         chei = {
             CONF_REVIZIE_ULEI_KM_ULTIMUL, CONF_REVIZIE_ULEI_KM_URMATOR,
             CONF_REVIZIE_ULEI_DATA,
         }
 
-        if user_input is not None:
+        if not self._verifica_km_curent():
+            errors["base"] = "km_necesar"
+        elif user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
@@ -508,14 +568,20 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     async def async_step_distributie(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
-        """Formular pentru distribuție."""
+        """Formular pentru distribuție.
+
+        Necesită kilometrajul curent configurat (senzorul calculează
+        km rămași până la următoarea schimbare distribuție).
+        """
         errors: dict[str, str] = {}
         chei = {
             CONF_DISTRIBUTIE_KM_ULTIMUL, CONF_DISTRIBUTIE_KM_URMATOR,
             CONF_DISTRIBUTIE_DATA,
         }
 
-        if user_input is not None:
+        if not self._verifica_km_curent():
+            errors["base"] = "km_necesar"
+        elif user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
@@ -625,12 +691,20 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     async def async_step_frane(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
-        """Formular pentru plăcuțe și discuri de frână."""
+        """Formular pentru plăcuțe și discuri de frână.
+
+        Necesită kilometrajul curent configurat (senzorii calculează
+        km rămași până la următoarea schimbare plăcuțe/discuri).
+        """
+        errors: dict[str, str] = {}
         chei = {
             CONF_PLACUTE_FRANA_KM_ULTIMUL, CONF_PLACUTE_FRANA_KM_URMATOR,
             CONF_DISCURI_FRANA_KM_ULTIMUL, CONF_DISCURI_FRANA_KM_URMATOR,
         }
-        if user_input is not None:
+
+        if not self._verifica_km_curent():
+            errors["base"] = "km_necesar"
+        elif user_input is not None:
             return self._salveaza_si_inchide(user_input, chei)
 
         schema = vol.Schema(
@@ -671,6 +745,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             data_schema=self.add_suggested_values_to_schema(
                 schema, self.config_entry.options
             ),
+            errors=errors,
         )
 
     # ── 5f. Trusă de prim ajutor ──
@@ -804,3 +879,11 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                     optiuni_noi.pop(cheie, None)
 
         return self.async_create_entry(data=optiuni_noi)
+
+    def _verifica_km_curent(self) -> bool:
+        """Verifică dacă kilometrajul curent este configurat.
+
+        Pașii ITP, Revizie ulei, Distribuție și Frâne necesită km_curent
+        deoarece senzorii lor depind de kilometrajul vehiculului.
+        """
+        return self.config_entry.options.get(CONF_KM_CURENT) is not None
