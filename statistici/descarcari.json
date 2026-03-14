@@ -1,8 +1,22 @@
 {
-  "generat_la": "2026-03-14T23:45:57.231Z",
+  "generat_la": "2026-03-14T23:47:52.606Z",
   "repository": "cnecrea/vehicule",
   "total_descarcari": 0,
   "pe_release": [
+    {
+      "tag": "1.3.0",
+      "nume": "1.3.0",
+      "prerelease": false,
+      "publicat_la": "2026-03-14T23:47:44Z",
+      "descarcari": 0,
+      "assets": [
+        {
+          "nume": "vehicule.zip",
+          "descarcari": 0,
+          "url": "https://github.com/cnecrea/vehicule/releases/download/1.3.0/vehicule.zip"
+        }
+      ]
+    },
     {
       "tag": "1.2.0",
       "nume": "1.2.0",
@@ -47,6 +61,12 @@
     }
   ],
   "pe_asset": [
+    {
+      "tag": "1.3.0",
+      "nume": "vehicule.zip",
+      "descarcari": 0,
+      "url": "https://github.com/cnecrea/vehicule/releases/download/1.3.0/vehicule.zip"
+    },
     {
       "tag": "1.2.0",
       "nume": "vehicule.zip",
