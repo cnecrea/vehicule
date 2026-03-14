@@ -31,6 +31,11 @@ from .const import (
     CONF_ANVELOPE_VARA_DATA,
     CONF_BATERIE_DATA_SCHIMB,
     CONF_CAPACITATE_CILINDRICA,
+    CONF_CASCO_COMPANIE,
+    CONF_CASCO_COST,
+    CONF_CASCO_DATA_EMITERE,
+    CONF_CASCO_DATA_EXPIRARE,
+    CONF_CASCO_NUMAR_POLITA,
     CONF_COMBUSTIBIL,
     CONF_DISCURI_FRANA_KM_ULTIMUL,
     CONF_DISCURI_FRANA_KM_URMATOR,
@@ -195,6 +200,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             menu_options=[
                 "identificare",
                 "rca",
+                "casco",
                 "itp",
                 "rovinieta",
                 "administrativ",
@@ -340,6 +346,54 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
 
         return self.async_show_form(
             step_id="rca",
+            data_schema=self.add_suggested_values_to_schema(schema, valori),
+            errors=errors,
+        )
+
+    # ─────────────────────────────────────────
+    # 2b. Asigurare Casco
+    # ─────────────────────────────────────────
+    async def async_step_casco(
+        self, user_input: dict[str, Any] | None = None
+    ) -> config_entries.ConfigFlowResult:
+        """Formular pentru datele asigurării Casco."""
+        errors: dict[str, str] = {}
+        chei = {
+            CONF_CASCO_NUMAR_POLITA, CONF_CASCO_COMPANIE,
+            CONF_CASCO_DATA_EMITERE, CONF_CASCO_DATA_EXPIRARE, CONF_CASCO_COST,
+        }
+
+        if user_input is not None:
+            errors = valideaza_campuri_data(user_input)
+            if not errors:
+                return self._salveaza_si_inchide(
+                    converteste_date_la_iso(user_input), chei
+                )
+
+        schema = vol.Schema(
+            {
+                vol.Optional(CONF_CASCO_NUMAR_POLITA): selector.TextSelector(),
+                vol.Optional(CONF_CASCO_COMPANIE): selector.TextSelector(),
+                vol.Optional(CONF_CASCO_DATA_EMITERE): _selector_data(),
+                vol.Optional(CONF_CASCO_DATA_EXPIRARE): _selector_data(),
+                vol.Optional(CONF_CASCO_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
+            }
+        )
+
+        valori = pregateste_valori_sugerate(
+            {**self.config_entry.options, **(user_input or {})}
+            if user_input
+            else self.config_entry.options
+        )
+
+        return self.async_show_form(
+            step_id="casco",
             data_schema=self.add_suggested_values_to_schema(schema, valori),
             errors=errors,
         )
