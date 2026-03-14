@@ -16,7 +16,6 @@
 [![Descărcări ultima versiune](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/ultima_release.json)](https://github.com/cnecrea/vehicule/releases/latest)
 ![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fcnecrea%2Fvehicule&label=afi%C8%99%C4%83ri&icon=github&color=%23198754&message=&style=flat&tz=Europe%2FBucharest)
 
-
 Integrare custom pentru [Home Assistant](https://www.home-assistant.io/) care permite **gestionarea vehiculelor și documentelor** acestora — asigurări, taxe, revizii, anvelope, frâne, baterie, trusă de prim ajutor și extinctor — direct din interfața HA.
 
 Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul rulează local.
@@ -26,7 +25,7 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 ## Ce face integrarea
 
 - **Vehicule multiple**: adaugă un număr nelimitat de vehicule, fiecare identificat prin placa de înmatriculare
-- **Documente cu termen**: RCA, ITP, rovinieta, impozit, leasing — cu calculul automat al zilelor rămase
+- **Documente cu termen**: RCA, Casco, ITP, rovinieta, impozit, leasing — cu calculul automat al zilelor rămase
 - **Mentenanță**: revizie ulei, distribuție, anvelope, baterie, plăcuțe și discuri de frână — cu calculul km rămași
 - **Echipament obligatoriu**: trusă de prim ajutor, extinctor — cu avertizare la expirare
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
@@ -79,6 +78,7 @@ Integrarea creează un device cu un singur senzor (Informații). Restul senzoril
 Gestionare vehicul
 ├── Date de identificare
 ├── Asigurare RCA
+├── Asigurare Casco
 ├── Inspecție tehnică (ITP)
 ├── Rovinieta
 ├── Date administrative / fiscale
@@ -99,7 +99,7 @@ Datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: `18.04.2026`). 
 
 ## Entități create
 
-Pentru fiecare vehicul, integrarea creează până la **15 senzori**. Aceștia apar condiționat — doar dacă au date completate.
+Pentru fiecare vehicul, integrarea creează până la **16 senzori**. Aceștia apar condiționat — doar dacă au date completate.
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
@@ -112,6 +112,7 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici).
 | Informații | `informatii` | — | Mereu | Marcă + Model (sau nr. înmatriculare) |
 | Kilometraj | `kilometraj` | km | `km_curent` completat | Km curent |
 | RCA | `rca` | zile | `rca_data_expirare` completat | Zile rămase până la expirare |
+| Casco | `casco` | zile | `casco_data_expirare` completat | Zile rămase până la expirare |
 | ITP | `itp` | zile | `itp_data_expirare` completat | Zile rămase până la expirare |
 | Rovinieta | `rovinieta` | zile | `rovinieta_data_sfarsit` completat | Zile rămase până la expirare |
 | Impozit | `impozit` | zile | `impozit_scadenta` completat | Zile rămase până la scadență |
@@ -130,6 +131,8 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici).
 Fiecare senzor expune atribute suplimentare. Câteva exemple:
 
 **RCA** — atribute: Număr poliță, Companie, Data emitere, Data expirare, Cost (RON), Stare (Valid/Expirat)
+
+**Casco** — atribute: Număr poliță, Companie, Data emitere, Data expirare, Cost (RON), Stare (Valid/Expirat)
 
 **ITP** — atribute: Data expirare, Stație, Kilometraj la ITP, Stare (Valid/Expirat)
 
@@ -224,6 +227,10 @@ automation:
           for_each:
             - entity: sensor.vehicule_b123abc_rca
               name: "RCA"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_casco
+              name: "Casco"
               prag: 30
               unitate: "zile"
             - entity: sensor.vehicule_b123abc_itp
