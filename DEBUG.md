@@ -44,7 +44,7 @@ Când integrarea vehicule se încarcă pentru prima dată sau după o repornire,
 ```
 [custom_components.vehicule] Configurez vehiculul: B123ABC
 [custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B123ABC
-[custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 8 posibili)
+[custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 16 posibili)
 [custom_components.vehicule] Serviciul vehicule.actualizeaza_date a fost înregistrat
 [custom_components.vehicule] Serviciul vehicule.exporta_date a fost înregistrat
 [custom_components.vehicule] Serviciul vehicule.importa_date a fost înregistrat
@@ -53,7 +53,7 @@ Când integrarea vehicule se încarcă pentru prima dată sau după o repornire,
 **Explicație:**
 - `Configurez vehiculul: B123ABC` – Integrarea a inițializat vehiculul cu numărul de înmatriculare
 - `Creez senzorii...` – Se procesează entitățile care vor fi create
-- `5 senzori creați (din 15 posibili)` – Doar 5 senzori sunt relevanți pentru datele tale (de ex., dacă nu ai date despre rovinieta, senzorul de rovinieta nu va fi creat)
+- `5 senzori creați (din 16 posibili)` – Doar 5 senzori sunt relevanți pentru datele tale (de ex., dacă nu ai date despre rovinieta, senzorul de rovinieta nu va fi creat)
 - `Serviciul vehicule.actualizeaza_date a fost înregistrat` – Serviciul pentru actualizare manuală a datelor este disponibil
 - `Serviciul vehicule.exporta_date a fost înregistrat` – Serviciul pentru export backup JSON
 - `Serviciul vehicule.importa_date a fost înregistrat` – Serviciul pentru import backup JSON
@@ -67,7 +67,7 @@ Când actualizezi datele printr-un apel de serviciu:
 
 ```
 [custom_components.vehicule] Actualizez datele pentru B123ABC – km: 45320
-[custom_components.vehicule.sensor] Vehicul B123ABC: 6 senzori creați (din 8 posibili)
+[custom_components.vehicule.sensor] Vehicul B123ABC: 6 senzori creați (din 16 posibili)
 ```
 
 Senzori noi pot apărea când completezi date (de ex., dacă adaugi prima dată consumul, senzorul de consum va fi creat).
@@ -152,7 +152,7 @@ Atunci când Home Assistant pornește, secvența este:
 2. **Crearea senzorilor**
    ```
    [custom_components.vehicule.sensor] Creez senzorii pentru vehiculul: B123ABC
-   [custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 8 posibili)
+   [custom_components.vehicule.sensor] Vehicul B123ABC: 5 senzori creați (din 16 posibili)
    ```
 
 3. **Înregistrarea serviciilor**
