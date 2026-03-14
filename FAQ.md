@@ -3,12 +3,12 @@
 ## 1. Generale
 
 ### Ce este integrarea Vehicule?
-Vehicule este o integrare Home Assistant personalizată care vă permite să gestionați vehiculele și documentele acestora (RCA, ITP, rovinieta, asigurări, reparații, etc.) direct în Home Assistant. Puteți urmări expirarea documentelor, kilometrajul și istoricul mentenanței pentru fiecare vehicul.
+Vehicule este o integrare Home Assistant personalizată care vă permite să gestionați vehiculele și documentele acestora (RCA, Casco, ITP, rovinieta, asigurări, reparații, etc.) direct în Home Assistant. Puteți urmări expirarea documentelor, kilometrajul și istoricul mentenanței pentru fiecare vehicul.
 
 ### Pentru cine este aceasta integrare?
 Aceasta integrare este ideală pentru:
 - Proprietarii de multiple vehicule care doresc centralizarea datelor
-- Persoane care doresc automatizări pentru remindere la expirarea RCA/ITP
+- Persoane care doresc automatizări pentru remindere la expirarea RCA/Casco/ITP
 - Utilizatori care doresc urmărirea consumului de carburant și mentenanței
 - Oricine preferă să-și gestioneze datele 100% local, fără servicii cloud externe
 
@@ -48,6 +48,7 @@ Datele sunt organizate în meniuri categorizate:
 |-----------|-----------|
 | **Identificare** | Marca, model, tip combustibil, cilindree, an de fabricație, an de înmatriculare, tip proprietate (proprietate/leasing) |
 | **RCA** | Număr poliță, data expirării, asigurator |
+| **Casco** | Număr poliță, data expirării, asigurator |
 | **ITP** | Data expirării, locul testării |
 | **Rovinieta** | Data început, data sfârșit, categorie, preț |
 | **Administrativ** | Proprietar, tip proprietate, impozit, leasing |
@@ -81,10 +82,11 @@ Da. Începând cu versiunea 1.1.0, pașii **ITP**, **Revizie ulei**, **Distribu�
 ## 3. Senzori
 
 ### Ce senzori are fiecare vehicul?
-Integrarea creează până la **15 senzori** pentru fiecare vehicul:
+Integrarea creează până la **16 senzori** pentru fiecare vehicul:
 - Informații (marcă + model)
 - Kilometraj
 - RCA (zile rămase)
+- Casco (zile rămase)
 - ITP (zile rămase)
 - Rovinieta (zile rămase)
 - Impozit (zile rămase)
@@ -108,7 +110,7 @@ Integrarea creează până la **15 senzori** pentru fiecare vehicul:
 - **Valori negative (ex: -10):** documentul a expirat cu 10 zile în urmă
 - **0:** expira astazi
 
-Exemplu: dacă RCA expira în 15 zile, `days_remaining = 15`. Dacă a expirat acum 3 zile, `days_remaining = -3`.
+Exemplu: dacă RCA expira în 15 zile, `days_remaining = 15`. Dacă a expirat acum 3 zile, `days_remaining = -3`. Același atribut se aplică și pentru Casco.
 
 ### De ce datele se afișează în format românesc?
 Formatele de dată sunt adaptate la localizarea românească:
@@ -210,6 +212,10 @@ automation:
               name: "RCA"
               prag: 30
               unitate: "zile"
+            - entity: sensor.vehicule_b123abc_casco
+              name: "Casco"
+              prag: 30
+              unitate: "zile"
             - entity: sensor.vehicule_b123abc_itp
               name: "ITP"
               prag: 30
@@ -250,7 +256,7 @@ automation:
 
 Adăugați sau eliminați senzori din lista `for_each` după necesități. Pragurile se pot ajusta liber.
 
-### Cum creez o notificare doar pentru RCA sau ITP?
+### Cum creez o notificare doar pentru RCA, Casco sau ITP?
 Folosiți automatizarea de mai sus, dar păstrați doar senzorul dorit în lista `for_each`.
 
 ### Cum actualizez kilometrajul automat?
@@ -272,7 +278,7 @@ automation:
 ```
 
 ### Care sunt cazurile de utilizare frecvente?
-- Notificări push pe telefon când expira RCA/ITP
+- Notificări push pe telefon când expira RCA/Casco/ITP
 - Trimitere de email/SMS cu reminder-uri
 - Logging datelor în baze de date externe (ex: InfluxDB)
 - Integrare cu dashboard-uri custom în Lovelace
