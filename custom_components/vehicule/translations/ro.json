@@ -136,7 +136,8 @@
         "data": {
           "revizie_ulei_km_ultimul": "Km la ultima revizie",
           "revizie_ulei_km_urmator": "Km la următoarea revizie",
-          "revizie_ulei_data": "Data ultima revizie"
+          "revizie_ulei_data": "Data ultima revizie",
+          "revizie_ulei_cost": "Cost (RON)"
         }
       },
       "distributie": {
@@ -145,7 +146,8 @@
         "data": {
           "distributie_km_ultimul": "Km la ultima schimbare",
           "distributie_km_urmator": "Km la următoarea schimbare",
-          "distributie_data": "Data ultima schimbare"
+          "distributie_data": "Data ultima schimbare",
+          "distributie_cost": "Cost (RON)"
         }
       },
       "anvelope": {
@@ -153,14 +155,16 @@
         "description": "Introduceți datele de montare a anvelopelor.",
         "data": {
           "anvelope_vara_data": "Data montare anvelope de vară",
-          "anvelope_iarna_data": "Data montare anvelope de iarnă"
+          "anvelope_iarna_data": "Data montare anvelope de iarnă",
+          "anvelope_cost": "Cost (RON)"
         }
       },
       "baterie": {
         "title": "Baterie",
         "description": "Introduceți data ultimului schimb de baterie.",
         "data": {
-          "baterie_data_schimb": "Data schimb baterie"
+          "baterie_data_schimb": "Data schimb baterie",
+          "baterie_cost": "Cost (RON)"
         }
       },
       "frane": {
@@ -169,8 +173,10 @@
         "data": {
           "placute_frana_km_ultimul": "Plăcuțe frână – Km ultima schimbare",
           "placute_frana_km_urmator": "Plăcuțe frână – Km următoarea schimbare",
+          "placute_frana_cost": "Plăcuțe frână – Cost (RON)",
           "discuri_frana_km_ultimul": "Discuri frână – Km ultima schimbare",
-          "discuri_frana_km_urmator": "Discuri frână – Km următoarea schimbare"
+          "discuri_frana_km_urmator": "Discuri frână – Km următoarea schimbare",
+          "discuri_frana_cost": "Discuri frână – Cost (RON)"
         }
       },
       "trusa_prim_ajutor": {
@@ -245,6 +251,9 @@
       },
       "extinctor": {
         "name": "Extinctor"
+      },
+      "cost_total": {
+        "name": "Cost total"
       }
     }
   },
