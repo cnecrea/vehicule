@@ -22,6 +22,7 @@ Senzori posibili per vehicul:
 - Discuri frână (km rămași) – vizibil când discuri_frana_km_urmator este setat
 - Trusă prim ajutor (zile rămase) – vizibil când trusa_prim_ajutor_data_expirare este setat
 - Extinctor (zile rămase) – vizibil când extinctor_data_expirare este setat
+- Cost total (RON) – vizibil când cel puțin un cost este completat
 """
 
 from __future__ import annotations
@@ -46,8 +47,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import (
     CONF_AN_FABRICATIE,
     CONF_AN_PRIMA_INMATRICULARE,
+    CONF_ANVELOPE_COST,
     CONF_ANVELOPE_IARNA_DATA,
     CONF_ANVELOPE_VARA_DATA,
+    CONF_BATERIE_COST,
     CONF_BATERIE_DATA_SCHIMB,
     CONF_CAPACITATE_CILINDRICA,
     CONF_CASCO_COMPANIE,
@@ -56,14 +59,17 @@ from .const import (
     CONF_CASCO_DATA_EXPIRARE,
     CONF_CASCO_NUMAR_POLITA,
     CONF_COMBUSTIBIL,
+    CONF_DISCURI_FRANA_COST,
     CONF_DISCURI_FRANA_KM_ULTIMUL,
     CONF_DISCURI_FRANA_KM_URMATOR,
+    CONF_DISTRIBUTIE_COST,
     CONF_DISTRIBUTIE_DATA,
     CONF_DISTRIBUTIE_KM_ULTIMUL,
     CONF_DISTRIBUTIE_KM_URMATOR,
     CONF_IMPOZIT_LOCALITATE,
     CONF_IMPOZIT_SCADENTA,
     CONF_IMPOZIT_SUMA,
+    CONF_ISTORIC,
     CONF_ITP_DATA_EXPIRARE,
     CONF_ITP_KILOMETRAJ,
     CONF_ITP_STATIE,
@@ -73,6 +79,7 @@ from .const import (
     CONF_MODEL,
     CONF_MOTORIZARE,
     CONF_NR_INMATRICULARE,
+    CONF_PLACUTE_FRANA_COST,
     CONF_PLACUTE_FRANA_KM_ULTIMUL,
     CONF_PLACUTE_FRANA_KM_URMATOR,
     CONF_PROPRIETAR,
@@ -83,16 +90,17 @@ from .const import (
     CONF_RCA_DATA_EMITERE,
     CONF_RCA_DATA_EXPIRARE,
     CONF_RCA_NUMAR_POLITA,
+    CONF_REVIZIE_ULEI_COST,
     CONF_REVIZIE_ULEI_DATA,
     CONF_REVIZIE_ULEI_KM_ULTIMUL,
     CONF_REVIZIE_ULEI_KM_URMATOR,
-    CONF_SERIE_CIV,
-    CONF_TIP_PROPRIETATE,
-    CONF_EXTINCTOR_DATA_EXPIRARE,
     CONF_ROVINIETA_CATEGORIE,
     CONF_ROVINIETA_DATA_INCEPUT,
     CONF_ROVINIETA_DATA_SFARSIT,
     CONF_ROVINIETA_PRET,
+    CONF_SERIE_CIV,
+    CONF_TIP_PROPRIETATE,
+    CONF_EXTINCTOR_DATA_EXPIRARE,
     CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE,
     CONF_VIN,
     DOMAIN,
@@ -186,6 +194,99 @@ def _informatii_attr(data: dict[str, Any]) -> dict[str, Any]:
 def _filtrare_atribute(perechi: dict[str, Any]) -> dict[str, Any]:
     """Filtrează atributele: elimină valorile None și stringurile goale."""
     return {k: v for k, v in perechi.items() if v is not None and v != ""}
+
+
+# ─────────────────────────────────────────────
+# Funcții pentru senzorul Cost Total
+# ─────────────────────────────────────────────
+
+# Toate câmpurile de cost din integrare, grupate pe categorii
+_COSTURI_ASIGURARI = {
+    "RCA": CONF_RCA_COST,
+    "Casco": CONF_CASCO_COST,
+}
+_COSTURI_TAXE = {
+    "Rovinieta": CONF_ROVINIETA_PRET,
+    "Impozit auto": CONF_IMPOZIT_SUMA,
+}
+_COSTURI_MENTENANTA = {
+    "Revizie ulei": CONF_REVIZIE_ULEI_COST,
+    "Distribuție": CONF_DISTRIBUTIE_COST,
+    "Anvelope": CONF_ANVELOPE_COST,
+    "Baterie": CONF_BATERIE_COST,
+    "Plăcuțe frână": CONF_PLACUTE_FRANA_COST,
+    "Discuri frână": CONF_DISCURI_FRANA_COST,
+}
+
+
+def _suma_categorie(data: dict[str, Any], campuri: dict[str, str]) -> int:
+    """Calculează suma costurilor pentru o categorie."""
+    total = 0
+    for _eticheta, cheie in campuri.items():
+        val = intreg(data.get(cheie))
+        if val is not None:
+            total += val
+    return total
+
+
+def _cost_total_value(data: dict[str, Any]) -> int | None:
+    """Returnează costul total curent (toate categoriile sumate).
+
+    Returnează None dacă nu există niciun cost completat.
+    """
+    toate_cheile = (
+        list(_COSTURI_ASIGURARI.values())
+        + list(_COSTURI_TAXE.values())
+        + list(_COSTURI_MENTENANTA.values())
+    )
+    if not any(
+        data.get(k) is not None and data.get(k) != ""
+        for k in toate_cheile
+    ):
+        return None
+    return (
+        _suma_categorie(data, _COSTURI_ASIGURARI)
+        + _suma_categorie(data, _COSTURI_TAXE)
+        + _suma_categorie(data, _COSTURI_MENTENANTA)
+    )
+
+
+def _cost_total_attr(data: dict[str, Any]) -> dict[str, Any]:
+    """Atributele senzorului Cost Total: defalcare pe categorii + istoric."""
+    atribute: dict[str, Any] = {}
+
+    # Defalcare asigurări
+    s_asig = _suma_categorie(data, _COSTURI_ASIGURARI)
+    if s_asig > 0:
+        atribute["Asigurări (RON)"] = s_asig
+
+    # Defalcare taxe
+    s_taxe = _suma_categorie(data, _COSTURI_TAXE)
+    if s_taxe > 0:
+        atribute["Taxe și rovinieta (RON)"] = s_taxe
+
+    # Defalcare mentenanță
+    s_ment = _suma_categorie(data, _COSTURI_MENTENANTA)
+    if s_ment > 0:
+        atribute["Mentenanță (RON)"] = s_ment
+
+    # Istoric: număr de intrări și total costuri din istoric
+    istoric = data.get(CONF_ISTORIC, [])
+    if isinstance(istoric, list) and istoric:
+        atribute["Intrări istoric"] = len(istoric)
+        total_istoric = 0
+        for intrare in istoric:
+            if isinstance(intrare, dict):
+                date_intrare = intrare.get("date", {})
+                for cheie_et, val in date_intrare.items():
+                    if "cost" in cheie_et.lower() or "preț" in cheie_et.lower():
+                        v = intreg(val)
+                        if v is not None:
+                            total_istoric += v
+        if total_istoric > 0:
+            atribute["Total istoric (RON)"] = total_istoric
+
+    return atribute
 
 
 SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
@@ -332,6 +433,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 "Km ultima revizie": intreg(d.get(CONF_REVIZIE_ULEI_KM_ULTIMUL)),
                 "Km următoarea revizie": intreg(d.get(CONF_REVIZIE_ULEI_KM_URMATOR)),
                 "Data ultima revizie": format_data_ro(d.get(CONF_REVIZIE_ULEI_DATA)),
+                "Cost (RON)": intreg(d.get(CONF_REVIZIE_ULEI_COST)),
                 "Km curent": intreg(d.get(CONF_KM_CURENT)),
             }
         ),
@@ -351,6 +453,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 "Km ultima schimbare": intreg(d.get(CONF_DISTRIBUTIE_KM_ULTIMUL)),
                 "Km următoarea schimbare": intreg(d.get(CONF_DISTRIBUTIE_KM_URMATOR)),
                 "Data ultima schimbare": format_data_ro(d.get(CONF_DISTRIBUTIE_DATA)),
+                "Cost (RON)": intreg(d.get(CONF_DISTRIBUTIE_COST)),
                 "Km curent": intreg(d.get(CONF_KM_CURENT)),
             }
         ),
@@ -370,6 +473,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
             {
                 "Data montare vară": format_data_ro(d.get(CONF_ANVELOPE_VARA_DATA)),
                 "Data montare iarnă": format_data_ro(d.get(CONF_ANVELOPE_IARNA_DATA)),
+                "Cost (RON)": intreg(d.get(CONF_ANVELOPE_COST)),
                 "Sezon recomandat": (
                     "Iarnă"
                     if date.today().month in (11, 12, 1, 2, 3)
@@ -389,6 +493,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         attributes_fn=lambda d: _filtrare_atribute(
             {
                 "Data schimb": format_data_ro(d.get(CONF_BATERIE_DATA_SCHIMB)),
+                "Cost (RON)": intreg(d.get(CONF_BATERIE_COST)),
             }
         ),
     ),
@@ -406,6 +511,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
             {
                 "Km ultima schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_ULTIMUL)),
                 "Km următoarea schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_URMATOR)),
+                "Cost (RON)": intreg(d.get(CONF_PLACUTE_FRANA_COST)),
                 "Km curent": intreg(d.get(CONF_KM_CURENT)),
             }
         ),
@@ -424,6 +530,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
             {
                 "Km ultima schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_ULTIMUL)),
                 "Km următoarea schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_URMATOR)),
+                "Cost (RON)": intreg(d.get(CONF_DISCURI_FRANA_COST)),
                 "Km curent": intreg(d.get(CONF_KM_CURENT)),
             }
         ),
@@ -457,6 +564,18 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 "Stare": stare_document(d.get(CONF_EXTINCTOR_DATA_EXPIRARE)),
             }
         ),
+    ),
+    # ── Cost Total ──
+    VehiculeSensorDescription(
+        key="cost_total",
+        translation_key="cost_total",
+        icon="mdi:cash-multiple",
+        native_unit_of_measurement="RON",
+        state_class=SensorStateClass.MEASUREMENT,
+        suggested_display_precision=0,
+        vizibil_fn=lambda d: _cost_total_value(d) is not None,
+        value_fn=_cost_total_value,
+        attributes_fn=_cost_total_attr,
     ),
 ]
 
