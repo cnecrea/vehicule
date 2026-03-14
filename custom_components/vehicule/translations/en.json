@@ -136,7 +136,8 @@
         "data": {
           "revizie_ulei_km_ultimul": "Km at last service",
           "revizie_ulei_km_urmator": "Km at next service",
-          "revizie_ulei_data": "Last service date"
+          "revizie_ulei_data": "Last service date",
+          "revizie_ulei_cost": "Cost (RON)"
         }
       },
       "distributie": {
@@ -145,7 +146,8 @@
         "data": {
           "distributie_km_ultimul": "Km at last replacement",
           "distributie_km_urmator": "Km at next replacement",
-          "distributie_data": "Last replacement date"
+          "distributie_data": "Last replacement date",
+          "distributie_cost": "Cost (RON)"
         }
       },
       "anvelope": {
@@ -153,14 +155,16 @@
         "description": "Enter the tire fitting dates.",
         "data": {
           "anvelope_vara_data": "Summer tires fitting date",
-          "anvelope_iarna_data": "Winter tires fitting date"
+          "anvelope_iarna_data": "Winter tires fitting date",
+          "anvelope_cost": "Cost (RON)"
         }
       },
       "baterie": {
         "title": "Battery",
         "description": "Enter the date of the last battery replacement.",
         "data": {
-          "baterie_data_schimb": "Battery replacement date"
+          "baterie_data_schimb": "Battery replacement date",
+          "baterie_cost": "Cost (RON)"
         }
       },
       "frane": {
@@ -169,8 +173,10 @@
         "data": {
           "placute_frana_km_ultimul": "Brake pads – Km at last replacement",
           "placute_frana_km_urmator": "Brake pads – Km at next replacement",
+          "placute_frana_cost": "Brake pads – Cost (RON)",
           "discuri_frana_km_ultimul": "Brake discs – Km at last replacement",
-          "discuri_frana_km_urmator": "Brake discs – Km at next replacement"
+          "discuri_frana_km_urmator": "Brake discs – Km at next replacement",
+          "discuri_frana_cost": "Brake discs – Cost (RON)"
         }
       },
       "trusa_prim_ajutor": {
@@ -245,6 +251,9 @@
       },
       "extinctor": {
         "name": "Fire extinguisher"
+      },
+      "cost_total": {
+        "name": "Total cost"
       }
     }
   },
