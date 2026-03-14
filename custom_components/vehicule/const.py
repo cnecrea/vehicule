@@ -39,6 +39,15 @@ CONF_RCA_DATA_EXPIRARE: Final = "rca_data_expirare"
 CONF_RCA_COST: Final = "rca_cost"
 
 # ─────────────────────────────────────────────
+# Casco (Asigurare facultativă)
+# ─────────────────────────────────────────────
+CONF_CASCO_NUMAR_POLITA: Final = "casco_numar_polita"
+CONF_CASCO_COMPANIE: Final = "casco_companie"
+CONF_CASCO_DATA_EMITERE: Final = "casco_data_emitere"
+CONF_CASCO_DATA_EXPIRARE: Final = "casco_data_expirare"
+CONF_CASCO_COST: Final = "casco_cost"
+
+# ─────────────────────────────────────────────
 # ITP (Inspecție tehnică periodică)
 # ─────────────────────────────────────────────
 CONF_ITP_DATA_EXPIRARE: Final = "itp_data_expirare"
