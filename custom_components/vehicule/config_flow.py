@@ -24,11 +24,14 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 
 from .const import (
+    CATEGORII_ARHIVABILE,
     COMBUSTIBIL_OPTIONS,
     CONF_AN_FABRICATIE,
     CONF_AN_PRIMA_INMATRICULARE,
+    CONF_ANVELOPE_COST,
     CONF_ANVELOPE_IARNA_DATA,
     CONF_ANVELOPE_VARA_DATA,
+    CONF_BATERIE_COST,
     CONF_BATERIE_DATA_SCHIMB,
     CONF_CAPACITATE_CILINDRICA,
     CONF_CASCO_COMPANIE,
@@ -37,14 +40,17 @@ from .const import (
     CONF_CASCO_DATA_EXPIRARE,
     CONF_CASCO_NUMAR_POLITA,
     CONF_COMBUSTIBIL,
+    CONF_DISCURI_FRANA_COST,
     CONF_DISCURI_FRANA_KM_ULTIMUL,
     CONF_DISCURI_FRANA_KM_URMATOR,
+    CONF_DISTRIBUTIE_COST,
     CONF_DISTRIBUTIE_DATA,
     CONF_DISTRIBUTIE_KM_ULTIMUL,
     CONF_DISTRIBUTIE_KM_URMATOR,
     CONF_IMPOZIT_LOCALITATE,
     CONF_IMPOZIT_SCADENTA,
     CONF_IMPOZIT_SUMA,
+    CONF_ISTORIC,
     CONF_ITP_DATA_EXPIRARE,
     CONF_ITP_KILOMETRAJ,
     CONF_ITP_STATIE,
@@ -54,6 +60,7 @@ from .const import (
     CONF_MODEL,
     CONF_MOTORIZARE,
     CONF_NR_INMATRICULARE,
+    CONF_PLACUTE_FRANA_COST,
     CONF_PLACUTE_FRANA_KM_ULTIMUL,
     CONF_PLACUTE_FRANA_KM_URMATOR,
     CONF_PROPRIETAR,
@@ -64,6 +71,7 @@ from .const import (
     CONF_RCA_DATA_EMITERE,
     CONF_RCA_DATA_EXPIRARE,
     CONF_RCA_NUMAR_POLITA,
+    CONF_REVIZIE_ULEI_COST,
     CONF_REVIZIE_ULEI_DATA,
     CONF_REVIZIE_ULEI_KM_ULTIMUL,
     CONF_REVIZIE_ULEI_KM_URMATOR,
@@ -319,7 +327,8 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="rca",
                 )
 
         schema = vol.Schema(
@@ -367,7 +376,8 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="casco",
                 )
 
         schema = vol.Schema(
@@ -418,7 +428,8 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="itp",
                 )
 
         schema = vol.Schema(
@@ -466,7 +477,8 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="rovinieta",
                 )
 
         schema = vol.Schema(
@@ -648,7 +660,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         errors: dict[str, str] = {}
         chei = {
             CONF_REVIZIE_ULEI_KM_ULTIMUL, CONF_REVIZIE_ULEI_KM_URMATOR,
-            CONF_REVIZIE_ULEI_DATA,
+            CONF_REVIZIE_ULEI_DATA, CONF_REVIZIE_ULEI_COST,
         }
 
         if not self._verifica_km_curent():
@@ -657,7 +669,8 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="revizie_ulei",
                 )
 
         schema = vol.Schema(
@@ -677,6 +690,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                     )
                 ),
                 vol.Optional(CONF_REVIZIE_ULEI_DATA): _selector_data(),
+                vol.Optional(CONF_REVIZIE_ULEI_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
             }
         )
 
@@ -704,7 +724,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         errors: dict[str, str] = {}
         chei = {
             CONF_DISTRIBUTIE_KM_ULTIMUL, CONF_DISTRIBUTIE_KM_URMATOR,
-            CONF_DISTRIBUTIE_DATA,
+            CONF_DISTRIBUTIE_DATA, CONF_DISTRIBUTIE_COST,
         }
 
         if not self._verifica_km_curent():
@@ -713,7 +733,8 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="distributie",
                 )
 
         schema = vol.Schema(
@@ -733,6 +754,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                     )
                 ),
                 vol.Optional(CONF_DISTRIBUTIE_DATA): _selector_data(),
+                vol.Optional(CONF_DISTRIBUTIE_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
             }
         )
 
@@ -754,19 +782,27 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru anvelope."""
         errors: dict[str, str] = {}
-        chei = {CONF_ANVELOPE_VARA_DATA, CONF_ANVELOPE_IARNA_DATA}
+        chei = {CONF_ANVELOPE_VARA_DATA, CONF_ANVELOPE_IARNA_DATA, CONF_ANVELOPE_COST}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="anvelope",
                 )
 
         schema = vol.Schema(
             {
                 vol.Optional(CONF_ANVELOPE_VARA_DATA): _selector_data(),
                 vol.Optional(CONF_ANVELOPE_IARNA_DATA): _selector_data(),
+                vol.Optional(CONF_ANVELOPE_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
             }
         )
 
@@ -788,18 +824,26 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
     ) -> config_entries.ConfigFlowResult:
         """Formular pentru baterie."""
         errors: dict[str, str] = {}
-        chei = {CONF_BATERIE_DATA_SCHIMB}
+        chei = {CONF_BATERIE_DATA_SCHIMB, CONF_BATERIE_COST}
 
         if user_input is not None:
             errors = valideaza_campuri_data(user_input)
             if not errors:
                 return self._salveaza_si_inchide(
-                    converteste_date_la_iso(user_input), chei
+                    converteste_date_la_iso(user_input), chei,
+                    categorie_arhivare="baterie",
                 )
 
         schema = vol.Schema(
             {
                 vol.Optional(CONF_BATERIE_DATA_SCHIMB): _selector_data(),
+                vol.Optional(CONF_BATERIE_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
             }
         )
 
@@ -827,13 +871,17 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         errors: dict[str, str] = {}
         chei = {
             CONF_PLACUTE_FRANA_KM_ULTIMUL, CONF_PLACUTE_FRANA_KM_URMATOR,
+            CONF_PLACUTE_FRANA_COST,
             CONF_DISCURI_FRANA_KM_ULTIMUL, CONF_DISCURI_FRANA_KM_URMATOR,
+            CONF_DISCURI_FRANA_COST,
         }
 
         if not self._verifica_km_curent():
             errors["base"] = "km_necesar"
         elif user_input is not None:
-            return self._salveaza_si_inchide(user_input, chei)
+            return self._salveaza_si_inchide(
+                user_input, chei, categorie_arhivare="frane"
+            )
 
         schema = vol.Schema(
             {
@@ -851,6 +899,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(CONF_PLACUTE_FRANA_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
                 vol.Optional(CONF_DISCURI_FRANA_KM_ULTIMUL): selector.NumberSelector(
                     selector.NumberSelectorConfig(
                         min=0, max=9_999_999, step=1,
@@ -862,6 +917,13 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                     selector.NumberSelectorConfig(
                         min=0, max=9_999_999, step=1,
                         unit_of_measurement="km",
+                        mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Optional(CONF_DISCURI_FRANA_COST): selector.NumberSelector(
+                    selector.NumberSelectorConfig(
+                        min=0, max=99999, step=1,
+                        unit_of_measurement="RON",
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
@@ -979,6 +1041,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         self,
         user_input: dict[str, Any],
         chei_formular: set[str] | None = None,
+        categorie_arhivare: str | None = None,
     ) -> config_entries.ConfigFlowResult:
         """Îmbină datele noi cu opțiunile existente și închide fluxul.
 
@@ -989,9 +1052,32 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
           (HA nu trimite câmpuri vol.Optional lăsate goale de utilizator)
         - Câmpuri nemodificate (absent din user_input ȘI din chei_formular):
           rămân neschimbate
+
+        Dacă categorie_arhivare este specificată, datele vechi sunt salvate
+        automat în lista _istoric înainte de suprascrierea cu date noi.
         """
         optiuni_noi = {**self.config_entry.options}
 
+        # ── Arhivare automată a datelor vechi ──
+        if categorie_arhivare and categorie_arhivare in CATEGORII_ARHIVABILE:
+            campuri_categorie = CATEGORII_ARHIVABILE[categorie_arhivare]
+            date_vechi: dict[str, Any] = {}
+            for eticheta, cheie_const in campuri_categorie.items():
+                val = optiuni_noi.get(cheie_const)
+                if val is not None and val != "":
+                    date_vechi[eticheta] = val
+            if date_vechi:
+                istoric = list(optiuni_noi.get(CONF_ISTORIC, []))
+                istoric.append(
+                    {
+                        "tip": categorie_arhivare,
+                        "data_arhivare": date.today().isoformat(),
+                        "date": date_vechi,
+                    }
+                )
+                optiuni_noi[CONF_ISTORIC] = istoric
+
+        # ── Îmbinare date noi ──
         for cheie, valoare in user_input.items():
             if valoare is not None and valoare != "":
                 optiuni_noi[cheie] = valoare
