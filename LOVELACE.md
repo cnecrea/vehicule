@@ -51,6 +51,7 @@ Următoarele componente custom trebuie instalate din [HACS](https://hacs.xyz/) �
 | Discuri frână | `sensor.vehicule_b123abc_discuri_frana` | km | Km rămași |
 | Trusă prim ajutor | `sensor.vehicule_b123abc_trusa_prim_ajutor` | zile | Zile rămase |
 | Extinctor | `sensor.vehicule_b123abc_extinctor` | zile | Zile rămase |
+| Cost total | `sensor.vehicule_b123abc_cost_total` | RON | Suma costurilor curente |
 
 ---
 
