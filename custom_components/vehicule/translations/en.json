@@ -32,6 +32,7 @@
         "menu_options": {
           "identificare": "Identification data",
           "rca": "RCA insurance",
+          "casco": "Casco insurance",
           "itp": "Technical inspection (ITP)",
           "rovinieta": "Vignette (Rovinieta)",
           "administrativ": "Administrative / tax data",
@@ -65,6 +66,17 @@
           "rca_data_emitere": "Issue date",
           "rca_data_expirare": "Expiry date",
           "rca_cost": "Cost (RON)"
+        }
+      },
+      "casco": {
+        "title": "Casco insurance",
+        "description": "Enter the Casco (comprehensive) policy details.",
+        "data": {
+          "casco_numar_polita": "Policy number",
+          "casco_companie": "Insurance company",
+          "casco_data_emitere": "Issue date",
+          "casco_data_expirare": "Expiry date",
+          "casco_cost": "Cost (RON)"
         }
       },
       "itp": {
@@ -194,6 +206,9 @@
       },
       "rca": {
         "name": "RCA"
+      },
+      "casco": {
+        "name": "Casco"
       },
       "itp": {
         "name": "ITP"
