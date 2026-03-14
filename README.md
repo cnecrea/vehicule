@@ -2,7 +2,19 @@
 
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
 [![GitHub Release](https://img.shields.io/github/v/release/cnecrea/vehicule)](https://github.com/cnecrea/vehicule/releases)
-![Total descărcări](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/descarcari.json)
+[![Licență](https://img.shields.io/github/license/cnecrea/vehicule)](https://github.com/cnecrea/vehicule/blob/main/LICENSE.md)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2025.11%2B-41BDF5?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
+[![GitHub Stars](https://img.shields.io/github/stars/cnecrea/vehicule?style=flat&logo=github)](https://github.com/cnecrea/vehicule/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/cnecrea/vehicule?style=flat&logo=github)](https://github.com/cnecrea/vehicule/network/members)
+[![GitHub Watchers](https://img.shields.io/github/watchers/cnecrea/vehicule?style=flat&logo=github)](https://github.com/cnecrea/vehicule/watchers)
+[![GitHub Issues](https://img.shields.io/github/issues/cnecrea/vehicule)](https://github.com/cnecrea/vehicule/issues)
+[![Ultimul Commit](https://img.shields.io/github/last-commit/cnecrea/vehicule)](https://github.com/cnecrea/vehicule/commits/main)
+[![Commit-uri/lună](https://img.shields.io/github/commit-activity/m/cnecrea/vehicule)](https://github.com/cnecrea/vehicule/commits/main)
+[![Dimensiune Repo](https://img.shields.io/github/repo-size/cnecrea/vehicule)](https://github.com/cnecrea/vehicule)
+[![Limbaj Principal](https://img.shields.io/github/languages/top/cnecrea/vehicule)](https://github.com/cnecrea/vehicule)
+[![Total descărcări](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/descarcari.json)](https://github.com/cnecrea/vehicule/releases)
+[![Descărcări ultima versiune](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/ultima_release.json)](https://github.com/cnecrea/vehicule/releases/latest)
+![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fcnecrea%2Fvehicule&label=vizitatori&icon=github&color=%23198754&message=&style=flat&tz=Europe%2FBucharest)
 
 
 Integrare custom pentru [Home Assistant](https://www.home-assistant.io/) care permite **gestionarea vehiculelor și documentelor** acestora — asigurări, taxe, revizii, anvelope, frâne, baterie, trusă de prim ajutor și extinctor — direct din interfața HA.
