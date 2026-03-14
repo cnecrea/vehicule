@@ -32,6 +32,7 @@
         "menu_options": {
           "identificare": "Date de identificare",
           "rca": "Asigurare RCA",
+          "casco": "Asigurare Casco",
           "itp": "Inspecție tehnică (ITP)",
           "rovinieta": "Rovinieta",
           "administrativ": "Date administrative / fiscale",
@@ -65,6 +66,17 @@
           "rca_data_emitere": "Data emitere",
           "rca_data_expirare": "Data expirare",
           "rca_cost": "Cost (RON)"
+        }
+      },
+      "casco": {
+        "title": "Asigurare Casco",
+        "description": "Introduceți datele poliței Casco.",
+        "data": {
+          "casco_numar_polita": "Număr poliță",
+          "casco_companie": "Companie de asigurare",
+          "casco_data_emitere": "Data emitere",
+          "casco_data_expirare": "Data expirare",
+          "casco_cost": "Cost (RON)"
         }
       },
       "itp": {
@@ -194,6 +206,9 @@
       },
       "rca": {
         "name": "RCA"
+      },
+      "casco": {
+        "name": "Casco"
       },
       "itp": {
         "name": "ITP"
