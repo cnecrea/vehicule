@@ -160,6 +160,7 @@ BACKUP_VERSION: Final = 1
 # Istoric costuri
 # ─────────────────────────────────────────────
 CONF_ISTORIC: Final = "_istoric"
+CONF_ARHIVARE_DATE: Final = "_arhivare_date"
 
 # ─────────────────────────────────────────────
 # Atribute dispozitiv
