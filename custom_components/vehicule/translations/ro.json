@@ -65,7 +65,8 @@
           "rca_companie": "Companie de asigurare",
           "rca_data_emitere": "Data emitere",
           "rca_data_expirare": "Data expirare",
-          "rca_cost": "Cost (RON)"
+          "rca_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "casco": {
@@ -76,7 +77,8 @@
           "casco_companie": "Companie de asigurare",
           "casco_data_emitere": "Data emitere",
           "casco_data_expirare": "Data expirare",
-          "casco_cost": "Cost (RON)"
+          "casco_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "itp": {
@@ -85,7 +87,8 @@
         "data": {
           "itp_data_expirare": "Data expirare ITP",
           "itp_statie": "Stația unde a fost efectuat",
-          "itp_kilometraj": "Kilometraj la ITP"
+          "itp_kilometraj": "Kilometraj la ITP",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "rovinieta": {
@@ -95,7 +98,8 @@
           "rovinieta_data_inceput": "Data început",
           "rovinieta_data_sfarsit": "Data sfârșit",
           "rovinieta_categorie": "Categorie",
-          "rovinieta_pret": "Preț (RON)"
+          "rovinieta_pret": "Preț (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "administrativ": {
@@ -137,7 +141,8 @@
           "revizie_ulei_km_ultimul": "Km la ultima revizie",
           "revizie_ulei_km_urmator": "Km la următoarea revizie",
           "revizie_ulei_data": "Data ultima revizie",
-          "revizie_ulei_cost": "Cost (RON)"
+          "revizie_ulei_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "distributie": {
@@ -147,7 +152,8 @@
           "distributie_km_ultimul": "Km la ultima schimbare",
           "distributie_km_urmator": "Km la următoarea schimbare",
           "distributie_data": "Data ultima schimbare",
-          "distributie_cost": "Cost (RON)"
+          "distributie_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "anvelope": {
@@ -156,7 +162,8 @@
         "data": {
           "anvelope_vara_data": "Data montare anvelope de vară",
           "anvelope_iarna_data": "Data montare anvelope de iarnă",
-          "anvelope_cost": "Cost (RON)"
+          "anvelope_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "baterie": {
@@ -164,7 +171,8 @@
         "description": "Introduceți data ultimului schimb de baterie.",
         "data": {
           "baterie_data_schimb": "Data schimb baterie",
-          "baterie_cost": "Cost (RON)"
+          "baterie_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "frane": {
@@ -176,7 +184,8 @@
           "placute_frana_cost": "Plăcuțe frână – Cost (RON)",
           "discuri_frana_km_ultimul": "Discuri frână – Km ultima schimbare",
           "discuri_frana_km_urmator": "Discuri frână – Km următoarea schimbare",
-          "discuri_frana_cost": "Discuri frână – Cost (RON)"
+          "discuri_frana_cost": "Discuri frână – Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
       },
       "trusa_prim_ajutor": {
