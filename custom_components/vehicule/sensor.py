@@ -28,12 +28,11 @@ Senzori posibili per vehicul:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import date
 from typing import Any, Callable
 
 from homeassistant.components.sensor import (
-    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
     SensorStateClass,
@@ -197,6 +196,74 @@ def _filtrare_atribute(perechi: dict[str, Any]) -> dict[str, Any]:
 
 
 # ─────────────────────────────────────────────
+# Funcții pentru istoric (per categorie)
+# ─────────────────────────────────────────────
+
+
+def _cu_istoric(
+    atribute: dict[str, Any], data: dict[str, Any], categorie: str
+) -> dict[str, Any]:
+    """Adaugă atribute de istoric la un dicționar de atribute existent.
+
+    Afișează:
+    - Reînnoiri anterioare: N
+    - Ultima arhivare: DD.MM.YYYY
+    - Detaliile ultimei intrări arhivate (cu prefix „Anterior – ")
+    - Cost total anterior (RON) agregat (dacă > 1 intrare și > 0)
+    """
+    istoric = data.get(CONF_ISTORIC, [])
+    if not isinstance(istoric, list):
+        return atribute
+
+    intrari = [
+        i for i in istoric
+        if isinstance(i, dict) and i.get("tip") == categorie
+    ]
+    if not intrari:
+        return atribute
+
+    # Număr total de reînnoiri
+    atribute["Reînnoiri anterioare"] = len(intrari)
+
+    # Ultima intrare arhivată — detalii
+    ultima = intrari[-1]
+    data_arhivare = ultima.get("data_arhivare")
+    if data_arhivare:
+        atribute["Ultima arhivare"] = format_data_ro(data_arhivare)
+
+    # Câmpurile din ultima intrare, cu prefix „Anterior – "
+    date_vechi = ultima.get("date", {})
+    for eticheta, val in date_vechi.items():
+        if val is None or val == "":
+            continue
+        # Încercăm conversie: dată RO > întreg > text brut
+        val_afisat: Any = val
+        val_data = format_data_ro(val)
+        if val_data is not None:
+            val_afisat = val_data
+        else:
+            v_int = intreg(val)
+            if v_int is not None:
+                val_afisat = v_int
+        atribute[f"Anterior – {eticheta}"] = val_afisat
+
+    # Cost total agregat din TOATE intrările (util dacă > 1 reînnoire)
+    if len(intrari) > 1:
+        total_cost = 0
+        for intrare_ist in intrari:
+            date_intrare = intrare_ist.get("date", {})
+            for cheie_et, v in date_intrare.items():
+                if "cost" in cheie_et.lower() or "preț" in cheie_et.lower():
+                    vi = intreg(v)
+                    if vi is not None:
+                        total_cost += vi
+        if total_cost > 0:
+            atribute["Cost total anterior (RON)"] = total_cost
+
+    return atribute
+
+
+# ─────────────────────────────────────────────
 # Funcții pentru senzorul Cost Total
 # ─────────────────────────────────────────────
 
@@ -252,7 +319,7 @@ def _cost_total_value(data: dict[str, Any]) -> int | None:
 
 
 def _cost_total_attr(data: dict[str, Any]) -> dict[str, Any]:
-    """Atributele senzorului Cost Total: defalcare pe categorii + istoric."""
+    """Atributele senzorului Cost Total: defalcare pe categorii curente."""
     atribute: dict[str, Any] = {}
 
     # Defalcare asigurări
@@ -269,22 +336,6 @@ def _cost_total_attr(data: dict[str, Any]) -> dict[str, Any]:
     s_ment = _suma_categorie(data, _COSTURI_MENTENANTA)
     if s_ment > 0:
         atribute["Mentenanță (RON)"] = s_ment
-
-    # Istoric: număr de intrări și total costuri din istoric
-    istoric = data.get(CONF_ISTORIC, [])
-    if isinstance(istoric, list) and istoric:
-        atribute["Intrări istoric"] = len(istoric)
-        total_istoric = 0
-        for intrare in istoric:
-            if isinstance(intrare, dict):
-                date_intrare = intrare.get("date", {})
-                for cheie_et, val in date_intrare.items():
-                    if "cost" in cheie_et.lower() or "preț" in cheie_et.lower():
-                        v = intreg(val)
-                        if v is not None:
-                            total_istoric += v
-        if total_istoric > 0:
-            atribute["Total istoric (RON)"] = total_istoric
 
     return atribute
 
@@ -319,15 +370,18 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         native_unit_of_measurement="zile",
         vizibil_fn=lambda d: _are_valoare(d, CONF_RCA_DATA_EXPIRARE),
         value_fn=lambda d: zile_ramase(d.get(CONF_RCA_DATA_EXPIRARE)),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Număr poliță": d.get(CONF_RCA_NUMAR_POLITA),
-                "Companie": d.get(CONF_RCA_COMPANIE),
-                "Data emitere": format_data_ro(d.get(CONF_RCA_DATA_EMITERE)),
-                "Data expirare": format_data_ro(d.get(CONF_RCA_DATA_EXPIRARE)),
-                "Cost (RON)": intreg(d.get(CONF_RCA_COST)),
-                "Stare": stare_document(d.get(CONF_RCA_DATA_EXPIRARE)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Număr poliță": d.get(CONF_RCA_NUMAR_POLITA),
+                    "Companie": d.get(CONF_RCA_COMPANIE),
+                    "Data emitere": format_data_ro(d.get(CONF_RCA_DATA_EMITERE)),
+                    "Data expirare": format_data_ro(d.get(CONF_RCA_DATA_EXPIRARE)),
+                    "Cost (RON)": intreg(d.get(CONF_RCA_COST)),
+                    "Stare": stare_document(d.get(CONF_RCA_DATA_EXPIRARE)),
+                }
+            ),
+            d, "rca",
         ),
     ),
     # ── Casco ──
@@ -338,15 +392,18 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         native_unit_of_measurement="zile",
         vizibil_fn=lambda d: _are_valoare(d, CONF_CASCO_DATA_EXPIRARE),
         value_fn=lambda d: zile_ramase(d.get(CONF_CASCO_DATA_EXPIRARE)),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Număr poliță": d.get(CONF_CASCO_NUMAR_POLITA),
-                "Companie": d.get(CONF_CASCO_COMPANIE),
-                "Data emitere": format_data_ro(d.get(CONF_CASCO_DATA_EMITERE)),
-                "Data expirare": format_data_ro(d.get(CONF_CASCO_DATA_EXPIRARE)),
-                "Cost (RON)": intreg(d.get(CONF_CASCO_COST)),
-                "Stare": stare_document(d.get(CONF_CASCO_DATA_EXPIRARE)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Număr poliță": d.get(CONF_CASCO_NUMAR_POLITA),
+                    "Companie": d.get(CONF_CASCO_COMPANIE),
+                    "Data emitere": format_data_ro(d.get(CONF_CASCO_DATA_EMITERE)),
+                    "Data expirare": format_data_ro(d.get(CONF_CASCO_DATA_EXPIRARE)),
+                    "Cost (RON)": intreg(d.get(CONF_CASCO_COST)),
+                    "Stare": stare_document(d.get(CONF_CASCO_DATA_EXPIRARE)),
+                }
+            ),
+            d, "casco",
         ),
     ),
     # ── ITP ──
@@ -357,13 +414,16 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         native_unit_of_measurement="zile",
         vizibil_fn=lambda d: _are_valoare(d, CONF_ITP_DATA_EXPIRARE),
         value_fn=lambda d: zile_ramase(d.get(CONF_ITP_DATA_EXPIRARE)),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Data expirare": format_data_ro(d.get(CONF_ITP_DATA_EXPIRARE)),
-                "Stație": d.get(CONF_ITP_STATIE),
-                "Kilometraj la ITP": intreg(d.get(CONF_ITP_KILOMETRAJ)),
-                "Stare": stare_document(d.get(CONF_ITP_DATA_EXPIRARE)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Data expirare": format_data_ro(d.get(CONF_ITP_DATA_EXPIRARE)),
+                    "Stație": d.get(CONF_ITP_STATIE),
+                    "Kilometraj la ITP": intreg(d.get(CONF_ITP_KILOMETRAJ)),
+                    "Stare": stare_document(d.get(CONF_ITP_DATA_EXPIRARE)),
+                }
+            ),
+            d, "itp",
         ),
     ),
     # ── Rovinieta ──
@@ -374,14 +434,17 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         native_unit_of_measurement="zile",
         vizibil_fn=lambda d: _are_valoare(d, CONF_ROVINIETA_DATA_SFARSIT),
         value_fn=lambda d: zile_ramase(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Data început": format_data_ro(d.get(CONF_ROVINIETA_DATA_INCEPUT)),
-                "Data sfârșit": format_data_ro(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
-                "Categorie": d.get(CONF_ROVINIETA_CATEGORIE),
-                "Preț (RON)": intreg(d.get(CONF_ROVINIETA_PRET)),
-                "Stare": stare_document(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Data început": format_data_ro(d.get(CONF_ROVINIETA_DATA_INCEPUT)),
+                    "Data sfârșit": format_data_ro(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
+                    "Categorie": d.get(CONF_ROVINIETA_CATEGORIE),
+                    "Preț (RON)": intreg(d.get(CONF_ROVINIETA_PRET)),
+                    "Stare": stare_document(d.get(CONF_ROVINIETA_DATA_SFARSIT)),
+                }
+            ),
+            d, "rovinieta",
         ),
     ),
     # ── Impozit ──
@@ -428,14 +491,17 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         value_fn=lambda d: km_ramasi(
             d.get(CONF_KM_CURENT), d.get(CONF_REVIZIE_ULEI_KM_URMATOR)
         ),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Km ultima revizie": intreg(d.get(CONF_REVIZIE_ULEI_KM_ULTIMUL)),
-                "Km următoarea revizie": intreg(d.get(CONF_REVIZIE_ULEI_KM_URMATOR)),
-                "Data ultima revizie": format_data_ro(d.get(CONF_REVIZIE_ULEI_DATA)),
-                "Cost (RON)": intreg(d.get(CONF_REVIZIE_ULEI_COST)),
-                "Km curent": intreg(d.get(CONF_KM_CURENT)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Km ultima revizie": intreg(d.get(CONF_REVIZIE_ULEI_KM_ULTIMUL)),
+                    "Km următoarea revizie": intreg(d.get(CONF_REVIZIE_ULEI_KM_URMATOR)),
+                    "Data ultima revizie": format_data_ro(d.get(CONF_REVIZIE_ULEI_DATA)),
+                    "Cost (RON)": intreg(d.get(CONF_REVIZIE_ULEI_COST)),
+                    "Km curent": intreg(d.get(CONF_KM_CURENT)),
+                }
+            ),
+            d, "revizie_ulei",
         ),
     ),
     # ── Distribuție ──
@@ -448,14 +514,17 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         value_fn=lambda d: km_ramasi(
             d.get(CONF_KM_CURENT), d.get(CONF_DISTRIBUTIE_KM_URMATOR)
         ),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Km ultima schimbare": intreg(d.get(CONF_DISTRIBUTIE_KM_ULTIMUL)),
-                "Km următoarea schimbare": intreg(d.get(CONF_DISTRIBUTIE_KM_URMATOR)),
-                "Data ultima schimbare": format_data_ro(d.get(CONF_DISTRIBUTIE_DATA)),
-                "Cost (RON)": intreg(d.get(CONF_DISTRIBUTIE_COST)),
-                "Km curent": intreg(d.get(CONF_KM_CURENT)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Km ultima schimbare": intreg(d.get(CONF_DISTRIBUTIE_KM_ULTIMUL)),
+                    "Km următoarea schimbare": intreg(d.get(CONF_DISTRIBUTIE_KM_URMATOR)),
+                    "Data ultima schimbare": format_data_ro(d.get(CONF_DISTRIBUTIE_DATA)),
+                    "Cost (RON)": intreg(d.get(CONF_DISTRIBUTIE_COST)),
+                    "Km curent": intreg(d.get(CONF_KM_CURENT)),
+                }
+            ),
+            d, "distributie",
         ),
     ),
     # ── Anvelope ──
@@ -469,17 +538,20 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         value_fn=lambda d: sezon_anvelope(
             d.get(CONF_ANVELOPE_VARA_DATA), d.get(CONF_ANVELOPE_IARNA_DATA)
         ),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Data montare vară": format_data_ro(d.get(CONF_ANVELOPE_VARA_DATA)),
-                "Data montare iarnă": format_data_ro(d.get(CONF_ANVELOPE_IARNA_DATA)),
-                "Cost (RON)": intreg(d.get(CONF_ANVELOPE_COST)),
-                "Sezon recomandat": (
-                    "Iarnă"
-                    if date.today().month in (11, 12, 1, 2, 3)
-                    else "Vară"
-                ),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Data montare vară": format_data_ro(d.get(CONF_ANVELOPE_VARA_DATA)),
+                    "Data montare iarnă": format_data_ro(d.get(CONF_ANVELOPE_IARNA_DATA)),
+                    "Cost (RON)": intreg(d.get(CONF_ANVELOPE_COST)),
+                    "Sezon recomandat": (
+                        "Iarnă"
+                        if date.today().month in (11, 12, 1, 2, 3)
+                        else "Vară"
+                    ),
+                }
+            ),
+            d, "anvelope",
         ),
     ),
     # ── Baterie ──
@@ -490,11 +562,14 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         native_unit_of_measurement="luni",
         vizibil_fn=lambda d: _are_valoare(d, CONF_BATERIE_DATA_SCHIMB),
         value_fn=lambda d: luni_de_la(d.get(CONF_BATERIE_DATA_SCHIMB)),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Data schimb": format_data_ro(d.get(CONF_BATERIE_DATA_SCHIMB)),
-                "Cost (RON)": intreg(d.get(CONF_BATERIE_COST)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Data schimb": format_data_ro(d.get(CONF_BATERIE_DATA_SCHIMB)),
+                    "Cost (RON)": intreg(d.get(CONF_BATERIE_COST)),
+                }
+            ),
+            d, "baterie",
         ),
     ),
     # ── Plăcuțe frână ──
@@ -507,13 +582,16 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         value_fn=lambda d: km_ramasi(
             d.get(CONF_KM_CURENT), d.get(CONF_PLACUTE_FRANA_KM_URMATOR)
         ),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Km ultima schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_ULTIMUL)),
-                "Km următoarea schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_URMATOR)),
-                "Cost (RON)": intreg(d.get(CONF_PLACUTE_FRANA_COST)),
-                "Km curent": intreg(d.get(CONF_KM_CURENT)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Km ultima schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_ULTIMUL)),
+                    "Km următoarea schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_URMATOR)),
+                    "Cost (RON)": intreg(d.get(CONF_PLACUTE_FRANA_COST)),
+                    "Km curent": intreg(d.get(CONF_KM_CURENT)),
+                }
+            ),
+            d, "frane",
         ),
     ),
     # ── Discuri frână ──
@@ -526,13 +604,16 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         value_fn=lambda d: km_ramasi(
             d.get(CONF_KM_CURENT), d.get(CONF_DISCURI_FRANA_KM_URMATOR)
         ),
-        attributes_fn=lambda d: _filtrare_atribute(
-            {
-                "Km ultima schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_ULTIMUL)),
-                "Km următoarea schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_URMATOR)),
-                "Cost (RON)": intreg(d.get(CONF_DISCURI_FRANA_COST)),
-                "Km curent": intreg(d.get(CONF_KM_CURENT)),
-            }
+        attributes_fn=lambda d: _cu_istoric(
+            _filtrare_atribute(
+                {
+                    "Km ultima schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_ULTIMUL)),
+                    "Km următoarea schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_URMATOR)),
+                    "Cost (RON)": intreg(d.get(CONF_DISCURI_FRANA_COST)),
+                    "Km curent": intreg(d.get(CONF_KM_CURENT)),
+                }
+            ),
+            d, "frane",
         ),
     ),
     # ── Trusă de prim ajutor (obligatorie în România) ──
@@ -707,8 +788,6 @@ class VehiculeSensor(SensorEntity):
         """Informații despre dispozitiv (vehiculul)."""
         marca = self._date_vehicul.get(CONF_MARCA, "")
         model = self._date_vehicul.get(CONF_MODEL, "")
-        #an = intreg(self._date_vehicul.get(CONF_AN_FABRICATIE))
-
         return DeviceInfo(
             identifiers={(DOMAIN, self._numar_normalizat)},
             name=f"Vehicule {self._nr_inmatriculare}",
