@@ -70,6 +70,7 @@ CONF_LEASING_DATA_EXPIRARE: Final = "leasing_data_expirare"
 CONF_REVIZIE_ULEI_KM_ULTIMUL: Final = "revizie_ulei_km_ultimul"
 CONF_REVIZIE_ULEI_KM_URMATOR: Final = "revizie_ulei_km_urmator"
 CONF_REVIZIE_ULEI_DATA: Final = "revizie_ulei_data"
+CONF_REVIZIE_ULEI_COST: Final = "revizie_ulei_cost"
 
 # ─────────────────────────────────────────────
 # Mentenanță – Distribuție
@@ -77,17 +78,20 @@ CONF_REVIZIE_ULEI_DATA: Final = "revizie_ulei_data"
 CONF_DISTRIBUTIE_KM_ULTIMUL: Final = "distributie_km_ultimul"
 CONF_DISTRIBUTIE_KM_URMATOR: Final = "distributie_km_urmator"
 CONF_DISTRIBUTIE_DATA: Final = "distributie_data"
+CONF_DISTRIBUTIE_COST: Final = "distributie_cost"
 
 # ─────────────────────────────────────────────
 # Mentenanță – Anvelope
 # ─────────────────────────────────────────────
 CONF_ANVELOPE_VARA_DATA: Final = "anvelope_vara_data"
 CONF_ANVELOPE_IARNA_DATA: Final = "anvelope_iarna_data"
+CONF_ANVELOPE_COST: Final = "anvelope_cost"
 
 # ─────────────────────────────────────────────
 # Mentenanță – Baterie
 # ─────────────────────────────────────────────
 CONF_BATERIE_DATA_SCHIMB: Final = "baterie_data_schimb"
+CONF_BATERIE_COST: Final = "baterie_cost"
 
 # ─────────────────────────────────────────────
 # Echipament obligatoriu – Trusă de prim ajutor
@@ -112,8 +116,10 @@ CONF_ROVINIETA_PRET: Final = "rovinieta_pret"
 # ─────────────────────────────────────────────
 CONF_PLACUTE_FRANA_KM_ULTIMUL: Final = "placute_frana_km_ultimul"
 CONF_PLACUTE_FRANA_KM_URMATOR: Final = "placute_frana_km_urmator"
+CONF_PLACUTE_FRANA_COST: Final = "placute_frana_cost"
 CONF_DISCURI_FRANA_KM_ULTIMUL: Final = "discuri_frana_km_ultimul"
 CONF_DISCURI_FRANA_KM_URMATOR: Final = "discuri_frana_km_urmator"
+CONF_DISCURI_FRANA_COST: Final = "discuri_frana_cost"
 
 # ─────────────────────────────────────────────
 # Opțiuni pentru selectoare
@@ -151,11 +157,80 @@ SERVICE_IMPORTA_DATE: Final = "importa_date"
 BACKUP_VERSION: Final = 1
 
 # ─────────────────────────────────────────────
+# Istoric costuri
+# ─────────────────────────────────────────────
+CONF_ISTORIC: Final = "_istoric"
+
+# ─────────────────────────────────────────────
 # Atribute dispozitiv
 # ─────────────────────────────────────────────
 ATTR_NR_INMATRICULARE: Final = "nr_inmatriculare"
 ATTR_MARCA: Final = "marca"
 ATTR_MODEL: Final = "model"
+
+
+# ─────────────────────────────────────────────
+# Categorii arhivabile (pentru istoric costuri)
+# ─────────────────────────────────────────────
+# Dicționar: categorie → {eticheta_afișare: constanta_conf}
+# Folosit de _salveaza_si_inchide() pentru a arhiva datele vechi
+# înainte de suprascrierea cu date noi.
+CATEGORII_ARHIVABILE: Final = {
+    "rca": {
+        "Număr poliță": CONF_RCA_NUMAR_POLITA,
+        "Companie": CONF_RCA_COMPANIE,
+        "Data emitere": CONF_RCA_DATA_EMITERE,
+        "Data expirare": CONF_RCA_DATA_EXPIRARE,
+        "Cost (RON)": CONF_RCA_COST,
+    },
+    "casco": {
+        "Număr poliță": CONF_CASCO_NUMAR_POLITA,
+        "Companie": CONF_CASCO_COMPANIE,
+        "Data emitere": CONF_CASCO_DATA_EMITERE,
+        "Data expirare": CONF_CASCO_DATA_EXPIRARE,
+        "Cost (RON)": CONF_CASCO_COST,
+    },
+    "itp": {
+        "Data expirare": CONF_ITP_DATA_EXPIRARE,
+        "Stație": CONF_ITP_STATIE,
+        "Kilometraj": CONF_ITP_KILOMETRAJ,
+    },
+    "rovinieta": {
+        "Data început": CONF_ROVINIETA_DATA_INCEPUT,
+        "Data sfârșit": CONF_ROVINIETA_DATA_SFARSIT,
+        "Categorie": CONF_ROVINIETA_CATEGORIE,
+        "Preț (RON)": CONF_ROVINIETA_PRET,
+    },
+    "revizie_ulei": {
+        "Km ultima revizie": CONF_REVIZIE_ULEI_KM_ULTIMUL,
+        "Km următoarea revizie": CONF_REVIZIE_ULEI_KM_URMATOR,
+        "Data": CONF_REVIZIE_ULEI_DATA,
+        "Cost (RON)": CONF_REVIZIE_ULEI_COST,
+    },
+    "distributie": {
+        "Km ultima schimbare": CONF_DISTRIBUTIE_KM_ULTIMUL,
+        "Km următoarea schimbare": CONF_DISTRIBUTIE_KM_URMATOR,
+        "Data": CONF_DISTRIBUTIE_DATA,
+        "Cost (RON)": CONF_DISTRIBUTIE_COST,
+    },
+    "anvelope": {
+        "Data montare vară": CONF_ANVELOPE_VARA_DATA,
+        "Data montare iarnă": CONF_ANVELOPE_IARNA_DATA,
+        "Cost (RON)": CONF_ANVELOPE_COST,
+    },
+    "baterie": {
+        "Data schimb": CONF_BATERIE_DATA_SCHIMB,
+        "Cost (RON)": CONF_BATERIE_COST,
+    },
+    "frane": {
+        "Plăcuțe – Km ultima schimbare": CONF_PLACUTE_FRANA_KM_ULTIMUL,
+        "Plăcuțe – Km următoarea schimbare": CONF_PLACUTE_FRANA_KM_URMATOR,
+        "Plăcuțe – Cost (RON)": CONF_PLACUTE_FRANA_COST,
+        "Discuri – Km ultima schimbare": CONF_DISCURI_FRANA_KM_ULTIMUL,
+        "Discuri – Km următoarea schimbare": CONF_DISCURI_FRANA_KM_URMATOR,
+        "Discuri – Cost (RON)": CONF_DISCURI_FRANA_COST,
+    },
+}
 
 
 def normalizeaza_numar(numar: str) -> str:
