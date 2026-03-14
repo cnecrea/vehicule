@@ -65,7 +65,8 @@
           "rca_companie": "Insurance company",
           "rca_data_emitere": "Issue date",
           "rca_data_expirare": "Expiry date",
-          "rca_cost": "Cost (RON)"
+          "rca_cost": "Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "casco": {
@@ -76,7 +77,8 @@
           "casco_companie": "Insurance company",
           "casco_data_emitere": "Issue date",
           "casco_data_expirare": "Expiry date",
-          "casco_cost": "Cost (RON)"
+          "casco_cost": "Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "itp": {
@@ -85,7 +87,8 @@
         "data": {
           "itp_data_expirare": "ITP expiry date",
           "itp_statie": "Inspection station",
-          "itp_kilometraj": "Mileage at ITP"
+          "itp_kilometraj": "Mileage at ITP",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "rovinieta": {
@@ -95,7 +98,8 @@
           "rovinieta_data_inceput": "Start date",
           "rovinieta_data_sfarsit": "End date",
           "rovinieta_categorie": "Category",
-          "rovinieta_pret": "Price (RON)"
+          "rovinieta_pret": "Price (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "administrativ": {
@@ -137,7 +141,8 @@
           "revizie_ulei_km_ultimul": "Km at last service",
           "revizie_ulei_km_urmator": "Km at next service",
           "revizie_ulei_data": "Last service date",
-          "revizie_ulei_cost": "Cost (RON)"
+          "revizie_ulei_cost": "Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "distributie": {
@@ -147,7 +152,8 @@
           "distributie_km_ultimul": "Km at last replacement",
           "distributie_km_urmator": "Km at next replacement",
           "distributie_data": "Last replacement date",
-          "distributie_cost": "Cost (RON)"
+          "distributie_cost": "Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "anvelope": {
@@ -156,7 +162,8 @@
         "data": {
           "anvelope_vara_data": "Summer tires fitting date",
           "anvelope_iarna_data": "Winter tires fitting date",
-          "anvelope_cost": "Cost (RON)"
+          "anvelope_cost": "Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "baterie": {
@@ -164,7 +171,8 @@
         "description": "Enter the date of the last battery replacement.",
         "data": {
           "baterie_data_schimb": "Battery replacement date",
-          "baterie_cost": "Cost (RON)"
+          "baterie_cost": "Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "frane": {
@@ -176,7 +184,8 @@
           "placute_frana_cost": "Brake pads – Cost (RON)",
           "discuri_frana_km_ultimul": "Brake discs – Km at last replacement",
           "discuri_frana_km_urmator": "Brake discs – Km at next replacement",
-          "discuri_frana_cost": "Brake discs – Cost (RON)"
+          "discuri_frana_cost": "Brake discs – Cost (RON)",
+          "_arhivare_date": "Archive old data before saving"
         }
       },
       "trusa_prim_ajutor": {
