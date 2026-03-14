@@ -9,6 +9,7 @@ Senzori posibili per vehicul:
 - Informații generale (marcă, model, etc.) – mereu vizibil
 - Kilometraj curent – vizibil când km_curent este setat
 - RCA (zile rămase) – vizibil când rca_data_expirare este setat
+- Casco (zile rămase) – vizibil când casco_data_expirare este setat
 - ITP (zile rămase) – vizibil când itp_data_expirare este setat
 - Rovinieta (zile rămase) – vizibil când rovinieta_data_sfarsit este setat
 - Impozit (zile rămase) – vizibil când impozit_scadenta este setat
@@ -49,6 +50,11 @@ from .const import (
     CONF_ANVELOPE_VARA_DATA,
     CONF_BATERIE_DATA_SCHIMB,
     CONF_CAPACITATE_CILINDRICA,
+    CONF_CASCO_COMPANIE,
+    CONF_CASCO_COST,
+    CONF_CASCO_DATA_EMITERE,
+    CONF_CASCO_DATA_EXPIRARE,
+    CONF_CASCO_NUMAR_POLITA,
     CONF_COMBUSTIBIL,
     CONF_DISCURI_FRANA_KM_ULTIMUL,
     CONF_DISCURI_FRANA_KM_URMATOR,
@@ -220,6 +226,25 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 "Data expirare": format_data_ro(d.get(CONF_RCA_DATA_EXPIRARE)),
                 "Cost (RON)": intreg(d.get(CONF_RCA_COST)),
                 "Stare": stare_document(d.get(CONF_RCA_DATA_EXPIRARE)),
+            }
+        ),
+    ),
+    # ── Casco ──
+    VehiculeSensorDescription(
+        key="casco",
+        translation_key="casco",
+        icon="mdi:shield-plus",
+        native_unit_of_measurement="zile",
+        vizibil_fn=lambda d: _are_valoare(d, CONF_CASCO_DATA_EXPIRARE),
+        value_fn=lambda d: zile_ramase(d.get(CONF_CASCO_DATA_EXPIRARE)),
+        attributes_fn=lambda d: _filtrare_atribute(
+            {
+                "Număr poliță": d.get(CONF_CASCO_NUMAR_POLITA),
+                "Companie": d.get(CONF_CASCO_COMPANIE),
+                "Data emitere": format_data_ro(d.get(CONF_CASCO_DATA_EMITERE)),
+                "Data expirare": format_data_ro(d.get(CONF_CASCO_DATA_EXPIRARE)),
+                "Cost (RON)": intreg(d.get(CONF_CASCO_COST)),
+                "Stare": stare_document(d.get(CONF_CASCO_DATA_EXPIRARE)),
             }
         ),
     ),
