@@ -88,6 +88,14 @@ Informații despre asigurarea de răspundere civilă:
 - **Agent asigurare:** Numele agentului sau companiei de asigurări
 - **Număr poliță:** Numărul unic al poliței de asigurare
 
+#### 2b. Casco
+Informații despre asigurarea Casco (facultativă):
+- **Data expirării:** Data până la care asigurarea este valabilă
+- **Agent asigurare:** Numele agentului sau companiei de asigurări
+- **Număr poliță:** Numărul unic al poliței de asigurare
+- **Data emitere:** Data la care a fost emisă polița
+- **Cost (RON):** Costul poliței Casco
+
 #### 3. ITP
 Informații despre inspecția tehnică periodică:
 - **Data expirării:** Data până la care ITP este valabil
@@ -145,13 +153,14 @@ Toate datele de tip dată se introduc în format **ZZ.LL.AAAA**, unde:
 
 ## Senzori creați
 
-Pentru fiecare vehicul adăugat, integrarea creează până la 15 senzori potențiali:
+Pentru fiecare vehicul adăugat, integrarea creează până la 16 senzori potențiali:
 
 ### Senzori de dată
 
 | Senzor | Descriere | Entitate | Condiție vizibilitate |
 |--------|-----------|----------|----------------------|
 | **RCA Expirare** | Data expirării asigurării RCA | `sensor.<id>_rca_expirare` | Dacă data RCA este setată |
+| **Casco Expirare** | Data expirării asigurării Casco | `sensor.<id>_casco_expirare` | Dacă data Casco este setată |
 | **ITP Expirare** | Data expirării ITP | `sensor.<id>_itp_expirare` | Dacă data ITP este setată |
 | **Certificat Înregistrare** | Data certificatului de înregistrare | `sensor.<id>_cert_inreg` | Dacă data este setată |
 | **Taxa Locală** | Data taxei locale | `sensor.<id>_taxa_locala` | Dacă data este setată |
@@ -178,6 +187,7 @@ data:
   nr_inmatriculare: "B123ABC"
   kilometraj: 50000
   data_rca: "18.04.2026"
+  data_casco: "15.05.2026"
   data_itp: "15.06.2027"
 ```
 
@@ -188,6 +198,7 @@ data:
 | `nr_inmatriculare` | string | **Obligatoriu** - Placa vehiculului | `B123ABC` |
 | `kilometraj` | integer | Kilometrajul curent | `50000` |
 | `data_rca` | string | Data expirării RCA (ZZ.LL.AAAA) | `18.04.2026` |
+| `data_casco` | string | Data expirării Casco (ZZ.LL.AAAA) | `15.05.2026` |
 | `data_itp` | string | Data expirării ITP (ZZ.LL.AAAA) | `15.06.2027` |
 | `data_cert_inreg` | string | Data certificatului (ZZ.LL.AAAA) | `10.01.2020` |
 | `data_taxa_locala` | string | Data taxei locale (ZZ.LL.AAAA) | `15.12.2026` |
@@ -328,6 +339,6 @@ Pentru probleme, sugestii sau raportare de bug-uri, vizitați:
 
 ---
 
-**Versiune:** 1.1.0
+**Versiune:** 1.2.0
 **Compatibilitate:** Home Assistant 2025.11.0+
 **Licență:** RO (România)
