@@ -31,6 +31,7 @@ from .const import (
     CONF_ANVELOPE_COST,
     CONF_ANVELOPE_IARNA_DATA,
     CONF_ANVELOPE_VARA_DATA,
+    CONF_ARHIVARE_DATE,
     CONF_BATERIE_COST,
     CONF_BATERIE_DATA_SCHIMB,
     CONF_CAPACITATE_CILINDRICA,
@@ -344,6 +345,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -393,6 +397,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -443,6 +450,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -493,6 +503,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -697,6 +710,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -761,6 +777,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -803,6 +822,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -844,6 +866,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -927,6 +952,9 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         mode=selector.NumberSelectorMode.BOX,
                     )
                 ),
+                vol.Optional(
+                    CONF_ARHIVARE_DATE, default=False
+                ): selector.BooleanSelector(),
             }
         )
 
@@ -1053,13 +1081,21 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         - Câmpuri nemodificate (absent din user_input ȘI din chei_formular):
           rămân neschimbate
 
-        Dacă categorie_arhivare este specificată, datele vechi sunt salvate
-        automat în lista _istoric înainte de suprascrierea cu date noi.
+        Dacă categorie_arhivare este specificată ȘI utilizatorul a bifat
+        opțiunea de arhivare, datele vechi sunt salvate în lista _istoric
+        înainte de suprascrierea cu date noi.
         """
+        # Extragem flag-ul de arhivare din user_input (câmp UI-only, nu se salvează)
+        doreste_arhivare = user_input.pop(CONF_ARHIVARE_DATE, False)
+
         optiuni_noi = {**self.config_entry.options}
 
-        # ── Arhivare automată a datelor vechi ──
-        if categorie_arhivare and categorie_arhivare in CATEGORII_ARHIVABILE:
+        # ── Arhivare datelor vechi (doar dacă utilizatorul a bifat) ──
+        if (
+            doreste_arhivare
+            and categorie_arhivare
+            and categorie_arhivare in CATEGORII_ARHIVABILE
+        ):
             campuri_categorie = CATEGORII_ARHIVABILE[categorie_arhivare]
             date_vechi: dict[str, Any] = {}
             for eticheta, cheie_const in campuri_categorie.items():
