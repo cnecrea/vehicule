@@ -153,7 +153,7 @@ Toate datele de tip dată se introduc în format **ZZ.LL.AAAA**, unde:
 
 ## Senzori creați
 
-Pentru fiecare vehicul adăugat, integrarea creează până la 16 senzori potențiali:
+Pentru fiecare vehicul adăugat, integrarea creează până la 17 senzori potențiali:
 
 ### Senzori de dată
 
@@ -339,6 +339,6 @@ Pentru probleme, sugestii sau raportare de bug-uri, vizitați:
 
 ---
 
-**Versiune:** 1.2.0
+**Versiune:** 1.3.0
 **Compatibilitate:** Home Assistant 2025.11.0+
 **Licență:** RO (România)
