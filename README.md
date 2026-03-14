@@ -28,6 +28,9 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 - **Documente cu termen**: RCA, Casco, ITP, rovinieta, impozit, leasing — cu calculul automat al zilelor rămase
 - **Mentenanță**: revizie ulei, distribuție, anvelope, baterie, plăcuțe și discuri de frână — cu calculul km rămași
 - **Echipament obligatoriu**: trusă de prim ajutor, extinctor — cu avertizare la expirare
+- **Costuri mentenanță**: câmpuri de cost la toate categoriile de mentenanță
+- **Istoric automat**: la reînnoirea unui document sau mentenanță, datele vechi sunt arhivate automat
+- **Senzor cost total**: sumă agregată a tuturor costurilor curente, cu defalcare pe categorii
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
 - **Curățare automată**: la schimbarea condițiilor (ex: treci de la leasing la proprietate), entitățile orfane sunt eliminate automat
 - **Date în format românesc**: ZZ.LL.AAAA în interfață, ISO intern
@@ -99,7 +102,7 @@ Datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: `18.04.2026`). 
 
 ## Entități create
 
-Pentru fiecare vehicul, integrarea creează până la **16 senzori**. Aceștia apar condiționat — doar dacă au date completate.
+Pentru fiecare vehicul, integrarea creează până la **17 senzori**. Aceștia apar condiționat — doar dacă au date completate.
 
 Entity ID-urile urmează formatul: `sensor.vehicule_{nr_normalizat}_{tip_senzor}`
 
@@ -125,6 +128,7 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici).
 | Discuri frână | `discuri_frana` | km | `discuri_frana_km_urmator` completat | Km rămași |
 | Trusă prim ajutor | `trusa_prim_ajutor` | zile | `trusa_prim_ajutor_data_expirare` completat | Zile rămase până la expirare |
 | Extinctor | `extinctor` | zile | `extinctor_data_expirare` completat | Zile rămase până la expirare |
+| Cost total | `cost_total` | RON | Cel puțin un cost completat | Suma tuturor costurilor curente |
 
 ### Atribute senzori
 
@@ -140,13 +144,15 @@ Fiecare senzor expune atribute suplimentare. Câteva exemple:
 
 **Impozit** — atribute: Sumă (RON), Scadență, Localitate, Proprietar, Tip proprietate
 
-**Revizie ulei** — atribute: Km ultima revizie, Km următoarea revizie, Data ultima revizie, Km curent
+**Revizie ulei** — atribute: Km ultima revizie, Km următoarea revizie, Data ultima revizie, Cost (RON), Km curent
 
-**Anvelope** — atribute: Data montare vară, Data montare iarnă, Sezon recomandat
+**Anvelope** — atribute: Data montare vară, Data montare iarnă, Cost (RON), Sezon recomandat
 
 **Trusă prim ajutor** — atribute: Data expirare, Stare (Valid/Expirat)
 
 **Extinctor** — atribute: Data expirare, Stare (Valid/Expirat)
+
+**Cost total** — atribute: Asigurări (RON), Taxe și rovinieta (RON), Mentenanță (RON), Intrări istoric, Total istoric (RON)
 
 Datele din atribute sunt afișate în format românesc (ZZ.LL.AAAA), iar valorile numerice sunt afișate ca numere întregi (fără zecimale).
 
@@ -349,8 +355,7 @@ custom_components/vehicule/
 ## Limitări cunoscute
 
 1. **Datele sunt locale** — stocate în configurația HA, nu sunt sincronizate cu alte sisteme
-2. **Fără istoric costuri** — costurile și datele de mentenanță nu sunt arhivate istoric
-3. **Fără imagini vehicul** — nu există suport pentru fotografii sau avatare per vehicul
+2. **Fără imagini vehicul** — nu există suport pentru fotografii sau avatare per vehicul
 
 ---
 
