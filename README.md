@@ -14,7 +14,7 @@
 [![Limbaj Principal](https://img.shields.io/github/languages/top/cnecrea/vehicule)](https://github.com/cnecrea/vehicule)
 [![Total descărcări](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/descarcari.json)](https://github.com/cnecrea/vehicule/releases)
 [![Descărcări ultima versiune](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cnecrea/vehicule/main/statistici/shields/ultima_release.json)](https://github.com/cnecrea/vehicule/releases/latest)
-![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fcnecrea%2Fvehicule&label=vizitatori&icon=github&color=%23198754&message=&style=flat&tz=Europe%2FBucharest)
+![Badge](https://hitscounter.dev/api/hit?url=https%3A%2F%2Fgithub.com%2Fcnecrea%2Fvehicule&label=afi%C8%99%C4%83ri&icon=github&color=%23198754&message=&style=flat&tz=Europe%2FBucharest)
 
 
 Integrare custom pentru [Home Assistant](https://www.home-assistant.io/) care permite **gestionarea vehiculelor și documentelor** acestora — asigurări, taxe, revizii, anvelope, frâne, baterie, trusă de prim ajutor și extinctor — direct din interfața HA.
