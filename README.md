@@ -29,7 +29,7 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 - **Mentenanță**: revizie ulei, distribuție, anvelope, baterie, plăcuțe și discuri de frână — cu calculul km rămași
 - **Echipament obligatoriu**: trusă de prim ajutor, extinctor — cu avertizare la expirare
 - **Costuri mentenanță**: câmpuri de cost la toate categoriile de mentenanță
-- **Istoric automat**: la reînnoirea unui document sau mentenanță, datele vechi sunt arhivate automat
+- **Istoric cu confirmare**: la reînnoirea unui document sau mentenanță, datele vechi pot fi arhivate (cu bifa explicită din formular)
 - **Senzor cost total**: sumă agregată a tuturor costurilor curente, cu defalcare pe categorii
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
 - **Curățare automată**: la schimbarea condițiilor (ex: treci de la leasing la proprietate), entitățile orfane sunt eliminate automat
@@ -152,7 +152,9 @@ Fiecare senzor expune atribute suplimentare. Câteva exemple:
 
 **Extinctor** — atribute: Data expirare, Stare (Valid/Expirat)
 
-**Cost total** — atribute: Asigurări (RON), Taxe și rovinieta (RON), Mentenanță (RON), Intrări istoric, Total istoric (RON)
+**Cost total** — atribute: Asigurări (RON), Taxe și rovinieta (RON), Mentenanță (RON)
+
+> **Istoric per senzor**: Senzorii arhivabili (RCA, Casco, ITP, Rovinieta, Revizie ulei, Distribuție, Anvelope, Baterie, Plăcuțe frână, Discuri frână) afișează în atribute și detaliile ultimei reînnoiri anterioare (Reînnoiri anterioare, Ultima arhivare, câmpurile anterioare cu prefix „Anterior – ", Cost total anterior)
 
 Datele din atribute sunt afișate în format românesc (ZZ.LL.AAAA), iar valorile numerice sunt afișate ca numere întregi (fără zecimale).
 
