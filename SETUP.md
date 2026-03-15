@@ -1,10 +1,10 @@
-# Vehicule - Integrare Home Assistant Personalizată
+# Vehicule — Ghid de instalare și configurare
 
-Integrare Home Assistant pentru gestionarea și urmărirea vehiculelor personale. Stochează date despre identificarea vehiculului, asigurări, inspecții și informații de întreținere direct în Home Assistant.
+Integrare Home Assistant pentru gestionarea vehiculelor: documente, asigurări, taxe, mentenanță, costuri și istoric — totul local, fără API-uri externe.
 
 **Depozitul oficial:** https://github.com/cnecrea/vehicule
 
-# Instalare și configurare
+---
 
 ## Ghid video de instalare
 
@@ -12,333 +12,442 @@ Pentru o demonstrație completă a procesului de instalare și configurare, urm�
 
 [![Tutorial instalare Vehicule](https://img.youtube.com/vi/vCtOu52y5bM/maxresdefault.jpg)](https://www.youtube.com/watch?v=vCtOu52y5bM)
 
+---
 
-Acest video prezintă procesul complet de instalare și configurare a integrării:
-- instalare prin HACS
-- configurarea inițială
-- verificarea senzorilor creați
+## Cerințe
+
+- Home Assistant **2025.11.0** sau mai nou
+- **HACS** (opțional, pentru instalare simplificată)
+- Acces administrativ în Home Assistant
+- Nu este necesară conexiunea la internet — integrarea funcționează 100% local
 
 ---
 
-## Cerințe preliminare
-
-- Home Assistant versiune **2025.11.0 sau mai nouă**
-- **Nu este necesară conexiunea la internet** - integrarea funcționează 100% local
-- **HACS** (opțional, pentru instalare simplificată)
-- Acces administrative în Home Assistant
-
 ## Instalare
 
-### Metoda 1: Prin HACS (Recomandată)
+### Metoda 1: Prin HACS (recomandată)
 
-1. Deschideți **HACS** în interfața Home Assistant
-2. Accesați **Integrări personalizate** (Custom Repositories)
-3. Adăugați un nou depozit custom:
+1. Deschideți **HACS** în Home Assistant
+2. Click pe cele 3 puncte (⋮) → **Custom repositories**
+3. Adăugați:
    - **URL:** `https://github.com/cnecrea/vehicule`
    - **Categorie:** Integration
-   - **Apăsați "Creare"**
-4. După adăugare, căutați **"Vehicule"** în HACS
-5. Accesați integrarea și apăsați **"Descărcare"**
-6. Selectați versiunea dorită și apăsați **"Descărcare"**
-7. **Reporniți Home Assistant:**
-   - **Setări** → **Sistem** → **Repornire** (în dreapta sus)
-   - Sau: **Developeri** → **Servicii** → `homeassistant.restart`
+4. Căutați **„Vehicule"** → **Install**
+5. Reporniți Home Assistant
 
 ### Metoda 2: Manual
 
-1. Descărcați cel mai recent release de la: https://github.com/cnecrea/vehicule/releases
-2. Extrageți fișierul descărcat
-3. Copiați dosarul `vehicule` din `custom_components/` în directorul `config/custom_components/` al Home Assistant
-   - Calea finală: `<HA_CONFIG_DIR>/custom_components/vehicule/`
-4. **Reporniți Home Assistant** (apasă Repornire din Setări → Sistem)
+1. Descărcați ultimul release de la: https://github.com/cnecrea/vehicule/releases
+2. Copiați folderul `vehicule` în `config/custom_components/`
+3. Calea finală: `<HA_CONFIG_DIR>/custom_components/vehicule/`
+4. Reporniți Home Assistant
+
+---
 
 ## Configurare inițială
 
-După instalare și repornire:
+1. **Setări** → **Dispozitive și servicii** → **Adaugă integrare**
+2. Căutați **„Vehicule"**
+3. Introduceți numărul de înmatriculare, fără spații (ex: `B123ABC`)
+4. Click **Salvare**
 
-1. Accesați **Setări** → **Dispozitive și servicii**
-2. În dreapta sus, apăsați **Crea integrare**
-3. Căutați și selectați **"Vehicule"**
-4. În fereastra de dialog:
-   - Introduceți **placa de înmatriculare** a vehiculului (ex: `B123ABC`)
-   - Apăsați **Creare**
-5. Integrarea este acum adăugată și gata pentru configurare
+Integrarea creează un dispozitiv cu un singur senzor (Informații). Restul senzorilor apar pe măsură ce completați date.
+
+---
 
 ## Editarea datelor vehiculului
 
-Toate datele sunt stocate și gestionate prin intermediul meniului de opțiuni:
+1. **Setări** → **Dispozitive și servicii** → click pe intrarea vehiculului
+2. Click **Configurare** (⚙️)
+3. Alegeți categoria dorită din meniu:
 
-1. Accesați **Setări** → **Dispozitive și servicii**
-2. Sub **Integrări**, localizați intrarea **"Vehicule"**
-3. Apăsați pe intrare pentru a deschide detaliile dispozitivului
-4. Apăsați butonul **"Configurare"** (pictograma cu roată dințată)
+```
+Gestionare vehicul
+├── Date de identificare
+├── Asigurare RCA
+├── Asigurare Casco
+├── Inspecție tehnică (ITP)
+├── Rovinieta
+├── Date administrative / fiscale
+├── Mentenanță
+│   ├── Revizie ulei
+│   ├── Distribuție
+│   ├── Anvelope
+│   ├── Baterie
+│   ├── Frâne (plăcuțe și discuri)
+│   ├── Trusă de prim ajutor
+│   └── Extinctor
+└── Actualizare kilometraj
+```
 
-### Meniuri disponibile
+### Câmpurile pe categorii
 
-#### 1. Identificare
-Informații de bază despre vehicul:
-- **Marcă și model:** Marca și modelul vehiculului (ex: Dacia Duster)
-- **Anul fabricației:** An pe 4 cifre (ex: 2018)
-- **Număr VIN:** Identificatorul unic al vehiculului
-- **Km inițiali:** Kilometrajul la momentul adăugării vehiculului
+#### Date de identificare
 
-#### 2. RCA
-Informații despre asigurarea de răspundere civilă:
-- **Data expirării:** Data până la care asigurarea este valabilă
-- **Agent asigurare:** Numele agentului sau companiei de asigurări
-- **Număr poliță:** Numărul unic al poliței de asigurare
+| Câmp | Descriere | Exemplu |
+|------|-----------|---------|
+| Marcă | Producătorul vehiculului | Dacia |
+| Model | Modelul vehiculului | Duster |
+| An fabricație | An pe 4 cifre | 2018 |
+| An prima înmatriculare | An pe 4 cifre | 2019 |
+| Serie CIV | Seria certificatului de înmatriculare | K012345 |
+| VIN | Identificatorul unic al vehiculului | WVWZZZ... |
+| Motorizare | Tipul motorului | 1.5 dCi |
+| Combustibil | Selectare din: benzină, diesel, hybrid, electric, GPL | diesel |
+| Capacitate cilindrică (cm³) | Capacitatea motorului | 1461 |
+| Putere (kW) | Puterea în kilowați | 81 |
+| Putere (CP) | Puterea în cai putere | 110 |
 
-#### 2b. Casco
-Informații despre asigurarea Casco (facultativă):
-- **Data expirării:** Data până la care asigurarea este valabilă
-- **Agent asigurare:** Numele agentului sau companiei de asigurări
-- **Număr poliță:** Numărul unic al poliței de asigurare
-- **Data emitere:** Data la care a fost emisă polița
-- **Cost (RON):** Costul poliței Casco
+#### Asigurare RCA
 
-#### 3. ITP
-Informații despre inspecția tehnică periodică:
-- **Data expirării:** Data până la care ITP este valabil
-- **Stație ITP:** Locul unde a fost efectuată inspecția
-- **Kilometraj la ITP:** Km la momentul inspecției
+| Câmp | Descriere |
+|------|-----------|
+| Număr poliță | Numărul poliței de asigurare |
+| Companie | Compania de asigurări |
+| Data emitere | Data emiterii poliței (ZZ.LL.AAAA) |
+| Data expirare | Data expirării poliței (ZZ.LL.AAAA) |
+| Cost (RON) | Costul poliței |
+
+#### Asigurare Casco
+
+Aceleași câmpuri ca la RCA (Număr poliță, Companie, Data emitere, Data expirare, Cost).
+
+#### ITP (Inspecție tehnică periodică)
+
+| Câmp | Descriere |
+|------|-----------|
+| Data expirare | Data expirării ITP (ZZ.LL.AAAA) |
+| Stație | Stația unde s-a efectuat ITP |
+| Kilometraj la ITP | Km la momentul inspecției |
 
 > **Notă:** Necesită setarea prealabilă a kilometrajului curent.
 
-#### 3b. Rovinieta
-Informații despre vinieta de drum:
-- **Data început:** Data de la care este valabilă
-- **Data sfârșit:** Data până la care este valabilă
-- **Categorie:** Categoria rovinietei
-- **Preț (RON):** Costul rovinietei
+#### Rovinieta
 
-#### 4. Administrativ
-Alte informații administrative:
-- **Certificat de înregistrare:** Data certificatului
-- **Taxa locală:** Valoarea și date ale taxei locale
-- **Alte documente:** Orice alte documente relevante și datele lor
+| Câmp | Descriere |
+|------|-----------|
+| Data început | Data de la care este valabilă (ZZ.LL.AAAA) |
+| Data sfârșit | Data până la care este valabilă (ZZ.LL.AAAA) |
+| Categorie | Categoria rovinietei |
+| Preț (RON) | Costul rovinietei |
 
-#### 5. Mentenanță
-Urmărirea lucrărilor de mentenanță și reparații:
-- **Submeniu:** Selectați tipul de mentenanță din listă
-  - Revizie ulei
-  - Distribuție
-  - Anvelope
-  - Baterie
-  - Frâne (plăcuțe și discuri)
-  - Trusă de prim ajutor
-  - Extinctor
-- Pentru fiecare tip:
-  - **Data ultimei mentenanțe:** Când a fost efectuată ultima dată
-  - **Prețul:** Costul lucrării
-  - **Observații:** Notări suplimentare
+#### Date administrative / fiscale
 
-#### 6. Kilometraj
-Informații actualizate privind kilometrajul:
-- **Kilometrajul curent:** Km actuali ai vehiculului
+| Câmp | Descriere |
+|------|-----------|
+| Impozit — Sumă (RON) | Valoarea impozitului auto |
+| Impozit — Scadență | Data scadenței (ZZ.LL.AAAA) |
+| Impozit — Localitate | Localitatea impozitării |
+| Proprietar | Numele proprietarului |
+| Tip proprietate | Proprietate sau Leasing |
+| Leasing — Data expirare | Apare doar dacă tipul e „Leasing" (ZZ.LL.AAAA) |
+
+#### Mentenanță — Revizie ulei
+
+| Câmp | Descriere |
+|------|-----------|
+| Km ultima revizie | Kilometrajul la ultima revizie |
+| Km următoarea revizie | Kilometrajul la care trebuie făcută următoarea |
+| Data ultima revizie | Data ultimei revizii (ZZ.LL.AAAA) |
+| Cost (RON) | Costul reviziei |
+
+> **Notă:** Necesită setarea prealabilă a kilometrajului curent.
+
+#### Mentenanță — Distribuție
+
+| Câmp | Descriere |
+|------|-----------|
+| Km ultima schimbare | Kilometrajul la ultima schimbare |
+| Km următoarea schimbare | Kilometrajul la care trebuie schimbat |
+| Data ultima schimbare | Data ultimei schimbări (ZZ.LL.AAAA) |
+| Cost (RON) | Costul schimbării |
+
+> **Notă:** Necesită setarea prealabilă a kilometrajului curent.
+
+#### Mentenanță — Anvelope
+
+| Câmp | Descriere |
+|------|-----------|
+| Data montare vară | Data montării anvelopelor de vară (ZZ.LL.AAAA) |
+| Data montare iarnă | Data montării anvelopelor de iarnă (ZZ.LL.AAAA) |
+| Cost (RON) | Costul anvelopelor |
+
+#### Mentenanță — Baterie
+
+| Câmp | Descriere |
+|------|-----------|
+| Data schimb | Data schimbării bateriei (ZZ.LL.AAAA) |
+| Cost (RON) | Costul bateriei |
+
+#### Mentenanță — Frâne (plăcuțe și discuri)
+
+| Câmp | Descriere |
+|------|-----------|
+| Plăcuțe — Km ultima schimbare | Kilometrajul la ultima schimbare |
+| Plăcuțe — Km următoarea schimbare | Kilometrajul la care trebuie schimbate |
+| Plăcuțe — Data schimbare | Data schimbării plăcuțelor (ZZ.LL.AAAA) |
+| Plăcuțe — Cost (RON) | Costul plăcuțelor |
+| Discuri — Km ultima schimbare | Kilometrajul la ultima schimbare |
+| Discuri — Km următoarea schimbare | Kilometrajul la care trebuie schimbate |
+| Discuri — Data schimbare | Data schimbării discurilor (ZZ.LL.AAAA) |
+| Discuri — Cost (RON) | Costul discurilor |
+
+> **Notă:** Necesită setarea prealabilă a kilometrajului curent.
+
+#### Echipament obligatoriu — Trusă de prim ajutor
+
+| Câmp | Descriere |
+|------|-----------|
+| Data expirare | Data expirării trusei (ZZ.LL.AAAA) |
+
+#### Echipament obligatoriu — Extinctor
+
+| Câmp | Descriere |
+|------|-----------|
+| Data expirare | Data expirării extinctorului (ZZ.LL.AAAA) |
+
+#### Actualizare kilometraj
+
+| Câmp | Descriere |
+|------|-----------|
+| Km curent | Kilometrajul actual al vehiculului |
+
+### Arhivare date (istoric)
+
+Fiecare formular arhivabil (RCA, Casco, ITP, Rovinieta, Revizie ulei, Distribuție, Anvelope, Baterie, Frâne) conține un toggle **„Arhivează datele vechi înainte de salvare"** (implicit dezactivat).
+
+- **Bifat**: datele vechi sunt salvate în istoric înainte de suprascriere (util la reînnoire)
+- **Nebifat**: se salvează direct, fără arhivare (util pentru corecții)
+
+Istoricul apare direct pe senzorul categoriei respective, cu prefix „Anterior –".
 
 ### Format date
 
-Toate datele de tip dată se introduc în format **ZZ.LL.AAAA**, unde:
-- **ZZ** = ziua (01-31)
-- **LL** = luna (01-12)
-- **AAAA** = anul (4 cifre)
+Toate datele calendaristice se introduc în format **ZZ.LL.AAAA** (ex: 18.04.2026). Intern, se stochează în format ISO (2026-04-18).
 
-**Exemplu:** 18.04.2026 (18 aprilie 2026)
-
-### Validare și păstrare
-
-- Toate câmpurile cu an sunt validate pe server-side pentru a asigura corectitudinea
-- **Golirea unui câmp:** Ștergerea conținutului unui câmp și salvarea înlătură acea informație din storage
-- Modificările sunt salvate imediat după apăsarea butonului **"Salvare"**
+---
 
 ## Senzori creați
 
-Pentru fiecare vehicul adăugat, integrarea creează până la 17 senzori potențiali:
+Pentru fiecare vehicul, integrarea creează până la **17 senzori**. Aceștia apar condiționat — doar dacă au date completate.
 
-### Senzori de dată
+Entity ID-uri: `sensor.vehicule_{nr_normalizat}_{tip_senzor}` (ex: `sensor.vehicule_b123abc_rca`)
 
-| Senzor | Descriere | Entitate | Condiție vizibilitate |
-|--------|-----------|----------|----------------------|
-| **RCA Expirare** | Data expirării asigurării RCA | `sensor.<id>_rca_expirare` | Dacă data RCA este setată |
-| **Casco Expirare** | Data expirării asigurării Casco | `sensor.<id>_casco_expirare` | Dacă data Casco este setată |
-| **ITP Expirare** | Data expirării ITP | `sensor.<id>_itp_expirare` | Dacă data ITP este setată |
-| **Certificat Înregistrare** | Data certificatului de înregistrare | `sensor.<id>_cert_inreg` | Dacă data este setată |
-| **Taxa Locală** | Data taxei locale | `sensor.<id>_taxa_locala` | Dacă data este setată |
-| **Mentenanță** | Data ultimei mentenanțe (pe fiecare tip) | `sensor.<id>_maint_<tip>` | Dacă data este setată |
+| Senzor | Cheie | Unitate | Vizibil când... | Valoare |
+|--------|-------|---------|-----------------|---------|
+| Informații | `informatii` | — | Mereu | Marcă + Model |
+| Kilometraj | `kilometraj` | km | `km_curent` completat | Km curent |
+| RCA | `rca` | zile | `rca_data_expirare` completat | Zile rămase |
+| Casco | `casco` | zile | `casco_data_expirare` completat | Zile rămase |
+| ITP | `itp` | zile | `itp_data_expirare` completat | Zile rămase |
+| Rovinieta | `rovinieta` | zile | `rovinieta_data_sfarsit` completat | Zile rămase |
+| Impozit | `impozit` | zile | `impozit_scadenta` completat | Zile rămase |
+| Leasing | `leasing` | zile | `tip_proprietate` = leasing | Zile rămase |
+| Revizie ulei | `revizie_ulei` | km | `revizie_ulei_km_urmator` completat | Km rămași |
+| Distribuție | `distributie` | km | `distributie_km_urmator` completat | Km rămași |
+| Anvelope | `anvelope` | — | Cel puțin o dată de montare | Sezon (Vară / Iarnă) |
+| Baterie | `baterie` | luni | `baterie_data_schimb` completat | Luni de la schimb |
+| Plăcuțe frână | `placute_frana` | km | `placute_frana_km_urmator` completat | Km rămași |
+| Discuri frână | `discuri_frana` | km | `discuri_frana_km_urmator` completat | Km rămași |
+| Trusă prim ajutor | `trusa_prim_ajutor` | zile | `trusa_prim_ajutor_data_expirare` completat | Zile rămase |
+| Extinctor | `extinctor` | zile | `extinctor_data_expirare` completat | Zile rămase |
+| Cost total | `cost_total` | RON | Cel puțin un cost completat | Costul anului curent |
 
-### Senzori de valoare
+### Atribute senzori
 
-| Senzor | Descriere | Entitate | Condiție vizibilitate |
-|--------|-----------|----------|----------------------|
-| **Kilometraj** | Kilometrajul curent | `sensor.<id>_km` | Întotdeauna vizibil |
-| **Cost Mentenanță** | Costul ultimei mentenanțe (per tip) | `sensor.<id>_maint_cost_<tip>` | Dacă costul este setat |
+Fiecare senzor expune atribute suplimentare. Exemple:
 
-Senzori care nu au valori setate nu apar în interfață.
+**RCA** — Număr poliță, Companie, Data emitere, Data expirare, Cost (RON), Stare (Valid/Expirat)
 
-## Serviciul vehicule.actualizeaza_date
+**Revizie ulei** — Km ultima revizie, Km următoarea revizie, Data ultima revizie, Cost (RON), Km curent
 
-Puteți actualiza datele vehiculului prin apelarea serviciului `vehicule.actualizeaza_date`:
+**Frâne (plăcuțe/discuri)** — Km ultima schimbare, Km următoarea schimbare, Data schimbare, Cost (RON), Km curent
 
-### Utilizare
+**Cost total** — Asigurări {an} (RON), Taxe {an} (RON), Mentenanță {an} (RON), Total {an-1} (RON), Total general (RON). Fiecare cost e atribuit anului din data sa de referință. Totalurile per an includ și costurile arhivate.
+
+**Istoric per senzor** — Senzorii arhivabili afișează: Reînnoiri anterioare, Ultima arhivare, câmpurile anterioare cu prefix „Anterior –", Cost total anterior (RON).
+
+---
+
+## Servicii
+
+### vehicule.actualizeaza_date
+
+Actualizează kilometrajul curent al unui vehicul.
+
+| Parametru | Tip | Obligatoriu | Descriere | Exemplu |
+|-----------|-----|-------------|-----------|---------|
+| `nr_inmatriculare` | string | Da | Placa vehiculului | `B123ABC` |
+| `km_curent` | int | Da | Kilometrajul actual (0–9.999.999) | `85000` |
 
 ```yaml
-service: vehicule.actualizeaza_date
+action: vehicule.actualizeaza_date
 data:
   nr_inmatriculare: "B123ABC"
-  kilometraj: 50000
-  data_rca: "18.04.2026"
-  data_casco: "15.05.2026"
-  data_itp: "15.06.2027"
+  km_curent: 85000
 ```
 
-### Parametri disponibili
+### vehicule.exporta_date
 
-| Parametru | Tip | Descriere | Exemplu |
-|-----------|-----|-----------|---------|
-| `nr_inmatriculare` | string | **Obligatoriu** - Placa vehiculului | `B123ABC` |
-| `kilometraj` | integer | Kilometrajul curent | `50000` |
-| `data_rca` | string | Data expirării RCA (ZZ.LL.AAAA) | `18.04.2026` |
-| `data_casco` | string | Data expirării Casco (ZZ.LL.AAAA) | `15.05.2026` |
-| `data_itp` | string | Data expirării ITP (ZZ.LL.AAAA) | `15.06.2027` |
-| `data_cert_inreg` | string | Data certificatului (ZZ.LL.AAAA) | `10.01.2020` |
-| `data_taxa_locala` | string | Data taxei locale (ZZ.LL.AAAA) | `15.12.2026` |
-| `maint_<tip>` | string | Data mentenanței (ZZ.LL.AAAA) | `18.03.2026` |
-| `maint_cost_<tip>` | float | Cost mentenanță | `150.50` |
+Exportă datele unui vehicul într-un fișier JSON în `/config/`.
 
-### Exemplu - Automație
+| Parametru | Tip | Obligatoriu | Descriere |
+|-----------|-----|-------------|-----------|
+| `nr_inmatriculare` | string | Da | Placa vehiculului |
 
 ```yaml
-automation:
-  - alias: "Actualizare kilometraj lunar"
-    trigger:
-      platform: time
-      at: "09:00:00"
-    condition:
-      - condition: time
-        weekday:
-          - mon
-    action:
-      - service: vehicule.actualizeaza_date
-        data:
-          nr_inmatriculare: "B123ABC"
-          kilometraj: 51000
-```
-
-## Serviciul vehicule.exporta_date
-
-Exportă datele unui vehicul într-un fișier JSON în directorul `/config/`:
-
-```yaml
-service: vehicule.exporta_date
+action: vehicule.exporta_date
 data:
   nr_inmatriculare: "B123ABC"
 ```
 
 Fișierul generat: `/config/vehicule_backup_b123abc.json`
 
-## Serviciul vehicule.importa_date
+### vehicule.importa_date
 
-Importă datele unui vehicul dintr-un fișier JSON. Dacă vehiculul nu există, va fi creat automat:
+Importă datele unui vehicul dintr-un fișier JSON. Dacă vehiculul nu există, va fi creat automat.
+
+| Parametru | Tip | Obligatoriu | Descriere |
+|-----------|-----|-------------|-----------|
+| `cale_fisier` | string | Da | Calea completă către fișierul JSON |
 
 ```yaml
-service: vehicule.importa_date
+action: vehicule.importa_date
 data:
   cale_fisier: "/config/vehicule_backup_b123abc.json"
 ```
 
+---
+
+## Exemple de automatizări
+
+### Actualizare km din senzor OBD/GPS
+
+```yaml
+automation:
+  - alias: "Actualizare km din OBD/GPS"
+    triggers:
+      - trigger: time_pattern
+        hours: "/1"
+    actions:
+      - action: vehicule.actualizeaza_date
+        data:
+          nr_inmatriculare: "B123ABC"
+          km_curent: "{{ states('sensor.obd_odometer') | int(0) }}"
+```
+
+### Notificare documente care expiră
+
+```yaml
+automation:
+  - alias: "Vehicul B123ABC — Notificări zilnice"
+    triggers:
+      - trigger: time
+        at: "11:00:00"
+    actions:
+      - repeat:
+          for_each:
+            - entity: sensor.vehicule_b123abc_rca
+              name: "RCA"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_itp
+              name: "ITP"
+              prag: 30
+              unitate: "zile"
+            - entity: sensor.vehicule_b123abc_revizie_ulei
+              name: "Revizie ulei"
+              prag: 1000
+              unitate: "km"
+            - entity: sensor.vehicule_b123abc_placute_frana
+              name: "Plăcuțe frână"
+              prag: 3000
+              unitate: "km"
+          sequence:
+            - variables:
+                val: "{{ states(repeat.item.entity) }}"
+            - if:
+                - condition: template
+                  value_template: >
+                    {{ val not in ['unknown', 'unavailable'] and val | int(999) < repeat.item.prag }}
+              then:
+                - action: notify.mobile_app
+                  data:
+                    title: "⚠️ {{ repeat.item.name }} — B123ABC"
+                    message: "Mai ai {{ val }} {{ repeat.item.unitate }} rămase."
+```
+
+> **Notă**: Înlocuiți `notify.mobile_app` cu serviciul vostru de notificare. Lista de senzori și pragurile se pot ajusta.
+
+---
+
 ## Carduri Lovelace
 
-### Card simplu cu entități
+### Card cu entități
 
 ```yaml
 type: entities
-title: Vehicul - Status
+title: Vehicul B123ABC
 entities:
-  - sensor.vehicule_ab123cd_km
-  - sensor.vehicule_ab123cd_rca_expirare
-  - sensor.vehicule_ab123cd_itp_expirare
-  - sensor.vehicule_ab123cd_taxa_locala
+  - sensor.vehicule_b123abc_informatii
+  - sensor.vehicule_b123abc_kilometraj
+  - sensor.vehicule_b123abc_rca
+  - sensor.vehicule_b123abc_itp
+  - sensor.vehicule_b123abc_cost_total
 ```
 
-### Card cu informații detaliate
+### Card cu auto-entities (toate entitățile)
 
 ```yaml
 type: custom:auto-entities
 filter:
   include:
-    - entity_id: "sensor.vehicule_ab123cd*"
-title: Vehicul - Toate informațiile
+    - entity_id: "sensor.vehicule_b123abc*"
+title: Vehicul B123ABC — Toate
 ```
 
-### Card cu avertismente
+---
 
-```yaml
-type: conditional
-conditions:
-  - entity: sensor.vehicule_ab123cd_rca_expirare
-    state_not: "unavailable"
-card:
-  type: entities
-  title: "⚠️ Documente care expiră în curând"
-  entities:
-    - sensor.vehicule_ab123cd_rca_expirare
-    - sensor.vehicule_ab123cd_itp_expirare
-```
+## Diagnostics
+
+1. **Setări** → **Dispozitive și servicii** → click pe vehicul
+2. Click pe cele 3 puncte (⋮) → **Download diagnostics**
+
+Datele sunt structurate pe categorii (identificare, kilometraj, rca, casco, itp, rovinieta, administrativ, revizie_ulei, distributie, anvelope, baterie, frane, echipament_obligatoriu), cu secțiune separată pentru istoric și lista senzorilor activi.
+
+Informațiile sensibile (VIN, serie CIV, nr. înmatriculare, nr. poliță, proprietar) sunt mascate automat.
+
+---
 
 ## Verificare după instalare
 
-După instalare și configurare inițială, efectuați aceste verificări:
+1. **Setări** → **Dispozitive și servicii** → **Dispozitive** — căutați dispozitivul cu placa vehiculului
+2. **Setări** → **Dispozitive și servicii** → **Entități** — filtrați după `sensor.vehicule_` și verificați senzorii creați
+3. **Setări** → **Sistem** → **Jurnale** — filtrați după `vehicule` și verificați că nu sunt erori
+4. Testați serviciul `vehicule.actualizeaza_date` din **Instrumente pentru dezvoltatori** → **Servicii**
 
-### 1. Verificare dispozitiv
-
-1. Accesați **Setări** → **Dispozitive și servicii** → **Dispozitive**
-2. Căutați dispozitivul cu placa vehiculului
-3. Verificați că sunt listate corect
-
-### 2. Verificare senzori
-
-1. Accesați **Setări** → **Dispozitive și servicii** → **Entități**
-2. Filtrați după `sensor.` și placa vehiculului
-3. Verificați că apar senzori pentru datele completate
-
-### 3. Verificare jurnale
-
-1. Accesați **Setări** → **Sistemul** → **Jurnale**
-2. Filtrați după `vehicule`
-3. Verificați că nu sunt erori sau avertismente
-
-### 4. Test serviciu
-
-1. Accesați **Setări** → **Sisteme** → **Servicii**
-2. Selectați domeniu: `vehicule`
-3. Selectați serviciu: `actualizeaza_date`
-4. Completați parametrul `nr_inmatriculare` și apăsați **Execută**
-5. Verificați în jurnale că serviciul s-a executat cu succes
+---
 
 ## Dezinstalare
 
 ### Prin HACS
 
-1. Deschideți **HACS** → **Integrări personalizate**
-2. Localizați **"Vehicule"**
-3. Apăsați pe ea și selectați **"Dezinstalare"**
-4. Confirmați
-5. **Reporniți Home Assistant**
+1. **HACS** → localizați **„Vehicule"** → **Dezinstalare**
+2. Reporniți Home Assistant
 
 ### Manual
 
-1. Ștergeți dosarul `vehicule` din `config/custom_components/`
-2. **Reporniți Home Assistant**
-3. În **Setări** → **Dispozitive și servicii**, ștergeți integrarea Vehicule dacă apare
+1. Ștergeți folderul `vehicule` din `config/custom_components/`
+2. Reporniți Home Assistant
+3. Ștergeți integrarea din **Setări** → **Dispozitive și servicii** dacă apare
 
-## Suport și raportare erori
+---
 
-Pentru probleme, sugestii sau raportare de bug-uri, vizitați:
+## Suport
 
-**GitHub:** https://github.com/cnecrea/vehicule
+Pentru probleme sau sugestii: https://github.com/cnecrea/vehicule/issues
 
 ---
 
 **Versiune:** 1.3.0
 **Compatibilitate:** Home Assistant 2025.11.0+
-**Licență:** RO (România)
