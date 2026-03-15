@@ -59,12 +59,14 @@ from .const import (
     CONF_CASCO_NUMAR_POLITA,
     CONF_COMBUSTIBIL,
     CONF_DISCURI_FRANA_COST,
+    CONF_DISCURI_FRANA_DATA,
     CONF_DISCURI_FRANA_KM_ULTIMUL,
     CONF_DISCURI_FRANA_KM_URMATOR,
     CONF_DISTRIBUTIE_COST,
     CONF_DISTRIBUTIE_DATA,
     CONF_DISTRIBUTIE_KM_ULTIMUL,
     CONF_DISTRIBUTIE_KM_URMATOR,
+    CONF_EXTINCTOR_DATA_EXPIRARE,
     CONF_IMPOZIT_LOCALITATE,
     CONF_IMPOZIT_SCADENTA,
     CONF_IMPOZIT_SUMA,
@@ -79,6 +81,7 @@ from .const import (
     CONF_MOTORIZARE,
     CONF_NR_INMATRICULARE,
     CONF_PLACUTE_FRANA_COST,
+    CONF_PLACUTE_FRANA_DATA,
     CONF_PLACUTE_FRANA_KM_ULTIMUL,
     CONF_PLACUTE_FRANA_KM_URMATOR,
     CONF_PROPRIETAR,
@@ -99,7 +102,6 @@ from .const import (
     CONF_ROVINIETA_PRET,
     CONF_SERIE_CIV,
     CONF_TIP_PROPRIETATE,
-    CONF_EXTINCTOR_DATA_EXPIRARE,
     CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE,
     CONF_VIN,
     DOMAIN,
@@ -267,16 +269,31 @@ def _cu_istoric(
 # Funcții pentru senzorul Cost Total
 # ─────────────────────────────────────────────
 
-# Toate câmpurile de cost din integrare, grupate pe categorii
-_COSTURI_ASIGURARI = {
+# ── Mapping cost → data de referință (pentru determinarea anului) ──
+# Fiecare cheie de cost are o dată asociată din care extragem anul.
+_COST_DATA_REFERINTA: dict[str, str] = {
+    CONF_RCA_COST: CONF_RCA_DATA_EMITERE,
+    CONF_CASCO_COST: CONF_CASCO_DATA_EMITERE,
+    CONF_ROVINIETA_PRET: CONF_ROVINIETA_DATA_INCEPUT,
+    CONF_IMPOZIT_SUMA: CONF_IMPOZIT_SCADENTA,
+    CONF_REVIZIE_ULEI_COST: CONF_REVIZIE_ULEI_DATA,
+    CONF_DISTRIBUTIE_COST: CONF_DISTRIBUTIE_DATA,
+    CONF_ANVELOPE_COST: CONF_ANVELOPE_VARA_DATA,
+    CONF_BATERIE_COST: CONF_BATERIE_DATA_SCHIMB,
+    CONF_PLACUTE_FRANA_COST: CONF_PLACUTE_FRANA_DATA,
+    CONF_DISCURI_FRANA_COST: CONF_DISCURI_FRANA_DATA,
+}
+
+# Costurile grupate pe categorii (pentru defalcare în atribute)
+_COSTURI_ASIGURARI: dict[str, str] = {
     "RCA": CONF_RCA_COST,
     "Casco": CONF_CASCO_COST,
 }
-_COSTURI_TAXE = {
+_COSTURI_TAXE: dict[str, str] = {
     "Rovinieta": CONF_ROVINIETA_PRET,
     "Impozit auto": CONF_IMPOZIT_SUMA,
 }
-_COSTURI_MENTENANTA = {
+_COSTURI_MENTENANTA: dict[str, str] = {
     "Revizie ulei": CONF_REVIZIE_ULEI_COST,
     "Distribuție": CONF_DISTRIBUTIE_COST,
     "Anvelope": CONF_ANVELOPE_COST,
@@ -286,56 +303,172 @@ _COSTURI_MENTENANTA = {
 }
 
 
-def _suma_categorie(data: dict[str, Any], campuri: dict[str, str]) -> int:
-    """Calculează suma costurilor pentru o categorie."""
+def _an_din_data(data_iso: Any) -> int | None:
+    """Extrage anul dintr-o dată ISO. Returnează None dacă nu e validă."""
+    if not data_iso or data_iso == "":
+        return None
+    try:
+        return date.fromisoformat(str(data_iso)).year
+    except (ValueError, TypeError):
+        return None
+
+
+def _costuri_pe_ani(data: dict[str, Any]) -> dict[int, int]:
+    """Construiește un dicționar {an: total_cost} din costurile curente.
+
+    Folosește _COST_DATA_REFERINTA pentru a determina anul fiecărui cost.
+    Costurile fără dată asociată se atribuie anului curent (fallback).
+    """
+    costuri: dict[int, int] = {}
+    an_curent = date.today().year
+
+    for cheie_cost, cheie_data in _COST_DATA_REFERINTA.items():
+        val = intreg(data.get(cheie_cost))
+        if val is None or val == 0:
+            continue
+        an = _an_din_data(data.get(cheie_data)) or an_curent
+        costuri[an] = costuri.get(an, 0) + val
+
+    return costuri
+
+
+def _costuri_istorice_pe_ani(data: dict[str, Any]) -> dict[int, int]:
+    """Construiește un dicționar {an: total_cost} din intrările arhivate.
+
+    Scanează _istoric și extrage costurile + anul din datele arhivate.
+    Folosește data_arhivare ca fallback dacă nu există date calendaristice.
+    """
+    istoric = data.get(CONF_ISTORIC, [])
+    if not isinstance(istoric, list):
+        return {}
+
+    costuri: dict[int, int] = {}
+
+    for intrare in istoric:
+        if not isinstance(intrare, dict):
+            continue
+        date_vechi = intrare.get("date", {})
+        # Determinăm anul: căutăm prima dată validă în datele arhivate
+        an_intrare: int | None = None
+        for _eticheta, val in date_vechi.items():
+            an_intrare = _an_din_data(val)
+            if an_intrare is not None:
+                break
+        # Fallback: anul din data_arhivare
+        if an_intrare is None:
+            an_intrare = _an_din_data(intrare.get("data_arhivare"))
+        if an_intrare is None:
+            continue
+
+        # Extragem costurile
+        for eticheta, val in date_vechi.items():
+            if "cost" in eticheta.lower() or "preț" in eticheta.lower():
+                v = intreg(val)
+                if v is not None and v > 0:
+                    costuri[an_intrare] = costuri.get(an_intrare, 0) + v
+
+    return costuri
+
+
+def _suma_categorie_an(
+    data: dict[str, Any], campuri: dict[str, str], an: int,
+) -> int:
+    """Calculează suma costurilor unei categorii pentru un an specific."""
     total = 0
-    for _eticheta, cheie in campuri.items():
-        val = intreg(data.get(cheie))
-        if val is not None:
+    for _eticheta, cheie_cost in campuri.items():
+        val = intreg(data.get(cheie_cost))
+        if val is None or val == 0:
+            continue
+        cheie_data = _COST_DATA_REFERINTA.get(cheie_cost)
+        an_cost = (
+            _an_din_data(data.get(cheie_data)) if cheie_data else None
+        ) or date.today().year
+        if an_cost == an:
             total += val
     return total
 
 
-def _cost_total_value(data: dict[str, Any]) -> int | None:
-    """Returnează costul total curent (toate categoriile sumate).
+def _are_costuri(data: dict[str, Any]) -> bool:
+    """Verifică dacă există cel puțin un cost completat (curent sau arhivat)."""
+    # Costuri curente
+    for cheie_cost in _COST_DATA_REFERINTA:
+        val = intreg(data.get(cheie_cost))
+        if val is not None and val > 0:
+            return True
+    # Costuri arhivate
+    istoric = data.get(CONF_ISTORIC, [])
+    if isinstance(istoric, list):
+        for intrare in istoric:
+            if not isinstance(intrare, dict):
+                continue
+            for et, v in intrare.get("date", {}).items():
+                if "cost" in et.lower() or "preț" in et.lower():
+                    vi = intreg(v)
+                    if vi is not None and vi > 0:
+                        return True
+    return False
 
-    Returnează None dacă nu există niciun cost completat.
+
+def _cost_total_value(data: dict[str, Any]) -> int | None:
+    """Returnează costul total al anului curent.
+
+    Suma tuturor costurilor curente care au data de referință în anul curent.
+    Returnează None dacă nu există niciun cost (senzorul nu se creează).
+    Returnează 0 dacă există costuri dar niciunul nu e din anul curent.
     """
-    toate_cheile = (
-        list(_COSTURI_ASIGURARI.values())
-        + list(_COSTURI_TAXE.values())
-        + list(_COSTURI_MENTENANTA.values())
-    )
-    if not any(
-        data.get(k) is not None and data.get(k) != ""
-        for k in toate_cheile
-    ):
+    if not _are_costuri(data):
         return None
-    return (
-        _suma_categorie(data, _COSTURI_ASIGURARI)
-        + _suma_categorie(data, _COSTURI_TAXE)
-        + _suma_categorie(data, _COSTURI_MENTENANTA)
-    )
+    costuri_curente = _costuri_pe_ani(data)
+    an_curent = date.today().year
+    return costuri_curente.get(an_curent, 0)
 
 
 def _cost_total_attr(data: dict[str, Any]) -> dict[str, Any]:
-    """Atributele senzorului Cost Total: defalcare pe categorii curente."""
+    """Atributele senzorului Cost Total: defalcare pe an și categorie.
+
+    Afișează:
+    - An curent: defalcare pe categorii (Asigurări / Taxe / Mentenanță)
+    - Ani anteriori: total per an (din costuri curente + arhivate)
+    """
     atribute: dict[str, Any] = {}
+    an_curent = date.today().year
 
-    # Defalcare asigurări
-    s_asig = _suma_categorie(data, _COSTURI_ASIGURARI)
+    # ── Defalcare an curent pe categorii ──
+    s_asig = _suma_categorie_an(data, _COSTURI_ASIGURARI, an_curent)
     if s_asig > 0:
-        atribute["Asigurări (RON)"] = s_asig
+        atribute[f"Asigurări {an_curent} (RON)"] = s_asig
 
-    # Defalcare taxe
-    s_taxe = _suma_categorie(data, _COSTURI_TAXE)
+    s_taxe = _suma_categorie_an(data, _COSTURI_TAXE, an_curent)
     if s_taxe > 0:
-        atribute["Taxe și rovinieta (RON)"] = s_taxe
+        atribute[f"Taxe {an_curent} (RON)"] = s_taxe
 
-    # Defalcare mentenanță
-    s_ment = _suma_categorie(data, _COSTURI_MENTENANTA)
+    s_ment = _suma_categorie_an(data, _COSTURI_MENTENANTA, an_curent)
     if s_ment > 0:
-        atribute["Mentenanță (RON)"] = s_ment
+        atribute[f"Mentenanță {an_curent} (RON)"] = s_ment
+
+    # ── Costuri din ani anteriori (curente care nu sunt anul curent) ──
+    costuri_curente = _costuri_pe_ani(data)
+
+    # ── Costuri din istoric (arhivate) ──
+    costuri_arhivate = _costuri_istorice_pe_ani(data)
+
+    # Combinăm toate costurile pe ani
+    toti_anii: dict[int, int] = {}
+    for an, total in costuri_curente.items():
+        toti_anii[an] = toti_anii.get(an, 0) + total
+    for an, total in costuri_arhivate.items():
+        toti_anii[an] = toti_anii.get(an, 0) + total
+
+    # Afișăm totaluri per an (descrescător, fără anul curent – deja defalcat)
+    for an in sorted(toti_anii.keys(), reverse=True):
+        if an == an_curent:
+            continue
+        atribute[f"Total {an} (RON)"] = toti_anii[an]
+
+    # Total general (toți anii)
+    total_general = sum(toti_anii.values())
+    if total_general > 0 and len(toti_anii) > 1:
+        atribute["Total general (RON)"] = total_general
 
     return atribute
 
@@ -587,6 +720,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 {
                     "Km ultima schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_ULTIMUL)),
                     "Km următoarea schimbare": intreg(d.get(CONF_PLACUTE_FRANA_KM_URMATOR)),
+                    "Data schimbare": format_data_ro(d.get(CONF_PLACUTE_FRANA_DATA)),
                     "Cost (RON)": intreg(d.get(CONF_PLACUTE_FRANA_COST)),
                     "Km curent": intreg(d.get(CONF_KM_CURENT)),
                 }
@@ -609,6 +743,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
                 {
                     "Km ultima schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_ULTIMUL)),
                     "Km următoarea schimbare": intreg(d.get(CONF_DISCURI_FRANA_KM_URMATOR)),
+                    "Data schimbare": format_data_ro(d.get(CONF_DISCURI_FRANA_DATA)),
                     "Cost (RON)": intreg(d.get(CONF_DISCURI_FRANA_COST)),
                     "Km curent": intreg(d.get(CONF_KM_CURENT)),
                 }
@@ -654,7 +789,7 @@ SENSOR_DESCRIPTIONS: list[VehiculeSensorDescription] = [
         native_unit_of_measurement="RON",
         state_class=SensorStateClass.MEASUREMENT,
         suggested_display_precision=0,
-        vizibil_fn=lambda d: _cost_total_value(d) is not None,
+        vizibil_fn=lambda d: _are_costuri(d),
         value_fn=_cost_total_value,
         attributes_fn=_cost_total_attr,
     ),
