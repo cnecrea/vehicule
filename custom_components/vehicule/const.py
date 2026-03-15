@@ -116,9 +116,11 @@ CONF_ROVINIETA_PRET: Final = "rovinieta_pret"
 # ─────────────────────────────────────────────
 CONF_PLACUTE_FRANA_KM_ULTIMUL: Final = "placute_frana_km_ultimul"
 CONF_PLACUTE_FRANA_KM_URMATOR: Final = "placute_frana_km_urmator"
+CONF_PLACUTE_FRANA_DATA: Final = "placute_frana_data"
 CONF_PLACUTE_FRANA_COST: Final = "placute_frana_cost"
 CONF_DISCURI_FRANA_KM_ULTIMUL: Final = "discuri_frana_km_ultimul"
 CONF_DISCURI_FRANA_KM_URMATOR: Final = "discuri_frana_km_urmator"
+CONF_DISCURI_FRANA_DATA: Final = "discuri_frana_data"
 CONF_DISCURI_FRANA_COST: Final = "discuri_frana_cost"
 
 # ─────────────────────────────────────────────
@@ -226,9 +228,11 @@ CATEGORII_ARHIVABILE: Final = {
     "frane": {
         "Plăcuțe – Km ultima schimbare": CONF_PLACUTE_FRANA_KM_ULTIMUL,
         "Plăcuțe – Km următoarea schimbare": CONF_PLACUTE_FRANA_KM_URMATOR,
+        "Plăcuțe – Data schimbare": CONF_PLACUTE_FRANA_DATA,
         "Plăcuțe – Cost (RON)": CONF_PLACUTE_FRANA_COST,
         "Discuri – Km ultima schimbare": CONF_DISCURI_FRANA_KM_ULTIMUL,
         "Discuri – Km următoarea schimbare": CONF_DISCURI_FRANA_KM_URMATOR,
+        "Discuri – Data schimbare": CONF_DISCURI_FRANA_DATA,
         "Discuri – Cost (RON)": CONF_DISCURI_FRANA_COST,
     },
 }
