@@ -30,7 +30,7 @@ Fără dependențe externe, fără API-uri, fără conexiune la internet. Totul 
 - **Echipament obligatoriu**: trusă de prim ajutor, extinctor — cu avertizare la expirare
 - **Costuri mentenanță**: câmpuri de cost la toate categoriile de mentenanță
 - **Istoric cu confirmare**: la reînnoirea unui document sau mentenanță, datele vechi pot fi arhivate (cu bifa explicită din formular)
-- **Senzor cost total**: sumă agregată a tuturor costurilor curente, cu defalcare pe categorii
+- **Senzor cost total pe ani**: costul anului curent cu defalcare pe categorii și totaluri pe ani anteriori (curente + arhivate)
 - **Senzori condiționați**: apar doar când au date completate (nu aglomererază dashboard-ul)
 - **Curățare automată**: la schimbarea condițiilor (ex: treci de la leasing la proprietate), entitățile orfane sunt eliminate automat
 - **Date în format românesc**: ZZ.LL.AAAA în interfață, ISO intern
@@ -128,7 +128,7 @@ Unde `{nr_normalizat}` este numărul de înmatriculare normalizat (litere mici).
 | Discuri frână | `discuri_frana` | km | `discuri_frana_km_urmator` completat | Km rămași |
 | Trusă prim ajutor | `trusa_prim_ajutor` | zile | `trusa_prim_ajutor_data_expirare` completat | Zile rămase până la expirare |
 | Extinctor | `extinctor` | zile | `extinctor_data_expirare` completat | Zile rămase până la expirare |
-| Cost total | `cost_total` | RON | Cel puțin un cost completat | Suma tuturor costurilor curente |
+| Cost total | `cost_total` | RON | Cel puțin un cost completat | Costul total al anului curent |
 
 ### Atribute senzori
 
@@ -152,7 +152,7 @@ Fiecare senzor expune atribute suplimentare. Câteva exemple:
 
 **Extinctor** — atribute: Data expirare, Stare (Valid/Expirat)
 
-**Cost total** — atribute: Asigurări (RON), Taxe și rovinieta (RON), Mentenanță (RON)
+**Cost total** — atribute: Asigurări {an} (RON), Taxe {an} (RON), Mentenanță {an} (RON), Total {an-1} (RON), Total {an-2} (RON), Total general (RON). Costurile sunt atribuite anului din data lor de referință. Totalurile per an includ și costurile arhivate.
 
 > **Istoric per senzor**: Senzorii arhivabili (RCA, Casco, ITP, Rovinieta, Revizie ulei, Distribuție, Anvelope, Baterie, Plăcuțe frână, Discuri frână) afișează în atribute și detaliile ultimei reînnoiri anterioare (Reînnoiri anterioare, Ultima arhivare, câmpurile anterioare cu prefix „Anterior – ", Cost total anterior)
 
@@ -320,6 +320,8 @@ Integrarea suportă exportarea datelor de diagnostic prin mecanismul standard HA
 
 1. **Settings** → **Devices & Services** → click pe vehicul
 2. Click pe cele 3 puncte (⋮) → **Download diagnostics**
+
+Datele sunt structurate pe categorii (identificare, kilometraj, rca, casco, itp, rovinieta, administrativ, revizie_ulei, distributie, anvelope, baterie, frane, echipament_obligatoriu), cu secțiune separată pentru istoric și lista senzorilor activi.
 
 Informațiile sensibile (VIN, serie CIV, nr. înmatriculare, nr. poliță, proprietar) sunt mascate automat.
 
