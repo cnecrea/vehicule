@@ -181,9 +181,11 @@
         "data": {
           "placute_frana_km_ultimul": "Brake pads – Km at last replacement",
           "placute_frana_km_urmator": "Brake pads – Km at next replacement",
+          "placute_frana_data": "Brake pads – Date of replacement (DD.MM.YYYY)",
           "placute_frana_cost": "Brake pads – Cost (RON)",
           "discuri_frana_km_ultimul": "Brake discs – Km at last replacement",
           "discuri_frana_km_urmator": "Brake discs – Km at next replacement",
+          "discuri_frana_data": "Brake discs – Date of replacement (DD.MM.YYYY)",
           "discuri_frana_cost": "Brake discs – Cost (RON)",
           "_arhivare_date": "Archive old data before saving"
         }
