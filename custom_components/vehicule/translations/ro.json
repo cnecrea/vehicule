@@ -181,9 +181,11 @@
         "data": {
           "placute_frana_km_ultimul": "Plăcuțe frână – Km ultima schimbare",
           "placute_frana_km_urmator": "Plăcuțe frână – Km următoarea schimbare",
+          "placute_frana_data": "Plăcuțe frână – Data schimbare (ZZ.LL.AAAA)",
           "placute_frana_cost": "Plăcuțe frână – Cost (RON)",
           "discuri_frana_km_ultimul": "Discuri frână – Km ultima schimbare",
           "discuri_frana_km_urmator": "Discuri frână – Km următoarea schimbare",
+          "discuri_frana_data": "Discuri frână – Data schimbare (ZZ.LL.AAAA)",
           "discuri_frana_cost": "Discuri frână – Cost (RON)",
           "_arhivare_date": "Arhivează datele vechi înainte de salvare"
         }
