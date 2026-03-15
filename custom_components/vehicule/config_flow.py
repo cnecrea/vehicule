@@ -42,6 +42,7 @@ from .const import (
     CONF_CASCO_NUMAR_POLITA,
     CONF_COMBUSTIBIL,
     CONF_DISCURI_FRANA_COST,
+    CONF_DISCURI_FRANA_DATA,
     CONF_DISCURI_FRANA_KM_ULTIMUL,
     CONF_DISCURI_FRANA_KM_URMATOR,
     CONF_DISTRIBUTIE_COST,
@@ -62,6 +63,7 @@ from .const import (
     CONF_MOTORIZARE,
     CONF_NR_INMATRICULARE,
     CONF_PLACUTE_FRANA_COST,
+    CONF_PLACUTE_FRANA_DATA,
     CONF_PLACUTE_FRANA_KM_ULTIMUL,
     CONF_PLACUTE_FRANA_KM_URMATOR,
     CONF_PROPRIETAR,
@@ -896,17 +898,21 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
         errors: dict[str, str] = {}
         chei = {
             CONF_PLACUTE_FRANA_KM_ULTIMUL, CONF_PLACUTE_FRANA_KM_URMATOR,
-            CONF_PLACUTE_FRANA_COST,
+            CONF_PLACUTE_FRANA_DATA, CONF_PLACUTE_FRANA_COST,
             CONF_DISCURI_FRANA_KM_ULTIMUL, CONF_DISCURI_FRANA_KM_URMATOR,
-            CONF_DISCURI_FRANA_COST,
+            CONF_DISCURI_FRANA_DATA, CONF_DISCURI_FRANA_COST,
         }
 
         if not self._verifica_km_curent():
             errors["base"] = "km_necesar"
         elif user_input is not None:
-            return self._salveaza_si_inchide(
-                user_input, chei, categorie_arhivare="frane"
-            )
+            errors = valideaza_campuri_data(user_input)
+            if not errors:
+                return self._salveaza_si_inchide(
+                    converteste_date_la_iso(user_input),
+                    chei,
+                    categorie_arhivare="frane",
+                )
 
         schema = vol.Schema(
             {
@@ -922,6 +928,11 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         min=0, max=9_999_999, step=1,
                         unit_of_measurement="km",
                         mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Optional(CONF_PLACUTE_FRANA_DATA): selector.TextSelector(
+                    selector.TextSelectorConfig(
+                        type=selector.TextSelectorType.TEXT,
                     )
                 ),
                 vol.Optional(CONF_PLACUTE_FRANA_COST): selector.NumberSelector(
@@ -943,6 +954,11 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         min=0, max=9_999_999, step=1,
                         unit_of_measurement="km",
                         mode=selector.NumberSelectorMode.BOX,
+                    )
+                ),
+                vol.Optional(CONF_DISCURI_FRANA_DATA): selector.TextSelector(
+                    selector.TextSelectorConfig(
+                        type=selector.TextSelectorType.TEXT,
                     )
                 ),
                 vol.Optional(CONF_DISCURI_FRANA_COST): selector.NumberSelector(
