@@ -1,0 +1,14 @@
+{
+  "domain": "vehicule",
+  "name": "Vehicule",
+  "codeowners": [
+    "@cnecrea"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/cnecrea/vehicule",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/cnecrea/vehicule/issues",
+  "requirements": [],
+  "version": "1.4.0"
+}

@@ -1,0 +1,299 @@
+{
+  "repo": "",
+  "prima_colectare": "",
+  "ultima_actualizare": "2026-03-19T06:42:27Z",
+  "zilnic": {
+    "2026-03-01": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-02": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-03": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-04": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-05": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-06": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-07": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-08": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-09": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-10": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-11": {
+      "clones_total": 0,
+      "clones_unice": 0,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-12": {
+      "clones_total": 386,
+      "clones_unice": 135,
+      "views_total": 0,
+      "views_unice": 0
+    },
+    "2026-03-13": {
+      "clones_total": 342,
+      "clones_unice": 140,
+      "views_total": 86,
+      "views_unice": 27
+    },
+    "2026-03-14": {
+      "clones_total": 359,
+      "clones_unice": 127,
+      "views_total": 43,
+      "views_unice": 15
+    },
+    "2026-03-15": {
+      "stars": 6,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "github.com",
+          "vizite": 23,
+          "vizitatori_unici": 7
+        },
+        {
+          "sursa": "buymeacoffee.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "lm.facebook.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "m.facebook.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
+      ],
+      "clones_total": 542,
+      "clones_unice": 204,
+      "views_total": 219,
+      "views_unice": 142
+    },
+    "2026-03-16": {
+      "stars": 6,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "m.facebook.com",
+          "vizite": 84,
+          "vizitatori_unici": 62
+        },
+        {
+          "sursa": "lm.facebook.com",
+          "vizite": 43,
+          "vizitatori_unici": 37
+        },
+        {
+          "sursa": "github.com",
+          "vizite": 42,
+          "vizitatori_unici": 16
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 25,
+          "vizitatori_unici": 19
+        },
+        {
+          "sursa": "facebook.com",
+          "vizite": 5,
+          "vizitatori_unici": 5
+        },
+        {
+          "sursa": "buymeacoffee.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
+      ],
+      "clones_total": 82,
+      "clones_unice": 35,
+      "views_total": 91,
+      "views_unice": 50
+    },
+    "2026-03-17": {
+      "stars": 7,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "m.facebook.com",
+          "vizite": 102,
+          "vizitatori_unici": 72
+        },
+        {
+          "sursa": "lm.facebook.com",
+          "vizite": 64,
+          "vizitatori_unici": 48
+        },
+        {
+          "sursa": "github.com",
+          "vizite": 51,
+          "vizitatori_unici": 23
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 34,
+          "vizitatori_unici": 27
+        },
+        {
+          "sursa": "facebook.com",
+          "vizite": 7,
+          "vizitatori_unici": 7
+        },
+        {
+          "sursa": "buymeacoffee.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
+      ],
+      "clones_total": 51,
+      "clones_unice": 19,
+      "views_total": 66,
+      "views_unice": 27
+    },
+    "2026-03-18": {
+      "stars": 7,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "m.facebook.com",
+          "vizite": 104,
+          "vizitatori_unici": 74
+        },
+        {
+          "sursa": "github.com",
+          "vizite": 81,
+          "vizitatori_unici": 32
+        },
+        {
+          "sursa": "lm.facebook.com",
+          "vizite": 71,
+          "vizitatori_unici": 53
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 39,
+          "vizitatori_unici": 31
+        },
+        {
+          "sursa": "facebook.com",
+          "vizite": 14,
+          "vizitatori_unici": 11
+        },
+        {
+          "sursa": "buymeacoffee.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
+      ],
+      "clones_total": 14,
+      "clones_unice": 6,
+      "views_total": 13,
+      "views_unice": 13
+    },
+    "2026-03-19": {
+      "stars": 7,
+      "forks": 0,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "m.facebook.com",
+          "vizite": 105,
+          "vizitatori_unici": 75
+        },
+        {
+          "sursa": "github.com",
+          "vizite": 87,
+          "vizitatori_unici": 37
+        },
+        {
+          "sursa": "lm.facebook.com",
+          "vizite": 72,
+          "vizitatori_unici": 54
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 39,
+          "vizitatori_unici": 31
+        },
+        {
+          "sursa": "facebook.com",
+          "vizite": 15,
+          "vizitatori_unici": 12
+        },
+        {
+          "sursa": "buymeacoffee.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
+      ]
+    }
+  },
+  "releases": {
+    "1.4.0": 0,
+    "1.3.0": 0,
+    "1.2.0": 0,
+    "1.1.0": 0,
+    "1.0.0": 0
+  }
+}

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ghid și întrebări frecvente
+    url: https://github.com/cnecrea/vehicule/blob/main/FAQ.md
+    about: Răspunsuri la cele mai frecvente întrebări despre instalarea, configurarea și utilizarea integrării Vehicule pentru Home Assistant.
+  - name: Ghid de instalare și configurare
+    url: https://github.com/cnecrea/vehicule/blob/main/SETUP.md
+    about: Instrucțiuni pas cu pas pentru instalare (HACS sau manual), configurarea vehiculelor, editarea datelor și personalizarea cardurilor Lovelace.
+  - name: Ghid de debugging
+    url: https://github.com/cnecrea/vehicule/blob/main/DEBUG.md
+    about: Cum activezi loguri debug, interpretezi mesajele din log și raportezi probleme.

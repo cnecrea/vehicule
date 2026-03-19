@@ -1,0 +1,128 @@
+name: Închidere automată a problemelor incomplete
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Motivul pentru care se închid issue-urile (ex. incomplete)"
+        required: true
+        default: "incomplete"
+        type: string
+
+  issues:
+    types:
+      - opened
+
+permissions:
+  issues: write
+
+jobs:
+  inchidere_si_blocare_issue:
+    name: Închidere automată și blocare
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Verifică tip issue
+        id: tip
+        env:
+          LABELS_JSON: ${{ toJson(github.event.issue.labels.*.name) }}
+        run: |
+          if echo "$LABELS_JSON" | grep -q "ajutor necesar"; then
+            echo "is_bug=true" >> "$GITHUB_ENV"
+          else
+            echo "is_bug=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Verifică corpul issue-ului
+        if: env.is_bug == 'true'
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          close=false
+
+          if echo "$ISSUE_BODY" | grep -qF "Nu, nu am citit documentația."; then
+            echo "Detectat: nu a citit documentatia"
+            close=true
+          fi
+
+          if echo "$ISSUE_BODY" | grep -qF "Selectează o opțiune…"; then
+            echo "Detectat: dropdown neselectat"
+            close=true
+          fi
+
+          if echo "$ISSUE_BODY" | grep -qP '^\s*Exemplu:\s*1\.0\.0\s*$'; then
+            echo "Detectat: versiune integrare = placeholder"
+            close=true
+          fi
+
+          if echo "$ISSUE_BODY" | grep -qP '^\s*Exemplu:\s*2025\.2\.0\s*$'; then
+            echo "Detectat: versiune HA = placeholder"
+            close=true
+          fi
+
+          if echo "$ISSUE_BODY" | grep -qP '### Versiunea integrării vehicule\s*\n\s*\n'; then
+            echo "Detectat: versiune integrare goala"
+            close=true
+          fi
+
+          if echo "$ISSUE_BODY" | grep -qP '### Versiunea Home Assistant\s*\n\s*\n'; then
+            echo "Detectat: versiune HA goala"
+            close=true
+          fi
+
+          echo "close=$close" >> "$GITHUB_ENV"
+
+      - name: Închide issue-ul
+        if: env.is_bug == 'true' && env.close == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NR: ${{ github.event.issue.number }}
+        run: |
+          curl -s -X PATCH \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NR" \
+            -d '{"state":"closed"}'
+
+          COMMENT_BODY=$(printf '%s\n' \
+            "Salut! :wave:" \
+            "" \
+            "Am închis automat acest issue deoarece lipsesc câteva informații de care avem nevoie ca să te putem ajuta." \
+            "" \
+            "Înainte de a deschide un issue nou, te rugăm să parcurgi documentația disponibilă — acolo găsești răspunsuri la majoritatea problemelor întâlnite:" \
+            "" \
+            "- [README.md](https://github.com/cnecrea/vehicule/blob/main/README.md)" \
+            "- [SETUP.md](https://github.com/cnecrea/vehicule/blob/main/SETUP.md)" \
+            "- [FAQ.md](https://github.com/cnecrea/vehicule/blob/main/FAQ.md)" \
+            "- [DEBUG.md](https://github.com/cnecrea/vehicule/blob/main/DEBUG.md)" \
+            "" \
+            "Dacă problema persistă și după ce ai consultat documentația, deschide un issue nou și asigură-te că ai completat toate câmpurile din template: versiunea integrării, versiunea Home Assistant și logurile relevante." \
+            "" \
+            "Mulțumim pentru înțelegere! :pray:"
+          )
+
+          PAYLOAD=$(jq -n --arg body "$COMMENT_BODY" '{"body":$body}')
+
+          curl -s -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NR/comments" \
+            -d "$PAYLOAD"
+
+      - name: Blochează issue-ul
+        if: env.is_bug == 'true' && env.close == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NR: ${{ github.event.issue.number }}
+        run: |
+          curl -s -X PUT \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/issues/$ISSUE_NR/lock" \
+            -d '{"lock_reason":"resolved"}'
+
+      - name: Log notificare
+        if: env.is_bug == 'true' && env.close == 'true'
+        run: echo "Issue-ul a fost închis automat (incomplet)."

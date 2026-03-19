@@ -1,0 +1,339 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Adaugă vehicul",
+        "description": "Introduceți numărul de înmatriculare al vehiculului, fără spații sau cratime (ex: B123ABC). Restul datelor pot fi adăugate ulterior din setările integrării.",
+        "data": {
+          "nr_inmatriculare": "Număr de înmatriculare"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Acest vehicul este deja configurat."
+    },
+    "error": {
+      "numar_gol": "Numărul de înmatriculare nu poate fi gol.",
+      "format_numar_invalid": "Format invalid. Introduceți numărul fără spații, cratime sau alte caractere speciale (ex: B123ABC).",
+      "format_data_invalid": "Format dată invalid. Folosiți formatul ZZ.LL.AAAA (ex: 18.04.2026).",
+      "an_invalid": "An invalid. Introduceți un an valid cu 4 cifre (verificați intervalul permis)."
+    }
+  },
+  "options": {
+    "error": {
+      "format_data_invalid": "Format dată invalid. Folosiți formatul ZZ.LL.AAAA (ex: 18.04.2026).",
+      "an_invalid": "An invalid. Introduceți un an valid cu 4 cifre (verificați intervalul permis).",
+      "km_necesar": "Trebuie să configurați mai întâi kilometrajul curent al vehiculului (meniul principal → Actualizare kilometraj).",
+      "license_key_empty": "Introdu o cheie de licență.",
+      "license_key_invalid": "Cheie de licență invalidă. Verifică formatul și încearcă din nou.",
+      "license_already_used": "Această cheie de licență a fost deja folosită pe altă instalare.",
+      "license_key_expired": "Această cheie de licență a expirat.",
+      "license_fingerprint_mismatch": "Această cheie de licență este asociată altei instalări.",
+      "license_network_error": "Nu se poate conecta la serverul de licențe. Verifică conexiunea la internet.",
+      "license_server_error": "Eroare server licențe. Încearcă din nou mai târziu."
+    },
+    "step": {
+      "init": {
+        "title": "Gestionare vehicul",
+        "description": "Alegeți categoria de date pe care doriți să o editați.",
+        "menu_options": {
+          "identificare": "Date de identificare",
+          "rca": "Asigurare RCA",
+          "casco": "Asigurare Casco",
+          "itp": "Inspecție tehnică (ITP)",
+          "rovinieta": "Rovinieta",
+          "administrativ": "Date administrative / fiscale",
+          "mentenanta": "Mentenanță",
+          "kilometraj": "Actualizare kilometraj",
+          "licenta": "Licență"
+        }
+      },
+      "identificare": {
+        "title": "Date de identificare ale vehiculului",
+        "description": "Completați datele de identificare. Toate câmpurile sunt opționale.",
+        "data": {
+          "marca": "Marcă",
+          "model": "Model",
+          "vin": "VIN (serie șasiu)",
+          "serie_civ": "Serie carte identitate vehicul (CIV)",
+          "an_fabricatie": "An fabricație",
+          "an_prima_inmatriculare": "An prima înmatriculare",
+          "motorizare": "Motorizare",
+          "combustibil": "Combustibil",
+          "capacitate_cilindrica": "Capacitate cilindrică",
+          "putere_kw": "Putere (kW)",
+          "putere_cp": "Putere (CP)"
+        }
+      },
+      "rca": {
+        "title": "Asigurare RCA",
+        "description": "Introduceți datele poliței RCA.",
+        "data": {
+          "rca_numar_polita": "Număr poliță",
+          "rca_companie": "Companie de asigurare",
+          "rca_data_emitere": "Data emitere",
+          "rca_data_expirare": "Data expirare",
+          "rca_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "casco": {
+        "title": "Asigurare Casco",
+        "description": "Introduceți datele poliței Casco.",
+        "data": {
+          "casco_numar_polita": "Număr poliță",
+          "casco_companie": "Companie de asigurare",
+          "casco_data_emitere": "Data emitere",
+          "casco_data_expirare": "Data expirare",
+          "casco_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "itp": {
+        "title": "Inspecție tehnică periodică (ITP)",
+        "description": "Introduceți datele ITP.",
+        "data": {
+          "itp_data_expirare": "Data expirare ITP",
+          "itp_statie": "Stația unde a fost efectuat",
+          "itp_kilometraj": "Kilometraj la ITP",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "rovinieta": {
+        "title": "Rovinieta",
+        "description": "Introduceți datele rovinietei.",
+        "data": {
+          "rovinieta_data_inceput": "Data început",
+          "rovinieta_data_sfarsit": "Data sfârșit",
+          "rovinieta_categorie": "Categorie",
+          "rovinieta_pret": "Preț (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "administrativ": {
+        "title": "Date administrative / fiscale",
+        "description": "Introduceți datele administrative și fiscale.",
+        "data": {
+          "proprietar": "Proprietar",
+          "tip_proprietate": "Tip proprietate",
+          "impozit_suma": "Impozit auto anual (RON)",
+          "impozit_scadenta": "Data scadență impozit",
+          "impozit_localitate": "Primărie / localitate",
+          "leasing_data_expirare": "Data expirare leasing"
+        }
+      },
+      "leasing_data": {
+        "title": "Data expirare leasing",
+        "description": "Ați selectat tipul de proprietate 'Leasing'. Introduceți data de expirare a contractului de leasing.",
+        "data": {
+          "leasing_data_expirare": "Data expirare leasing"
+        }
+      },
+      "mentenanta": {
+        "title": "Mentenanță",
+        "description": "Alegeți categoria de mentenanță.",
+        "menu_options": {
+          "revizie_ulei": "Revizie ulei",
+          "distributie": "Distribuție",
+          "anvelope": "Anvelope",
+          "baterie": "Baterie",
+          "frane": "Frâne (plăcuțe și discuri)",
+          "trusa_prim_ajutor": "Trusă de prim ajutor",
+          "extinctor": "Extinctor"
+        }
+      },
+      "revizie_ulei": {
+        "title": "Revizie ulei",
+        "description": "Introduceți datele despre ultima revizie și intervalul până la următoarea.",
+        "data": {
+          "revizie_ulei_km_ultimul": "Km la ultima revizie",
+          "revizie_ulei_km_urmator": "Km la următoarea revizie",
+          "revizie_ulei_data": "Data ultima revizie",
+          "revizie_ulei_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "distributie": {
+        "title": "Distribuție",
+        "description": "Introduceți datele despre curea/lanț de distribuție.",
+        "data": {
+          "distributie_km_ultimul": "Km la ultima schimbare",
+          "distributie_km_urmator": "Km la următoarea schimbare",
+          "distributie_data": "Data ultima schimbare",
+          "distributie_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "anvelope": {
+        "title": "Anvelope",
+        "description": "Introduceți datele de montare a anvelopelor.",
+        "data": {
+          "anvelope_vara_data": "Data montare anvelope de vară",
+          "anvelope_iarna_data": "Data montare anvelope de iarnă",
+          "anvelope_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "baterie": {
+        "title": "Baterie",
+        "description": "Introduceți data ultimului schimb de baterie.",
+        "data": {
+          "baterie_data_schimb": "Data schimb baterie",
+          "baterie_cost": "Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "frane": {
+        "title": "Frâne",
+        "description": "Introduceți datele despre plăcuțe și discuri de frână.",
+        "data": {
+          "placute_frana_km_ultimul": "Plăcuțe frână – Km ultima schimbare",
+          "placute_frana_km_urmator": "Plăcuțe frână – Km următoarea schimbare",
+          "placute_frana_data": "Plăcuțe frână – Data schimbare (ZZ.LL.AAAA)",
+          "placute_frana_cost": "Plăcuțe frână – Cost (RON)",
+          "discuri_frana_km_ultimul": "Discuri frână – Km ultima schimbare",
+          "discuri_frana_km_urmator": "Discuri frână – Km următoarea schimbare",
+          "discuri_frana_data": "Discuri frână – Data schimbare (ZZ.LL.AAAA)",
+          "discuri_frana_cost": "Discuri frână – Cost (RON)",
+          "_arhivare_date": "Arhivează datele vechi înainte de salvare"
+        }
+      },
+      "trusa_prim_ajutor": {
+        "title": "Trusă de prim ajutor",
+        "description": "Introduceți data de expirare a trusei de prim ajutor (obligatorie în România).",
+        "data": {
+          "trusa_prim_ajutor_data_expirare": "Data expirare"
+        }
+      },
+      "extinctor": {
+        "title": "Extinctor",
+        "description": "Introduceți data de expirare a extinctorului (obligatoriu în România).",
+        "data": {
+          "extinctor_data_expirare": "Data expirare"
+        }
+      },
+      "kilometraj": {
+        "title": "Actualizare kilometraj",
+        "description": "Actualizați kilometrajul curent al vehiculului.",
+        "data": {
+          "km_curent": "Kilometraj curent"
+        }
+      },
+      "licenta": {
+        "title": "Licență Vehicule",
+        "description": "{license_status}\n\nIntrodu cheia de licență pentru a activa sau reînnoi integrarea.",
+        "data": {
+          "license_key": "Cheie de licență"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "informatii": {
+        "name": "Informații"
+      },
+      "kilometraj": {
+        "name": "Kilometraj"
+      },
+      "rca": {
+        "name": "RCA"
+      },
+      "casco": {
+        "name": "Casco"
+      },
+      "itp": {
+        "name": "ITP"
+      },
+      "rovinieta": {
+        "name": "Rovinieta"
+      },
+      "impozit": {
+        "name": "Impozit"
+      },
+      "leasing": {
+        "name": "Leasing"
+      },
+      "revizie_ulei": {
+        "name": "Revizie ulei"
+      },
+      "distributie": {
+        "name": "Distribuție"
+      },
+      "anvelope": {
+        "name": "Anvelope"
+      },
+      "baterie": {
+        "name": "Baterie"
+      },
+      "placute_frana": {
+        "name": "Plăcuțe frână"
+      },
+      "discuri_frana": {
+        "name": "Discuri frână"
+      },
+      "trusa_prim_ajutor": {
+        "name": "Trusă prim ajutor"
+      },
+      "extinctor": {
+        "name": "Extinctor"
+      },
+      "cost_total": {
+        "name": "Cost total"
+      }
+    }
+  },
+  "selector": {
+    "combustibil": {
+      "options": {
+        "benzina": "Benzină",
+        "diesel": "Diesel",
+        "hybrid": "Hybrid",
+        "electric": "Electric",
+        "gpl": "GPL"
+      }
+    },
+    "tip_proprietate": {
+      "options": {
+        "proprietate": "Proprietate",
+        "leasing": "Leasing"
+      }
+    }
+  },
+  "services": {
+    "actualizeaza_date": {
+      "name": "Actualizează date",
+      "description": "Actualizează datele unui vehicul (kilometraj curent).",
+      "fields": {
+        "nr_inmatriculare": {
+          "name": "Număr de înmatriculare",
+          "description": "Numărul de înmatriculare al vehiculului (ex: B123ABC)."
+        },
+        "km_curent": {
+          "name": "Kilometraj curent",
+          "description": "Kilometrajul actual al vehiculului."
+        }
+      }
+    },
+    "exporta_date": {
+      "name": "Exportă date vehicul",
+      "description": "Exportă datele unui vehicul într-un fișier JSON în directorul config al Home Assistant.",
+      "fields": {
+        "nr_inmatriculare": {
+          "name": "Număr de înmatriculare",
+          "description": "Numărul de înmatriculare al vehiculului de exportat (ex: B123ABC)."
+        }
+      }
+    },
+    "importa_date": {
+      "name": "Importă date vehicul",
+      "description": "Importă datele unui vehicul dintr-un fișier JSON de backup. Dacă vehiculul nu există, va fi creat automat.",
+      "fields": {
+        "cale_fisier": {
+          "name": "Cale fișier",
+          "description": "Calea completă către fișierul JSON de backup (ex: /config/vehicule_backup_b123abc.json)."
+        }
+      }
+    }
+  }
+}
