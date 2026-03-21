@@ -24,6 +24,7 @@ from .const import (
     CONF_SERIE_CIV,
     CONF_VIN,
     DOMAIN,
+    LICENSE_DATA_KEY,
     STRUCTURA_CATEGORII,
     normalizeaza_numar,
 )
@@ -149,6 +150,18 @@ async def async_get_config_entry_diagnostics(
         )
     ]
 
+    # ── Licență (fingerprint + cheie mascată) ──
+    license_mgr = hass.data.get(DOMAIN, {}).get(LICENSE_DATA_KEY)
+    licenta_info: dict[str, Any] = {}
+    if license_mgr:
+        licenta_info = {
+            "fingerprint": license_mgr.fingerprint,
+            "status": license_mgr.status,
+            "license_key": license_mgr.license_key_masked,
+            "is_valid": license_mgr.is_valid,
+            "license_type": license_mgr.license_type,
+        }
+
     return {
         "intrare": {
             "titlu": _mascheaza(
@@ -158,6 +171,7 @@ async def async_get_config_entry_diagnostics(
             "versiune": entry.version,
             "domeniu": DOMAIN,
         },
+        "licenta": licenta_info,
         **categorii,
         "istoric": istoric,
         "stare": {
