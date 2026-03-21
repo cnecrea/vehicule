@@ -44,6 +44,8 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
+    DOMAIN,
+    LICENSE_DATA_KEY,
     CONF_AN_FABRICATIE,
     CONF_AN_PRIMA_INMATRICULARE,
     CONF_ANVELOPE_COST,
@@ -104,7 +106,6 @@ from .const import (
     CONF_TIP_PROPRIETATE,
     CONF_TRUSA_PRIM_AJUTOR_DATA_EXPIRARE,
     CONF_VIN,
-    DOMAIN,
     normalizeaza_numar,
 )
 from .helpers import (
@@ -823,6 +824,17 @@ async def async_setup_entry(
 
     _LOGGER.debug("Creez senzorii pentru vehiculul: %s", nr_inmatriculare)
 
+    # ── Verificare licență ──
+    license_mgr = hass.data.get(DOMAIN, {}).get(LICENSE_DATA_KEY)
+    license_valid = license_mgr.is_valid if license_mgr else False
+
+    if not license_valid:
+        _LOGGER.warning(
+            "[Vehicule] Licență invalidă — senzorii vor afișa 'Licență necesară' "
+            "pentru vehiculul %s",
+            nr_inmatriculare,
+        )
+
     # Combinăm data + options într-un singur dicționar
     date_vehicul: dict[str, Any] = {**entry.data, **entry.options}
 
@@ -848,16 +860,18 @@ async def async_setup_entry(
             nr_inmatriculare=nr_inmatriculare,
             numar_normalizat=numar_normalizat,
             date_vehicul=date_vehicul,
+            license_valid=license_valid,
         )
         for desc in SENSOR_DESCRIPTIONS
         if desc.key in chei_active
     ]
 
     _LOGGER.debug(
-        "Vehicul %s: %d senzori creați (din %d posibili)",
+        "Vehicul %s: %d senzori creați (din %d posibili), licență: %s",
         nr_inmatriculare,
         len(entitati),
         len(SENSOR_DESCRIPTIONS),
+        "validă" if license_valid else "invalidă",
     )
 
     async_add_entities(entitati, update_before_add=True)
@@ -907,6 +921,7 @@ class VehiculeSensor(SensorEntity):
         nr_inmatriculare: str,
         numar_normalizat: str,
         date_vehicul: dict[str, Any],
+        license_valid: bool = True,
     ) -> None:
         """Inițializează senzorul."""
         self.entity_description = description
@@ -914,6 +929,7 @@ class VehiculeSensor(SensorEntity):
         self._nr_inmatriculare = nr_inmatriculare
         self._numar_normalizat = numar_normalizat
         self._date_vehicul = date_vehicul
+        self._license_valid = license_valid
 
         # ID unic: vehicule_{numar_normalizat}_{tip_senzor}
         self._attr_unique_id = f"vehicule_{numar_normalizat}_{description.key}"
@@ -933,14 +949,28 @@ class VehiculeSensor(SensorEntity):
 
     @property
     def native_value(self) -> Any:
-        """Returnează starea senzorului."""
+        """Returnează starea senzorului.
+
+        Dacă licența nu e validă, returnează 'Licență necesară'.
+        Senzorul 'informatii' afișează nr. înmatriculare chiar și fără licență.
+        """
+        if not self._license_valid:
+            if self.entity_description.key == "informatii":
+                # Senzorul de informații afișează nr. înmatriculare + mesaj
+                return f"{self._nr_inmatriculare} — Licență necesară"
+            return "Licență necesară"
         if self.entity_description.value_fn is None:
             return None
         return self.entity_description.value_fn(self._date_vehicul)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
-        """Returnează atributele suplimentare ale senzorului."""
+        """Returnează atributele suplimentare ale senzorului.
+
+        Fără licență validă, atributele sunt goale (nu se expun date).
+        """
+        if not self._license_valid:
+            return {"licență": "necesară"}
         if self.entity_description.attributes_fn is None:
             return {}
         return self.entity_description.attributes_fn(self._date_vehicul)
