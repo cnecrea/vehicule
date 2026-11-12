@@ -219,14 +219,10 @@ _TRAD_VALORI_EN: dict[str, str] = {
     "necesară": "required",
     "Licență necesară": "License required",
     "Licență expirată": "License expired",
-    "Trial expirat": "Trial expired",
-    "Activați o cheie de licență din Setări → Dispozitive → Vehicule.": (
-        "Activate a license key from Settings → Devices → Vehicule."
-    ),
+    "Perioadă de test încheiată": "Free trial ended",
+    "Introdu cheia de licență în Configurare → Licență.": "Enter the license key in Configure → License.",
     "Fără dată expirare": "No expiry date",
-    "Activați licența pentru a vedea senzorii vehiculului.": (
-        "Activate the license to see the vehicle sensors."
-    ),
+    "Activează licența ca să vezi senzorii vehiculului.": "Activate the license to see the vehicle sensors.",
 }
 
 # Prefixe dinamice pentru chei de tip „Anterior – X" și „Cost {an}"
@@ -1280,7 +1276,7 @@ class LicentaNecesaraSensor(SensorEntity):
             status = mgr.status
             if status == "expired":
                 return _traduce_val(
-                    self.hass, "Licență expirată" if mgr.has_license else "Trial expirat"
+                    self.hass, "Licență expirată" if mgr.has_license else "Perioadă de test încheiată"
                 )
         return _traduce_val(self.hass, "Licență necesară")
 
@@ -1294,9 +1290,7 @@ class LicentaNecesaraSensor(SensorEntity):
             attrs["status_licență"] = mgr.status
             if mgr.status == "trial":
                 attrs["zile_trial_rămase"] = mgr.trial_days_remaining
-            attrs["informații"] = (
-                "Activați o cheie de licență din Setări → Dispozitive → Vehicule."
-            )
+            attrs["informații"] = "Introdu cheia de licență în Configurare → Licență."
         else:
             attrs["informații"] = (
                 "Managerul de licențe nu este disponibil."

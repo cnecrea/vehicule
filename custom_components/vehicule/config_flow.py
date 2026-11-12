@@ -127,23 +127,6 @@ def _selector_data() -> selector.TextSelector:
 # Licență — etichete tip
 # ─────────────────────────────────────────────
 
-_ETICHETE_TIP_LICENTA = {
-    # Tipurile emise de WebAPI (LICENSE_DURATION)
-    "perpetual": ("perpetuă", "perpetual"),
-    "annual": ("anuală", "annual"),
-    "semi_annual": ("semestrială", "semi-annual"),
-    "monthly": ("lunară", "monthly"),
-}
-
-
-def _eticheta_tip_licenta(tip: str | None, is_ro: bool) -> str:
-    """Eticheta afișată pentru tipul de licență primit de la server."""
-    if not tip:
-        return "necunoscut" if is_ro else "unknown"
-    ro, en = _ETICHETE_TIP_LICENTA.get(tip, (tip, tip))
-    return ro if is_ro else en
-
-
 # ─────────────────────────────────────────────
 # Config Flow
 # ─────────────────────────────────────────────
@@ -221,6 +204,69 @@ class VehiculeConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 # ─────────────────────────────────────────────
 # Options Flow
 # ─────────────────────────────────────────────
+
+
+# ── Textele licenței: aceleași în toate integrările hubinteligent (standardizate pe 12.11.2026) ──
+
+_TIP_LICENTA = {
+    # Tipurile emise de WebAPI (LICENSE_DURATION)
+    "perpetual": ("permanentă", "permanent"),
+    "annual": ("anuală", "annual"),
+    "semi_annual": ("semestrială", "semi-annual"),
+    "monthly": ("lunară", "monthly"),
+}
+
+
+def _tip_licenta(tip: str | None, is_ro: bool) -> str:
+    """Eticheta tipului de licență primit de la server."""
+    if not tip:
+        return "necunoscut" if is_ro else "unknown"
+    ro, en = _TIP_LICENTA.get(tip, (tip, tip))
+    return ro if is_ro else en
+
+
+def _zile_ramase(zile: int, is_ro: bool) -> str:
+    """„o zi rămasă”, „5 zile rămase”, „20 de zile rămase” — „1 day left”, „5 days left”."""
+    if zile <= 0:
+        return "ultima zi" if is_ro else "last day"
+    if not is_ro:
+        return "1 day left" if zile == 1 else f"{zile} days left"
+    if zile == 1:
+        return "o zi rămasă"
+    return f"{zile} {'de ' if zile % 100 >= 20 or zile % 100 == 0 else ''}zile rămase"
+
+
+def _status_licenta(mgr, is_ro: bool) -> str:
+    """Starea licenței, afișată la pasul „Licență”, deasupra câmpului „Cheie de licență”."""
+    from homeassistant.util import dt as dt_util
+
+    def data(moment: float) -> str:
+        return dt_util.as_local(dt_util.utc_from_timestamp(moment)).strftime("%d.%m.%Y")
+
+    obtine = f"🛒 {'Obține o licență' if is_ro else 'Get a license'}: {LICENSE_PURCHASE_URL}"
+    if mgr.status == "licensed":
+        linii = [f"✅ {'Licență activă' if is_ro else 'Active license'} ({_tip_licenta(mgr.license_type, is_ro)})"]
+        if mgr.license_key_masked:
+            linii[0] += f" — {mgr.license_key_masked}"
+        if mgr.activated_at:
+            linii.append(f"{'Activată la' if is_ro else 'Activated on'}: {data(mgr.activated_at)}")
+        if mgr.license_expires_at:
+            linii.append(f"📅 {'Expiră la' if is_ro else 'Expires on'}: {data(mgr.license_expires_at)}")
+        else:
+            linii.append("Valabilitate: nelimitată" if is_ro else "Validity: unlimited")
+        return "\n".join(linii)
+    if mgr.status == "trial":
+        perioada = "Perioadă de test" if is_ro else "Free trial"
+        return "\n".join([f"⏳ {perioada}: {_zile_ramase(mgr.trial_days_remaining, is_ro)}", "", obtine])
+    if mgr.status == "expired" and mgr.has_license:
+        linii = ["❌ Licență expirată" if is_ro else "❌ License expired"]
+        if mgr.license_expires_at:
+            linii.append(f"{'Expirată la' if is_ro else 'Expired on'}: {data(mgr.license_expires_at)}")
+        return "\n".join([*linii, "", obtine])
+    if mgr.status == "expired":
+        return "\n".join(["❌ Perioada de test s-a încheiat" if is_ro else "❌ The free trial has ended", "", obtine])
+    stare = "❌ Fără licență: senzorii nu se actualizează." if is_ro else "❌ No license: sensors do not update."
+    return "\n".join([stare, "", obtine])
 
 
 class VehiculeOptionsFlow(config_entries.OptionsFlow):
@@ -1304,114 +1350,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
             mgr = LicenseManager(self.hass)
             await mgr.async_load()
 
-        # Informații pentru descrierea formularului
-        server_status = mgr.status  # 'licensed', 'trial', 'expired', 'unlicensed'
-        is_ro = self.hass.config.language == "ro"
-
-        if server_status == "licensed":
-            from datetime import datetime
-
-            tip = _eticheta_tip_licenta(mgr.license_type, is_ro)
-            status_lines = [
-                f"✅ {'Licență activă' if is_ro else 'Active license'} ({tip})"
-            ]
-
-            if mgr.license_key_masked:
-                status_lines[0] += f" — {mgr.license_key_masked}"
-
-            # Data activării
-            if mgr.activated_at:
-                act_date = datetime.fromtimestamp(
-                    mgr.activated_at
-                ).strftime("%d.%m.%Y %H:%M")
-                lbl = "Activată la" if is_ro else "Activated at"
-                status_lines.append(f"{lbl}: {act_date}")
-
-            # Data expirării
-            if mgr.license_expires_at:
-                exp_date = datetime.fromtimestamp(
-                    mgr.license_expires_at
-                ).strftime("%d.%m.%Y %H:%M")
-                lbl = "Expiră la" if is_ro else "Expires at"
-                status_lines.append(f"📅 {lbl}: {exp_date}")
-            elif mgr.license_type == "perpetual":
-                status_lines.append(
-                    "Valabilitate: nelimitată (perpetuă)"
-                    if is_ro
-                    else "Validity: unlimited (perpetual)"
-                )
-
-            description_placeholders["license_status"] = "\n".join(
-                status_lines
-            )
-
-        elif server_status == "trial":
-            days = mgr.trial_days_remaining
-            if is_ro:
-                status_lines = [
-                    f"⏳ Evaluare — {days} zile rămase",
-                    "",
-                    f"🛒 Obține licență: {LICENSE_PURCHASE_URL}",
-                ]
-            else:
-                status_lines = [
-                    f"⏳ Trial — {days} days remaining",
-                    "",
-                    f"🛒 Get a license: {LICENSE_PURCHASE_URL}",
-                ]
-            description_placeholders["license_status"] = "\n".join(
-                status_lines
-            )
-        elif server_status == "expired":
-            from datetime import datetime
-
-            if is_ro:
-                status_lines = ["❌ Licență expirată"]
-            else:
-                status_lines = ["❌ License expired"]
-
-            if mgr.activated_at:
-                act_date = datetime.fromtimestamp(
-                    mgr.activated_at
-                ).strftime("%d.%m.%Y")
-                lbl = "Activată la" if is_ro else "Activated at"
-                status_lines.append(f"{lbl}: {act_date}")
-            if mgr.license_expires_at:
-                exp_date = datetime.fromtimestamp(
-                    mgr.license_expires_at
-                ).strftime("%d.%m.%Y")
-                lbl = "Expirată la" if is_ro else "Expired at"
-                status_lines.append(f"{lbl}: {exp_date}")
-
-            status_lines.append("")
-            if is_ro:
-                status_lines.append(
-                    f"🛒 Obține licență: {LICENSE_PURCHASE_URL}"
-                )
-            else:
-                status_lines.append(
-                    f"🛒 Get a license: {LICENSE_PURCHASE_URL}"
-                )
-
-            description_placeholders["license_status"] = "\n".join(
-                status_lines
-            )
-        else:
-            if is_ro:
-                status_lines = [
-                    "❌ Fără licență — funcționalitate blocată",
-                    "",
-                    f"🛒 Obține licență: {LICENSE_PURCHASE_URL}",
-                ]
-            else:
-                status_lines = [
-                    "❌ No license — functionality blocked",
-                    "",
-                    f"🛒 Get a license: {LICENSE_PURCHASE_URL}",
-                ]
-            description_placeholders["license_status"] = "\n".join(
-                status_lines
-            )
+        description_placeholders["license_status"] = _status_licenta(mgr, is_ro)
 
         if user_input is not None:
             cheie = user_input.get(CONF_LICENSE_KEY, "").strip()
@@ -1430,19 +1369,12 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
                         persistent_notification,
                     )
 
-                    tip_label = _eticheta_tip_licenta(mgr.license_type, is_ro)
-
+                    tip_label = _tip_licenta(mgr.license_type, is_ro)
                     if is_ro:
-                        notif_msg = (
-                            f"Licența Vehicule a fost activată cu succes! "
-                            f"Tip: {tip_label}."
-                        )
+                        notif_msg = f"Licența Vehicule este activă ({tip_label})."
                         notif_title = "Licență activată"
                     else:
-                        notif_msg = (
-                            f"Vehicule license activated successfully! "
-                            f"Type: {tip_label}."
-                        )
+                        notif_msg = f"The Vehicule license is active ({tip_label})."
                         notif_title = "License activated"
 
                     persistent_notification.async_create(

@@ -170,8 +170,9 @@ def _update_license_notifications(hass: HomeAssistant, mgr: LicenseManager) -> N
 
     - Dacă licența e validă → șterge orice issue și persistent notification
     - Dacă licența NU e validă:
-        - Trial expirat (dispozitivul n-a avut licență) → „Licența de probă a expirat"
-        - Licență expirată / revocată → „Licența a expirat"
+        - licență expirată → „Licența Vehicule a expirat"
+        - perioada de test încheiată → „Perioada de test Vehicule s-a încheiat"
+        - nicio licență activă sau neverificabilă → „Licența Vehicule nu este activă"
     """
     if mgr.is_valid:
         # Licență validă — curăță toate notificările de expirare
@@ -182,25 +183,29 @@ def _update_license_notifications(hass: HomeAssistant, mgr: LicenseManager) -> N
 
     # Licență invalidă — detectăm tipul
     if mgr.has_license:
-        # Licență plătită expirată
         issue_id = "license_expired"
-        notif_title = "Vehicule — Licența a expirat"
+        notif_title = "Licența Vehicule a expirat"
         notif_message = (
-            "Licența pentru integrarea **Vehicule** a expirat.\n\n"
-            "Senzorii sunt dezactivați până la reînnoirea licenței.\n\n"
-            f"[Reînnoiește licența]({LICENSE_PURCHASE_URL})"
+            "Senzorii integrării **Vehicule** nu se mai actualizează până la reînnoirea licenței.\n\n"
+            f"[Obține o licență nouă]({LICENSE_PURCHASE_URL})"
+        )
+    elif mgr.status == "expired":
+        issue_id = "trial_expired"
+        notif_title = "Perioada de test Vehicule s-a încheiat"
+        notif_message = (
+            "Senzorii integrării **Vehicule** nu se mai actualizează până la activarea unei licențe.\n\n"
+            f"[Obține o licență]({LICENSE_PURCHASE_URL})"
         )
     else:
-        # Trial expirat
+        # „unlicensed”: nicio licență activă sau licența nu a putut fi verificată
         issue_id = "trial_expired"
-        notif_title = "Vehicule — Licența de probă a expirat"
+        notif_title = "Licența Vehicule nu este activă"
         notif_message = (
-            "Perioada de evaluare gratuită pentru integrarea **Vehicule** s-a încheiat.\n\n"
-            "Senzorii sunt dezactivați până la obținerea unei licențe.\n\n"
-            f"[Obține o licență acum]({LICENSE_PURCHASE_URL})"
+            "Integrarea **Vehicule** nu are o licență activă sau licența nu a putut fi verificată, așa că senzorii "
+            "nu se actualizează. Cheia se introduce în Configurare → Licență.\n\n"
+            f"[Obține o licență]({LICENSE_PURCHASE_URL})"
         )
 
-    # Șterge issue-ul celălalt (dacă a fost creat anterior cu alt tip)
     other_id = "license_expired" if issue_id == "trial_expired" else "trial_expired"
     ir.async_delete_issue(hass, DOMAIN, other_id)
 
