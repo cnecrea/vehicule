@@ -1341,6 +1341,7 @@ class VehiculeOptionsFlow(config_entries.OptionsFlow):
 
         errors: dict[str, str] = {}
         description_placeholders: dict[str, str] = {}
+        is_ro = self.hass.config.language == "ro"
 
         # Obține LicenseManager
         mgr: LicenseManager | None = self.hass.data.get(DOMAIN, {}).get(
